@@ -10,6 +10,7 @@ dependencies {
     "implementation"(libraries.findLibrary("androidx-compose-ui-graphics").get())
     "implementation"(libraries.findLibrary("androidx-compose-ui-tooling-preview").get())
     "implementation"(libraries.findLibrary("androidx-compose-material3").get())
+    "implementation"(libraries.findBundle("compose-icons").get())
 
     "androidTestImplementation"(platform(composeBom))
     "androidTestImplementation"(libraries.findLibrary("androidx-compose-ui-test-junit4").get())
