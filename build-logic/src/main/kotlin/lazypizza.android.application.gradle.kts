@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id("com.android.application")
     kotlin("android")
+    id("lazypizza.library.compose")
 }
 
 kotlin {
@@ -38,8 +39,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
+    "implementation"(libraries.findLibrary("androidx-activity-compose").get())
     test(project)
 }
