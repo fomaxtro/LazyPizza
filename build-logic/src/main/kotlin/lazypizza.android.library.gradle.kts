@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     kotlin("android")
 }
 
@@ -15,13 +15,10 @@ android {
     compileSdk = libraries.findVersion("app-compileSdk").get().toString().toInt()
 
     defaultConfig {
-        applicationId = libraries.findVersion("app-applicationId").get().toString()
         minSdk = libraries.findVersion("app-minSdk").get().toString().toInt()
-        targetSdk = libraries.findVersion("app-targetSdk").get().toString().toInt()
-        versionCode = libraries.findVersion("app-versionCode").get().toString().toInt()
-        versionName = libraries.findVersion("app-versionName").get().toString()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -41,5 +38,6 @@ android {
 }
 
 dependencies {
+    "implementation"(libraries.findLibrary("androidx-core-ktx").get())
     test(project)
 }

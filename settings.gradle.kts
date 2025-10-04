@@ -26,3 +26,4 @@ dependencyResolutionManagement {
 rootProject.name = "LazyPizza"
 include(":app")
 include(":core:domain")
+include(":core:data")
