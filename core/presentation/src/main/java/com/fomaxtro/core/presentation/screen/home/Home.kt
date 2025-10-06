@@ -1,0 +1,274 @@
+package com.fomaxtro.core.presentation.screen.home
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fomaxtro.core.domain.model.ProductCategory
+import com.fomaxtro.core.presentation.R
+import com.fomaxtro.core.presentation.designsystem.text_field.LazyPizzaOutlinedTextField
+import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
+import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
+import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
+import com.fomaxtro.core.presentation.screen.home.component.ProductListItem
+import com.fomaxtro.core.presentation.screen.home.util.ProductUiFactory
+import com.fomaxtro.core.presentation.screen.home.util.toDisplayName
+
+@Composable
+fun HomeRoot(
+    viewModel: HomeViewModel
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    HomeScreen(
+        onAction = viewModel::onAction,
+        state = state
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HomeScreen(
+    onAction: (HomeAction) -> Unit = {},
+    state: HomeState
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_launcher_foreground),
+                            contentDescription = stringResource(R.string.app_name),
+                            modifier = Modifier.size(20.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(6.dp))
+
+                        Text(
+                            text = stringResource(R.string.app_name),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                },
+                actions = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = AppIcons.Filled.Phone,
+                            contentDescription = stringResource(R.string.contact)
+                        )
+
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        Text(
+                            text = stringResource(R.string.contact_phone_number),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.banner),
+                contentDescription = stringResource(R.string.banner),
+                modifier = Modifier.fillMaxWidth(),
+                contentScale = ContentScale.FillWidth
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyPizzaOutlinedTextField(
+                value = "",
+                onValueChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Icon(
+                        imageVector = AppIcons.Outlined.Search,
+                        contentDescription = stringResource(R.string.search),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
+                placeholder = {
+                    Text(stringResource(R.string.search_food))
+                }
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ProductCategory.entries.forEach { productCategory ->
+                    FilterChip(
+                        selected = state.selectedCategories.contains(productCategory),
+                        onClick = {},
+                        label = {
+                            Text(
+                                text = productCategory
+                                    .toDisplayName()
+                                    .asString(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium
+                            )
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primary,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                            labelColor = MaterialTheme.colorScheme.textPrimary
+                        )
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                item {
+                    Text(
+                        text = stringResource(R.string.pizza),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.textSecondary
+                    )
+                }
+
+                state.products[ProductCategory.PIZZA]?.let { pizzas ->
+                    items(pizzas, key = { it.id }) { product ->
+                        ProductListItem(
+                            product = product
+                        )
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                ProductCategory.entries
+                    .drop(1)
+                    .forEach { productCategory ->
+                        item {
+                            Text(
+                                text = productCategory
+                                    .toDisplayName()
+                                    .asString(),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.textSecondary
+                            )
+                        }
+
+                        state.products[productCategory]?.let { drinks ->
+                            items(drinks, key = { it.id }) { product ->
+                                ProductListItem(
+                                    product = product,
+                                    onAddClick = {},
+                                    onDeleteClick = {},
+                                    onQuantityChange = {}
+                                )
+                            }
+                        }
+
+                        item {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun HomeScreenPreview() {
+    LazyPizzaTheme {
+        HomeScreen(
+            state = HomeState(
+                selectedCategories = setOf(
+                    ProductCategory.PIZZA,
+                    ProductCategory.SAUCES
+                ),
+                products = mapOf(
+                    ProductCategory.PIZZA to (1..5).map {
+                        ProductUiFactory.create(
+                            id = it.toLong(),
+                            name = "Pizza $it",
+                            description = "This is a tasty pizza",
+                            category = ProductCategory.PIZZA
+                        )
+                    },
+                    ProductCategory.DRINKS to (1..3).map {
+                        ProductUiFactory.create(
+                            id = (it + 10).toLong(),
+                            name = "Drink $it",
+                            category = ProductCategory.DRINKS
+                        )
+                    },
+                    ProductCategory.SAUCES to (1..2).map {
+                        ProductUiFactory.create(
+                            id = (it + 20).toLong(),
+                            name = "Sauce $it",
+                            category = ProductCategory.SAUCES
+                        )
+                    },
+                    ProductCategory.ICE_CREAM to (1..2).map {
+                        ProductUiFactory.create(
+                            id = (it + 30).toLong(),
+                            name = "Ice Cream $it",
+                            category = ProductCategory.ICE_CREAM
+                        )
+                    }
+                )
+            )
+        )
+    }
+}
