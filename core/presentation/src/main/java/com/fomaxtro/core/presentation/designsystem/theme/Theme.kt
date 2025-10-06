@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 
 private val LightColorScheme = lightColorScheme(
     primary = Primary,
+    onPrimary = TextOnPrimary,
     background = BG,
     surface = SurfaceHigher,
     outline = Outline

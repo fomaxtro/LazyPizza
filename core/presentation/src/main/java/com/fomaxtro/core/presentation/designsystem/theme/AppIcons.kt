@@ -13,13 +13,18 @@ object AppIcons {
         val Search: ImageVector
             @Composable get() = ImageVector.vectorResource(R.drawable.search)
 
+        val Trash: ImageVector
+            @Composable get() = ImageVector.vectorResource(R.drawable.trash)
+    }
+
+    object Filled {
         val Minus: ImageVector
             @Composable get() = ImageVector.vectorResource(R.drawable.minus)
 
         val Plus: ImageVector
             @Composable get() = ImageVector.vectorResource(R.drawable.plus)
 
-        val Trash: ImageVector
-            @Composable get() = ImageVector.vectorResource(R.drawable.trash)
+        val Phone: ImageVector
+            @Composable get() = ImageVector.vectorResource(R.drawable.phone_filled)
     }
 }
