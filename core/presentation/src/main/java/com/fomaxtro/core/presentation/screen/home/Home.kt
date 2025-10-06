@@ -41,6 +41,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.screen.home.component.ProductListItem
+import com.fomaxtro.core.presentation.screen.home.component.ProductListItemLoader
 import com.fomaxtro.core.presentation.screen.home.util.ProductUiFactory
 import com.fomaxtro.core.presentation.screen.home.util.toDisplayName
 
@@ -62,6 +63,13 @@ private fun HomeScreen(
     onAction: (HomeAction) -> Unit = {},
     state: HomeState
 ) {
+    val productCategories = listOf(
+        ProductCategory.PIZZA,
+        ProductCategory.DRINKS,
+        ProductCategory.SAUCES,
+        ProductCategory.ICE_CREAM
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -144,7 +152,7 @@ private fun HomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                ProductCategory.entries.forEach { productCategory ->
+                productCategories.forEach { productCategory ->
                     FilterChip(
                         selected = state.selectedCategories.contains(productCategory),
                         onClick = {},
@@ -182,11 +190,19 @@ private fun HomeScreen(
                     )
                 }
 
-                state.products[ProductCategory.PIZZA]?.let { pizzas ->
-                    items(pizzas, key = { it.id }) { product ->
-                        ProductListItem(
-                            product = product
+                if (state.isLoading) {
+                    items(3) {
+                        ProductListItemLoader(
+                            modifier = Modifier.fillMaxWidth()
                         )
+                    }
+                } else {
+                    state.products[ProductCategory.PIZZA]?.let { pizzas ->
+                        items(pizzas, key = { it.id }) { product ->
+                            ProductListItem(
+                                product = product
+                            )
+                        }
                     }
                 }
 
@@ -194,19 +210,24 @@ private fun HomeScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                ProductCategory.entries
-                    .drop(1)
-                    .forEach { productCategory ->
-                        item {
-                            Text(
-                                text = productCategory
-                                    .toDisplayName()
-                                    .asString(),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.textSecondary
+                productCategories.drop(1).forEach { productCategory ->
+                    item {
+                        Text(
+                            text = productCategory
+                                .toDisplayName()
+                                .asString(),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.textSecondary
+                        )
+                    }
+
+                    if (state.isLoading) {
+                        items(3) {
+                            ProductListItemLoader(
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
-
+                    } else {
                         state.products[productCategory]?.let { drinks ->
                             items(drinks, key = { it.id }) { product ->
                                 ProductListItem(
@@ -217,11 +238,12 @@ private fun HomeScreen(
                                 )
                             }
                         }
-
-                        item {
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
                     }
+
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
             }
         }
     }
@@ -267,7 +289,8 @@ private fun HomeScreenPreview() {
                             category = ProductCategory.ICE_CREAM
                         )
                     }
-                )
+                ),
+                isLoading = true
             )
         )
     }

@@ -13,4 +13,5 @@
     <string name="add_to_cart">Add to Cart</string>
     <string name="minus">Minus</string>
     <string name="plus">Plus</string>
+    <string name="other">Other</string>
 </resources>
