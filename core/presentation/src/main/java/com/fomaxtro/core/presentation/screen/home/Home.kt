@@ -1,5 +1,6 @@
 package com.fomaxtro.core.presentation.screen.home
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,12 +46,27 @@ import com.fomaxtro.core.presentation.screen.home.component.ProductListItem
 import com.fomaxtro.core.presentation.screen.home.component.ProductListItemLoader
 import com.fomaxtro.core.presentation.screen.home.util.ProductUiFactory
 import com.fomaxtro.core.presentation.screen.home.util.toDisplayName
+import com.fomaxtro.core.presentation.ui.ObserveAsEvents
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeRoot(
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is HomeEvent.ShowSystemMessage -> {
+                Toast.makeText(
+                    context,
+                    event.message.asString(context),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
 
     HomeScreen(
         onAction = viewModel::onAction,
@@ -108,6 +125,8 @@ private fun HomeScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
+
+                    Spacer(modifier = Modifier.width(16.dp))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background

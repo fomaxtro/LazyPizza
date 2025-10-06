@@ -5,7 +5,7 @@ import com.fomaxtro.core.domain.util.Error
 sealed interface DataError : Error {
     enum class Network : DataError {
         NO_CONNECTION,
-        SERVER_UNAVAILABLE,
+        SERVICE_UNAVAILABLE,
         UNAUTHORIZED,
         UNKNOWN
     }

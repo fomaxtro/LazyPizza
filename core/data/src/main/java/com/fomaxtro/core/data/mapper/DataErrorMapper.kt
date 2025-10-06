@@ -11,8 +11,8 @@ fun NetworkError.toDataError(): DataError {
         NetworkError.UNAUTHORIZED -> DataError.Network.UNAUTHORIZED
         NetworkError.NOT_FOUND -> DataError.Resource.NOT_FOUND
         NetworkError.CONFLICT -> DataError.Resource.CONFLICT
-        NetworkError.TOO_MANY_REQUESTS -> DataError.Network.SERVER_UNAVAILABLE
-        NetworkError.SERVER_ERROR -> DataError.Network.SERVER_UNAVAILABLE
+        NetworkError.TOO_MANY_REQUESTS -> DataError.Network.SERVICE_UNAVAILABLE
+        NetworkError.SERVER_ERROR -> DataError.Network.SERVICE_UNAVAILABLE
         NetworkError.UNKNOWN -> DataError.Network.UNKNOWN
     }
 }

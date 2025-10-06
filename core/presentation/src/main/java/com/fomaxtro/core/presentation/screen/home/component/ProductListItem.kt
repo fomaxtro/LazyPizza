@@ -51,7 +51,7 @@ fun ProductListItem(
                 )
             } else {
                 AsyncImage(
-                    model = product.imagUrl,
+                    model = product.imageUrl,
                     contentDescription = null,
                     modifier = Modifier
                         .size(122.dp)

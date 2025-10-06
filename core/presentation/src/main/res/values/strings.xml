@@ -14,4 +14,11 @@
     <string name="minus">Minus</string>
     <string name="plus">Plus</string>
     <string name="other">Other</string>
+    <string name="no_connection">No internet connection</string>
+    <string name="service_unavailable">Service unavailable</string>
+    <string name="unauthorized">Unauthorized</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="resource_not_found">Resource not found</string>
+    <string name="resource_conflict">The reource already exists</string>
+    <string name="invalid_input">Invalid input provided</string>
 </resources>

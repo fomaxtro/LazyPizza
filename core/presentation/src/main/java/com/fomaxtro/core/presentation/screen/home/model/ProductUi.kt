@@ -7,7 +7,7 @@ data class ProductUi(
     val name: String,
     val description: String?,
     val price: Double,
-    val imagUrl: String,
+    val imageUrl: String,
     val category: ProductCategory,
     val quantity: Int = 0
 )

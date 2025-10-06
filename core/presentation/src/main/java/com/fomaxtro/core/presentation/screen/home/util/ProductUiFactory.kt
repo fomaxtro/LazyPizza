@@ -17,7 +17,7 @@ object ProductUiFactory {
         name = name,
         description = description,
         price = price,
-        imagUrl = imageUrl,
+        imageUrl = imageUrl,
         category = category,
         quantity = quantity
     )
