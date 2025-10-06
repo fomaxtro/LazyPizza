@@ -1,0 +1,14 @@
+package com.fomaxtro.core.presentation.screen.home.util
+
+import com.fomaxtro.core.domain.model.ProductCategory
+import com.fomaxtro.core.presentation.R
+import com.fomaxtro.core.presentation.ui.UiText
+
+fun ProductCategory.toDisplayName(): UiText {
+    return when (this) {
+        ProductCategory.PIZZA -> UiText.StringResource(R.string.pizza)
+        ProductCategory.DRINKS -> UiText.StringResource(R.string.drinks)
+        ProductCategory.SAUCES -> UiText.StringResource(R.string.sauces)
+        ProductCategory.ICE_CREAM -> UiText.StringResource(R.string.ice_cream)
+    }
+}
