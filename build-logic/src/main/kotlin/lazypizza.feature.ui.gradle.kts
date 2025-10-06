@@ -11,4 +11,5 @@ android {
 
 dependencies {
     "implementation"(libraries.findLibrary("androidx-activity-compose").get())
+    "implementation"(libraries.findLibrary("koin-compose").get())
 }

@@ -15,3 +15,7 @@ kotlin {
         jvmTarget = JvmTarget.JVM_11
     }
 }
+
+dependencies {
+    "implementation"(libraries.findLibrary("koin-core").get())
+}

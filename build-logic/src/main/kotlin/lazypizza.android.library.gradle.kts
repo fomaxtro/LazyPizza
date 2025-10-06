@@ -39,5 +39,7 @@ android {
 
 dependencies {
     "implementation"(libraries.findLibrary("androidx-core-ktx").get())
+    "implementation"(libraries.findLibrary("timber").get())
+    "implementation"(libraries.findLibrary("koin-android").get())
     test(project)
 }
