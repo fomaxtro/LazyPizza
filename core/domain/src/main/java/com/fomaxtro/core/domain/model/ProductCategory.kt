@@ -4,5 +4,6 @@ enum class ProductCategory {
     PIZZA,
     DRINKS,
     SAUCES,
-    ICE_CREAM
+    ICE_CREAM,
+    OTHER
 }

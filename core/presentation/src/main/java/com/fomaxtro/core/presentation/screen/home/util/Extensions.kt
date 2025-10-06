@@ -10,5 +10,6 @@ fun ProductCategory.toDisplayName(): UiText {
         ProductCategory.DRINKS -> UiText.StringResource(R.string.drinks)
         ProductCategory.SAUCES -> UiText.StringResource(R.string.sauces)
         ProductCategory.ICE_CREAM -> UiText.StringResource(R.string.ice_cream)
+        ProductCategory.OTHER -> UiText.StringResource(R.string.other)
     }
 }
