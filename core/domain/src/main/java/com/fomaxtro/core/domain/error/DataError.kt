@@ -1,0 +1,21 @@
+package com.fomaxtro.core.domain.error
+
+import com.fomaxtro.core.domain.util.Error
+
+sealed interface DataError : Error {
+    enum class Network : DataError {
+        NO_CONNECTION,
+        SERVER_UNAVAILABLE,
+        UNAUTHORIZED,
+        UNKNOWN
+    }
+
+    enum class Resource : DataError {
+        NOT_FOUND,
+        CONFLICT
+    }
+
+    enum class Validation : DataError {
+        INVALID_INPUT
+    }
+}
