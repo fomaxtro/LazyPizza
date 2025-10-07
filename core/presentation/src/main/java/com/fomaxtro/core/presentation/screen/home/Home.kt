@@ -1,14 +1,17 @@
 package com.fomaxtro.core.presentation.screen.home
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,13 +30,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fomaxtro.core.domain.model.ProductCategory
 import com.fomaxtro.core.presentation.R
@@ -43,7 +50,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.screen.home.component.ProductListItem
-import com.fomaxtro.core.presentation.screen.home.component.ProductListItemLoader
+import com.fomaxtro.core.presentation.screen.home.component.productsLoader
 import com.fomaxtro.core.presentation.screen.home.util.ProductUiFactory
 import com.fomaxtro.core.presentation.screen.home.util.toDisplayName
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
@@ -80,6 +87,10 @@ private fun HomeScreen(
     onAction: (HomeAction) -> Unit = {},
     state: HomeState
 ) {
+    val isInPreview = LocalInspectionMode.current
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+
     val productCategories = listOf(
         ProductCategory.PIZZA,
         ProductCategory.DRINKS,
@@ -120,9 +131,21 @@ private fun HomeScreen(
 
                         Spacer(modifier = Modifier.width(4.dp))
 
+                        val contactPhoneNumber = stringResource(R.string.contact_phone_number)
+
                         Text(
-                            text = stringResource(R.string.contact_phone_number),
-                            style = MaterialTheme.typography.bodyLarge
+                            text = contactPhoneNumber,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier
+                                .clickable {
+                                    if (!isInPreview) {
+                                        val dialerIntent = Intent(Intent.ACTION_DIAL).apply {
+                                            data = "tel:$contactPhoneNumber".toUri()
+                                        }
+
+                                        context.startActivity(dialerIntent)
+                                    }
+                                }
                         )
                     }
 
@@ -132,135 +155,141 @@ private fun HomeScreen(
                     containerColor = MaterialTheme.colorScheme.background
                 )
             )
-        }
+        },
+        modifier = Modifier
+            .pointerInput(Unit) {
+                detectTapGestures {
+                    focusManager.clearFocus()
+                }
+            }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
+                .imePadding()
         ) {
-            Image(
-                painter = painterResource(R.drawable.banner),
-                contentDescription = stringResource(R.string.banner),
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.FillWidth
-            )
+            item {
+                Image(
+                    painter = painterResource(R.drawable.banner),
+                    contentDescription = stringResource(R.string.banner),
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-            LazyPizzaOutlinedTextField(
-                value = "",
-                onValueChange = {},
-                modifier = Modifier.fillMaxWidth(),
-                leadingIcon = {
-                    Icon(
-                        imageVector = AppIcons.Outlined.Search,
-                        contentDescription = stringResource(R.string.search),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                },
-                placeholder = {
-                    Text(stringResource(R.string.search_food))
-                }
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                productCategories.forEach { productCategory ->
-                    FilterChip(
-                        selected = state.selectedCategories.contains(productCategory),
-                        onClick = {},
-                        label = {
-                            Text(
-                                text = productCategory
-                                    .toDisplayName()
-                                    .asString(),
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium
-                            )
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primary,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                            labelColor = MaterialTheme.colorScheme.textPrimary
+            item {
+                LazyPizzaOutlinedTextField(
+                    value = state.search,
+                    onValueChange = {
+                        onAction(HomeAction.OnSearchChange(it))
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = AppIcons.Outlined.Search,
+                            contentDescription = stringResource(R.string.search),
+                            tint = MaterialTheme.colorScheme.primary
                         )
-                    )
+                    },
+                    placeholder = {
+                        Text(stringResource(R.string.search_food))
+                    }
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    productCategories.forEach { productCategory ->
+                        FilterChip(
+                            selected = state.selectedCategories.contains(productCategory),
+                            onClick = {},
+                            label = {
+                                Text(
+                                    text = productCategory
+                                        .toDisplayName()
+                                        .asString(),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                labelColor = MaterialTheme.colorScheme.textPrimary
+                            )
+                        )
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            item {
+                Spacer(modifier = Modifier.height(12.dp))
+            }
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                item {
-                    Text(
-                        text = stringResource(R.string.pizza),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.textSecondary
-                    )
-                }
-
-                if (state.isLoading) {
-                    items(3) {
-                        ProductListItemLoader(
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                } else {
-                    state.products[ProductCategory.PIZZA]?.let { pizzas ->
-                        items(pizzas, key = { it.id }) { product ->
-                            ProductListItem(
-                                product = product
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                productCategories.drop(1).forEach { productCategory ->
+            if (state.isLoading) {
+                productsLoader(productCategories)
+            } else {
+                state.products[ProductCategory.PIZZA]?.let { pizzas ->
                     item {
                         Text(
-                            text = productCategory
-                                .toDisplayName()
-                                .asString(),
+                            text = stringResource(R.string.pizza),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.textSecondary
                         )
                     }
 
-                    if (state.isLoading) {
-                        items(3) {
-                            ProductListItemLoader(
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    } else {
-                        state.products[productCategory]?.let { drinks ->
-                            items(drinks, key = { it.id }) { product ->
-                                ProductListItem(
-                                    product = product,
-                                    onAddClick = {},
-                                    onDeleteClick = {},
-                                    onQuantityChange = {}
-                                )
-                            }
-                        }
+                    items(pizzas, key = { it.id }) { product ->
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        ProductListItem(
+                            product = product
+                        )
                     }
 
                     item {
                         Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+
+                productCategories.drop(1).forEach { productCategory ->
+                    state.products[productCategory]?.let { products ->
+                        item {
+                            Text(
+                                text = productCategory
+                                    .toDisplayName()
+                                    .asString(),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.textSecondary
+                            )
+                        }
+
+                        items(products, key = { it.id }) { product ->
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            ProductListItem(
+                                product = product,
+                                onAddClick = {},
+                                onDeleteClick = {},
+                                onQuantityChange = {}
+                            )
+                        }
+
+                        item {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
                     }
                 }
             }
