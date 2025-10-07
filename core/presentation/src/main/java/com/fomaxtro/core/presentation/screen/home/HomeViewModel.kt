@@ -117,6 +117,28 @@ class HomeViewModel(
             is HomeAction.OnProductCategoryToggle -> {
                 onProductCategoryToggle(action.category)
             }
+
+            is HomeAction.OnProductQuantityChange -> {
+                onProductQuantityChange(action.product, action.quantity)
+            }
+        }
+    }
+
+    private fun onProductQuantityChange(
+        product: ProductUi,
+        quantity: Int
+    ) {
+        val productsMap = state.value.products.toMutableMap()
+        val productList = productsMap[product.category]?.toMutableList() ?: return
+        val productIndex = productList.indexOf(product)
+
+        productList[productIndex] = product.copy(quantity = quantity)
+        productsMap[product.category] = productList.toList()
+
+        _state.update {
+            it.copy(
+                products = productsMap.toMap()
+            )
         }
     }
 

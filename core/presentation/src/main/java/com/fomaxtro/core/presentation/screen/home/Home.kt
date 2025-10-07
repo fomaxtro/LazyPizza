@@ -283,9 +283,21 @@ private fun HomeScreen(
 
                             ProductListItem(
                                 product = product,
-                                onAddClick = {},
-                                onDeleteClick = {},
-                                onQuantityChange = {}
+                                onAddClick = {
+                                    onAction(
+                                        HomeAction.OnProductQuantityChange(product, 1)
+                                    )
+                                },
+                                onDeleteClick = {
+                                    onAction(
+                                        HomeAction.OnProductQuantityChange(product, 0)
+                                    )
+                                },
+                                onQuantityChange = {
+                                    onAction(
+                                        HomeAction.OnProductQuantityChange(product, it)
+                                    )
+                                }
                             )
                         }
 
