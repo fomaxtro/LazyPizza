@@ -215,7 +215,9 @@ private fun HomeScreen(
                     productCategories.forEach { productCategory ->
                         FilterChip(
                             selected = state.selectedCategories.contains(productCategory),
-                            onClick = {},
+                            onClick = {
+                                onAction(HomeAction.OnProductCategoryToggle(productCategory))
+                            },
                             label = {
                                 Text(
                                     text = productCategory
