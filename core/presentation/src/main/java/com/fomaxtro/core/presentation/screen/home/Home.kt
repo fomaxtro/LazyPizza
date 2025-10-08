@@ -23,8 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,13 +45,14 @@ import com.fomaxtro.core.presentation.designsystem.text_field.LazyPizzaOutlinedT
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
+import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaTopAppBar
 import com.fomaxtro.core.presentation.screen.home.component.ProductListItem
 import com.fomaxtro.core.presentation.screen.home.component.categoryProductList
-import com.fomaxtro.core.presentation.screen.home.util.ProductUiFactory
-import com.fomaxtro.core.presentation.screen.home.util.toDisplayName
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.rememberScreenType
+import com.fomaxtro.core.presentation.util.ProductUiFactory
+import com.fomaxtro.core.presentation.util.toDisplayName
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -101,7 +100,7 @@ private fun HomeScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            LazyPizzaTopAppBar(
                 title = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -151,10 +150,7 @@ private fun HomeScreen(
                     }
 
                     Spacer(modifier = Modifier.width(16.dp))
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
+                }
             )
         },
         modifier = Modifier

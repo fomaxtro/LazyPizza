@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.model.ProductCategory
 import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.util.Result
+import com.fomaxtro.core.presentation.mapper.toProductUi
 import com.fomaxtro.core.presentation.mapper.toUiText
-import com.fomaxtro.core.presentation.screen.home.mapper.toProductUi
-import com.fomaxtro.core.presentation.screen.home.model.ProductUi
+import com.fomaxtro.core.presentation.model.ProductUi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

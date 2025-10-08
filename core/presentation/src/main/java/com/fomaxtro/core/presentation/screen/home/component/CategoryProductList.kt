@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.domain.model.ProductCategory
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
-import com.fomaxtro.core.presentation.screen.home.model.ProductUi
-import com.fomaxtro.core.presentation.screen.home.util.toDisplayName
+import com.fomaxtro.core.presentation.model.ProductUi
 import com.fomaxtro.core.presentation.ui.ScreenType
+import com.fomaxtro.core.presentation.util.toDisplayName
 
 fun LazyListScope.categoryProductList(
     category: ProductCategory,

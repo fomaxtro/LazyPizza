@@ -18,12 +18,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.presentation.designsystem.modifier.shimmer
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
 
 @Composable
 fun BaseProductListItem(
@@ -37,7 +37,7 @@ fun BaseProductListItem(
             .dropShadow(
                 shape = CardDefaults.shape,
                 shadow = Shadow(
-                    color = Color(0xFF03131F).copy(alpha = 0.06f),
+                    color = MaterialTheme.colorScheme.textPrimary.copy(alpha = 0.06f),
                     radius = 16.dp
                 )
             ),

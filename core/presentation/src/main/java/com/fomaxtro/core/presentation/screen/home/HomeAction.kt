@@ -1,7 +1,7 @@
 package com.fomaxtro.core.presentation.screen.home
 
 import com.fomaxtro.core.domain.model.ProductCategory
-import com.fomaxtro.core.presentation.screen.home.model.ProductUi
+import com.fomaxtro.core.presentation.model.ProductUi
 
 sealed interface HomeAction {
     data class OnSearchChange(val search: String) : HomeAction

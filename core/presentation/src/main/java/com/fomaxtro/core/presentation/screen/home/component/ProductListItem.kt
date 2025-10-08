@@ -21,15 +21,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.fomaxtro.core.presentation.R
+import com.fomaxtro.core.presentation.component.QuantityPicker
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaIconButton
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaOutlinedButton
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.surfaceHighest
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
-import com.fomaxtro.core.presentation.screen.home.model.ProductUi
-import com.fomaxtro.core.presentation.screen.home.util.ProductUiFactory
+import com.fomaxtro.core.presentation.model.ProductUi
 import com.fomaxtro.core.presentation.ui.Formatter
+import com.fomaxtro.core.presentation.util.ProductUiFactory
 
 @Composable
 fun ProductListItem(
