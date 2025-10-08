@@ -12,7 +12,9 @@ import com.fomaxtro.core.presentation.designsystem.modifier.shimmer
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 
 @Composable
-fun ToppingItemLoader() {
+fun ToppingItemLoader(
+    modifier: Modifier = Modifier
+) {
     BaseToppingItem(
         image = {
             Box(
@@ -36,7 +38,8 @@ fun ToppingItemLoader() {
                     .height(16.dp)
                     .shimmer()
             )
-        }
+        },
+        modifier = modifier
     )
 }
 

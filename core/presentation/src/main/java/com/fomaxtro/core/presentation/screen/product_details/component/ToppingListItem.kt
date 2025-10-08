@@ -1,8 +1,10 @@
 package com.fomaxtro.core.presentation.screen.product_details.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.fomaxtro.core.presentation.component.QuantityPicker
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.primary8
 import com.fomaxtro.core.presentation.model.ToppingUi
 import com.fomaxtro.core.presentation.ui.Formatter
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
@@ -29,7 +32,13 @@ fun ToppingListItem(
             AsyncImage(
                 model = topping.imageUrl,
                 contentDescription = null,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .size(64.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primary8,
+                        shape = CircleShape
+                    )
+                    .padding(4.dp)
             )
         },
         name = {
@@ -50,7 +59,11 @@ fun ToppingListItem(
         },
         modifier = modifier
             .clip(ToppingItemDefaults.shape)
-            .clickable(onClick = onClick),
+            .clickable(
+                onClick = onClick,
+                indication = null,
+                interactionSource = null
+            ),
         selected = topping.quantity > 0
     )
 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,11 +28,7 @@ fun BaseToppingItem(
     selected: Boolean = false
 ) {
     Surface(
-        modifier = modifier
-            .size(
-                width = 121.dp,
-                height = 142.dp
-            ),
+        modifier = modifier.height(142.dp),
         shape = ToppingItemDefaults.shape,
         border = BorderStroke(
             color = if (selected) {
