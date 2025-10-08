@@ -39,6 +39,8 @@ val ColorScheme.primary8: Color
 val ColorScheme.primaryGradient: Brush
     get() = PrimaryGradient
 
+val ColorScheme.fadeGradient: Brush
+    get() = FadeGradient
 
 @Composable
 fun LazyPizzaTheme(

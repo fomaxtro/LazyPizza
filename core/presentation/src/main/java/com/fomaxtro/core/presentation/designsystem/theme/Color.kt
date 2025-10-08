@@ -15,11 +15,22 @@ val SurfaceHighest = Color(0xFFF0F3F6)
 val Outline = Color(0xFFE6E7ED)
 val Outline50 = Color(0xFFE6E7ED).copy(alpha = 0.5f)
 
+val PrimaryGradientStart = Color(0xFFF36B50)
+val PrimaryGradientEnd = Color(0xFFF9966F)
+
 val PrimaryGradient: Brush
-    get() = Brush.linearGradient(
+    get() = Brush.horizontalGradient(
         colors = listOf(
-            Color(0xFFF9966F),
-            Color(0xFFF36B50)
+            PrimaryGradientStart,
+            PrimaryGradientEnd
+        )
+    )
+
+val FadeGradient: Brush
+    get() = Brush.verticalGradient(
+        colors = listOf(
+            Color(0xFFFFFFFF).copy(alpha = 0f),
+            Color(0xFFFFFFFF)
         )
     )
 

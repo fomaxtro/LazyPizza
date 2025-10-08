@@ -21,4 +21,7 @@
     <string name="resource_not_found">Resource not found</string>
     <string name="resource_conflict">The reource already exists</string>
     <string name="invalid_input">Invalid input provided</string>
+    <string name="navigate_back">Navigate back</string>
+    <string name="add_extra_toppings">Add extra toppings</string>
+    <string name="add_to_cart_for">Add to Cart for %s</string>
 </resources>
