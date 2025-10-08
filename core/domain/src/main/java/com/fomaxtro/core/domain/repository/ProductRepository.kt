@@ -5,5 +5,6 @@ import com.fomaxtro.core.domain.model.Product
 import com.fomaxtro.core.domain.util.Result
 
 interface ProductRepository {
-    suspend fun getAllProducts(): Result<List<Product>, DataError>
+    suspend fun getAll(): Result<List<Product>, DataError>
+    suspend fun findById(id: Long): Result<Product, DataError>
 }

@@ -14,9 +14,15 @@ import com.fomaxtro.core.domain.util.mapError
 class ProductRepositoryImpl(
     private val remoteDataSource: RemoteDataSource
 ) : ProductRepository {
-    override suspend fun getAllProducts(): Result<List<Product>, DataError> {
+    override suspend fun getAll(): Result<List<Product>, DataError> {
         return safeRemoteCall { remoteDataSource.fetchAllProducts() }
             .map { products -> products.map { it.toProduct() } }
+            .mapError { it.toDataError() }
+    }
+
+    override suspend fun findById(id: Long): Result<Product, DataError> {
+        return safeRemoteCall { remoteDataSource.findProductById(id) }
+            .map { it.toProduct() }
             .mapError { it.toDataError() }
     }
 }
