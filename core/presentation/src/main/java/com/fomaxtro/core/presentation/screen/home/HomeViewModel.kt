@@ -49,7 +49,7 @@ class HomeViewModel(
     private suspend fun loadProducts() {
         _state.update { it.copy(isLoading = true) }
 
-        val result = productRepository.getAllProducts()
+        val result = productRepository.getAll()
 
         _state.update { it.copy(isLoading = false) }
 
