@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.home.util
+package com.fomaxtro.core.presentation.util
 
 import com.fomaxtro.core.domain.model.ProductCategory
 import com.fomaxtro.core.presentation.R

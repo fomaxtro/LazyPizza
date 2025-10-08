@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.home.component
+package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width

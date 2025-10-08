@@ -1,7 +1,7 @@
-package com.fomaxtro.core.presentation.screen.home.util
+package com.fomaxtro.core.presentation.util
 
 import com.fomaxtro.core.domain.model.ProductCategory
-import com.fomaxtro.core.presentation.screen.home.model.ProductUi
+import com.fomaxtro.core.presentation.model.ProductUi
 
 object ProductUiFactory {
     fun create(

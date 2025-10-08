@@ -1,7 +1,7 @@
-package com.fomaxtro.core.presentation.screen.home.mapper
+package com.fomaxtro.core.presentation.mapper
 
 import com.fomaxtro.core.domain.model.Product
-import com.fomaxtro.core.presentation.screen.home.model.ProductUi
+import com.fomaxtro.core.presentation.model.ProductUi
 
 fun Product.toProductUi() = ProductUi(
     id = id,
