@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -48,12 +47,13 @@ import com.fomaxtro.core.presentation.designsystem.text_field.LazyPizzaOutlinedT
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
-import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.screen.home.component.ProductListItem
-import com.fomaxtro.core.presentation.screen.home.component.productsLoader
+import com.fomaxtro.core.presentation.screen.home.component.categoryProductList
 import com.fomaxtro.core.presentation.screen.home.util.ProductUiFactory
 import com.fomaxtro.core.presentation.screen.home.util.toDisplayName
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
+import com.fomaxtro.core.presentation.ui.ScreenType
+import com.fomaxtro.core.presentation.ui.rememberScreenType
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -90,6 +90,7 @@ private fun HomeScreen(
     val isInPreview = LocalInspectionMode.current
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+    val screenType = rememberScreenType()
 
     val productCategories = listOf(
         ProductCategory.PIZZA,
@@ -171,8 +172,13 @@ private fun HomeScreen(
                 .imePadding()
         ) {
             item {
+                val bannerImage = when (screenType) {
+                    ScreenType.MOBILE -> painterResource(R.drawable.banner)
+                    ScreenType.WIDE_SCREEN -> painterResource(R.drawable.banner_wide)
+                }
+
                 Image(
-                    painter = painterResource(R.drawable.banner),
+                    painter = bannerImage,
                     contentDescription = stringResource(R.string.banner),
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.FillWidth
@@ -237,74 +243,44 @@ private fun HomeScreen(
                 }
             }
 
-            item {
-                Spacer(modifier = Modifier.height(12.dp))
+            categoryProductList(
+                category = ProductCategory.PIZZA,
+                items = state.products[ProductCategory.PIZZA],
+                loading = state.isLoading,
+                screenType = screenType
+            ) { product ->
+                ProductListItem(
+                    product = product,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
-            if (state.isLoading) {
-                productsLoader(productCategories)
-            } else {
-                state.products[ProductCategory.PIZZA]?.let { pizzas ->
-                    item {
-                        Text(
-                            text = stringResource(R.string.pizza),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.textSecondary
-                        )
-                    }
-
-                    items(pizzas, key = { it.id }) { product ->
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        ProductListItem(
-                            product = product
-                        )
-                    }
-
-                    item {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-                }
-
-                productCategories.drop(1).forEach { productCategory ->
-                    state.products[productCategory]?.let { products ->
-                        item {
-                            Text(
-                                text = productCategory
-                                    .toDisplayName()
-                                    .asString(),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.textSecondary
+            productCategories.drop(1).forEach { productCategory ->
+                categoryProductList(
+                    category = productCategory,
+                    items = state.products[productCategory],
+                    loading = state.isLoading,
+                    screenType = screenType
+                ) { product ->
+                    ProductListItem(
+                        product = product,
+                        modifier = Modifier.fillMaxWidth(),
+                        onAddClick = {
+                            onAction(
+                                HomeAction.OnProductQuantityChange(product, 1)
+                            )
+                        },
+                        onDeleteClick = {
+                            onAction(
+                                HomeAction.OnProductQuantityChange(product, 0)
+                            )
+                        },
+                        onQuantityChange = {
+                            onAction(
+                                HomeAction.OnProductQuantityChange(product, it)
                             )
                         }
-
-                        items(products, key = { it.id }) { product ->
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            ProductListItem(
-                                product = product,
-                                onAddClick = {
-                                    onAction(
-                                        HomeAction.OnProductQuantityChange(product, 1)
-                                    )
-                                },
-                                onDeleteClick = {
-                                    onAction(
-                                        HomeAction.OnProductQuantityChange(product, 0)
-                                    )
-                                },
-                                onQuantityChange = {
-                                    onAction(
-                                        HomeAction.OnProductQuantityChange(product, it)
-                                    )
-                                }
-                            )
-                        }
-
-                        item {
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    }
+                    )
                 }
             }
         }
