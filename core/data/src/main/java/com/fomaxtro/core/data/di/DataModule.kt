@@ -1,7 +1,8 @@
 package com.fomaxtro.core.data.di
 
 import com.fomaxtro.core.data.remote.HttpClientFactory
-import com.fomaxtro.core.data.remote.RemoteDataSource
+import com.fomaxtro.core.data.remote.ProductRemoteDataSource
+import com.fomaxtro.core.data.remote.ToppingRemoteDataSource
 import com.fomaxtro.core.data.repository.ProductRepositoryImpl
 import com.fomaxtro.core.data.repository.ToppingRepositoryImpl
 import com.fomaxtro.core.domain.repository.ProductRepository
@@ -13,7 +14,8 @@ import org.koin.dsl.module
 
 val dataModule = module {
     single<HttpClient> { HttpClientFactory.create() }
-    singleOf(::RemoteDataSource)
+    singleOf(::ProductRemoteDataSource)
+    singleOf(::ToppingRemoteDataSource)
     singleOf(::ProductRepositoryImpl).bind<ProductRepository>()
     singleOf(::ToppingRepositoryImpl).bind<ToppingRepository>()
 }
