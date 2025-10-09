@@ -1,7 +1,7 @@
 package com.fomaxtro.core.data.repository
 
 import com.fomaxtro.core.data.mapper.toProduct
-import com.fomaxtro.core.data.remote.ProductRemoteDataSource
+import com.fomaxtro.core.data.remote.datasource.ProductRemoteDataSource
 import com.fomaxtro.core.data.util.safeRemoteCall
 import com.fomaxtro.core.domain.error.DataError
 import com.fomaxtro.core.domain.model.Product

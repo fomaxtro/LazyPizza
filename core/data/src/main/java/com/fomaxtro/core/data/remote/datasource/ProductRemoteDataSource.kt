@@ -1,4 +1,4 @@
-package com.fomaxtro.core.data.remote
+package com.fomaxtro.core.data.remote.datasource
 
 import com.fomaxtro.core.data.remote.dto.ProductDto
 import com.fomaxtro.core.data.remote.util.createRoute
