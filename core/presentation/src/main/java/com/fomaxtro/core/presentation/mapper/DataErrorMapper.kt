@@ -13,5 +13,6 @@ fun DataError.toUiText(): UiText {
         DataError.Resource.CONFLICT -> UiText.StringResource(R.string.resource_conflict)
         DataError.Validation.INVALID_INPUT -> UiText.StringResource(R.string.invalid_input)
         DataError.Network.UNKNOWN -> UiText.StringResource(R.string.unknown_error)
+        DataError.Network.TOO_MANY_REQUESTS -> UiText.StringResource(R.string.too_many_requests)
     }
 }

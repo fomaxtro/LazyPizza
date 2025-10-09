@@ -7,6 +7,7 @@ sealed interface DataError : Error {
         NO_CONNECTION,
         SERVICE_UNAVAILABLE,
         UNAUTHORIZED,
+        TOO_MANY_REQUESTS,
         UNKNOWN
     }
 

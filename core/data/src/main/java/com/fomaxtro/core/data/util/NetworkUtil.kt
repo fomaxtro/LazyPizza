@@ -1,5 +1,6 @@
 package com.fomaxtro.core.data.util
 
+import com.fomaxtro.core.domain.error.DataError
 import com.fomaxtro.core.domain.util.Result
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException
@@ -9,37 +10,37 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.SerializationException
 import timber.log.Timber
 
-suspend fun <T> safeRemoteCall(
-    block: suspend () -> T
-): Result<T, NetworkError> {
+inline fun <T> safeRemoteCall(
+    block: () -> T
+): Result<T, DataError> {
     return try {
         Result.Success(block())
     } catch (e: ClientRequestException) {
         val networkError = when (e.response.status) {
-            HttpStatusCode.BadRequest -> NetworkError.BAD_REQUEST
-            HttpStatusCode.Unauthorized -> NetworkError.UNAUTHORIZED
-            HttpStatusCode.NotFound -> NetworkError.NOT_FOUND
-            HttpStatusCode.Conflict -> NetworkError.CONFLICT
-            HttpStatusCode.TooManyRequests -> NetworkError.TOO_MANY_REQUESTS
-            else -> NetworkError.UNKNOWN
+            HttpStatusCode.BadRequest -> DataError.Validation.INVALID_INPUT
+            HttpStatusCode.Unauthorized -> DataError.Network.UNAUTHORIZED
+            HttpStatusCode.NotFound -> DataError.Resource.NOT_FOUND
+            HttpStatusCode.Conflict -> DataError.Resource.CONFLICT
+            HttpStatusCode.TooManyRequests -> DataError.Network.TOO_MANY_REQUESTS
+            else -> DataError.Network.UNKNOWN
         }
 
         Result.Error(networkError)
     } catch (_: ServerResponseException) {
-        Result.Error(NetworkError.SERVER_ERROR)
+        Result.Error(DataError.Network.SERVICE_UNAVAILABLE)
     } catch (e: UnresolvedAddressException) {
         Timber.tag("HttpClient").e(e)
 
-        Result.Error(NetworkError.NO_INTERNET)
+        Result.Error(DataError.Network.NO_CONNECTION)
     } catch (e: SerializationException) {
         Timber.tag("HttpClient").e(e)
 
-        Result.Error(NetworkError.SERIALIZATION)
+        Result.Error(DataError.Network.UNKNOWN)
     } catch (e: Exception) {
         Timber.tag("HttpClient").e(e)
 
         if (e is CancellationException) throw e
 
-        Result.Error(NetworkError.UNKNOWN)
+        Result.Error(DataError.Network.UNKNOWN)
     }
 }
