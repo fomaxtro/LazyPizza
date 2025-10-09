@@ -8,4 +8,5 @@ sealed interface ProductDetailsAction {
         val topping: ToppingUi,
         val quantity: Int
     ) : ProductDetailsAction
+    data object OnNavigateBackClick : ProductDetailsAction
 }

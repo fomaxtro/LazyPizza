@@ -38,7 +38,8 @@ fun ProductListItem(
     modifier: Modifier = Modifier,
     onAddClick: (() -> Unit)? = null,
     onDeleteClick: (() -> Unit)? = null,
-    onQuantityChange: ((Int) -> Unit)? = null
+    onQuantityChange: ((Int) -> Unit)? = null,
+    onClick: (() -> Unit)? = null
 ) {
     val isInPreview = LocalInspectionMode.current
 
@@ -60,6 +61,7 @@ fun ProductListItem(
                 )
             }
         },
+        onClick = onClick,
         modifier = modifier
     ) {
         Row(

@@ -98,9 +98,12 @@ class ProductDetailsViewModel(
     fun onAction(action: ProductDetailsAction) {
         when (action) {
             is ProductDetailsAction.OnToppingClick -> onToppingClick(action.topping)
+
             is ProductDetailsAction.OnToppingQuantityChange -> {
                 onToppingQuantityChange(action.topping, action.quantity)
             }
+
+            ProductDetailsAction.OnNavigateBackClick -> Unit
         }
     }
 

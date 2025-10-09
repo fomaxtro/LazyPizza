@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
-import com.fomaxtro.core.presentation.screen.product_details.ProductDetailsRoot
+import com.fomaxtro.lazypizza.navigation.NavigationRoot
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,9 +17,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             LazyPizzaTheme {
-                ProductDetailsRoot(
-                    id = 1
-                )
+                NavigationRoot()
             }
         }
     }

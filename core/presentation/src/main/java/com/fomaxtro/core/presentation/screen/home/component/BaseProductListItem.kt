@@ -1,6 +1,7 @@
 package com.fomaxtro.core.presentation.screen.home.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -17,6 +18,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +30,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
 @Composable
 fun BaseProductListItem(
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     image: @Composable () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -40,6 +43,13 @@ fun BaseProductListItem(
                     color = MaterialTheme.colorScheme.textPrimary.copy(alpha = 0.06f),
                     radius = 16.dp
                 )
+            )
+            .then(
+                if (onClick != null) {
+                    Modifier
+                        .clip(CardDefaults.shape)
+                        .clickable(onClick = onClick)
+                } else Modifier
             ),
         border = BorderStroke(
             color = MaterialTheme.colorScheme.surface,

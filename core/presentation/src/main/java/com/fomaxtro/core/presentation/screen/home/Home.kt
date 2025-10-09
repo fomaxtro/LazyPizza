@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fomaxtro.core.domain.model.ProductCategory
+import com.fomaxtro.core.domain.model.ProductId
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.designsystem.text_field.LazyPizzaOutlinedTextField
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
@@ -57,6 +58,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeRoot(
+    navigateToProductDetails: (id: ProductId) -> Unit,
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -75,7 +77,15 @@ fun HomeRoot(
     }
 
     HomeScreen(
-        onAction = viewModel::onAction,
+        onAction = { action ->
+            when (action) {
+                is HomeAction.OnProductClick -> {
+                    navigateToProductDetails(action.product.id)
+                }
+
+                else -> viewModel.onAction(action)
+            }
+        },
         state = state
     )
 }
@@ -247,7 +257,10 @@ private fun HomeScreen(
                 itemContent = { product ->
                     ProductListItem(
                         product = product,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            onAction(HomeAction.OnProductClick(product))
+                        }
                     )
                 }
             )

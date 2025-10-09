@@ -121,6 +121,8 @@ class HomeViewModel(
             is HomeAction.OnProductQuantityChange -> {
                 onProductQuantityChange(action.product, action.quantity)
             }
+
+            is HomeAction.OnProductClick -> Unit
         }
     }
 

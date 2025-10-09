@@ -43,6 +43,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun ProductDetailsRoot(
     id: ProductId,
+    navigateBack: () -> Unit,
     viewModel: ProductDetailsViewModel = koinViewModel {
         parametersOf(id)
     }
@@ -63,7 +64,12 @@ fun ProductDetailsRoot(
     }
 
     ProductDetailsScreen(
-        onAction = viewModel::onAction,
+        onAction = { action ->
+            when (action) {
+                ProductDetailsAction.OnNavigateBackClick -> navigateBack()
+                else -> viewModel.onAction(action)
+            }
+        },
         state = state
     )
 }
@@ -81,7 +87,9 @@ private fun ProductDetailsScreen(
             LazyPizzaTopAppBar(
                 navigationIcon = {
                     LazyPizzaNavigationIconButton(
-                        onClick = {}
+                        onClick = {
+                            onAction(ProductDetailsAction.OnNavigateBackClick)
+                        }
                     )
                 }
             )
