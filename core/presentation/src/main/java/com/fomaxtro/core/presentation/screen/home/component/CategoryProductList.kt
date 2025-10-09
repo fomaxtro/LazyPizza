@@ -21,10 +21,10 @@ import com.fomaxtro.core.presentation.util.toDisplayName
 
 fun LazyListScope.categoryProductList(
     category: ProductCategory,
-    items: List<ProductUi>?,
     loading: Boolean,
     screenType: ScreenType,
-    content: @Composable (ProductUi) -> Unit
+    itemContent: @Composable (ProductUi) -> Unit,
+    items: List<ProductUi>?
 ) {
     if (loading || (items != null && items.isNotEmpty())) {
         item {
@@ -56,7 +56,7 @@ fun LazyListScope.categoryProductList(
                         Box(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            content(item)
+                            itemContent(item)
                         }
                     }
                 }
@@ -83,7 +83,7 @@ fun LazyListScope.categoryProductList(
                                 Box(
                                     modifier = Modifier.weight(1f)
                                 ) {
-                                    content(item)
+                                    itemContent(item)
                                 }
                             }
                         }

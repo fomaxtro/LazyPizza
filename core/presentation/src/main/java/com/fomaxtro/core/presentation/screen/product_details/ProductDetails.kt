@@ -2,32 +2,21 @@ package com.fomaxtro.core.presentation.screen.product_details
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,13 +28,13 @@ import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaNavigationIconButton
 import com.fomaxtro.core.presentation.designsystem.modifier.shimmer
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
-import com.fomaxtro.core.presentation.designsystem.theme.fadeGradient
-import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaTopAppBar
-import com.fomaxtro.core.presentation.screen.product_details.component.ToppingItemLoader
+import com.fomaxtro.core.presentation.screen.product_details.component.ProductDetailsLayout
 import com.fomaxtro.core.presentation.screen.product_details.component.ToppingListItem
 import com.fomaxtro.core.presentation.ui.Formatter
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
+import com.fomaxtro.core.presentation.ui.ScreenType
+import com.fomaxtro.core.presentation.ui.rememberScreenType
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 import org.koin.androidx.compose.koinViewModel
@@ -85,7 +74,7 @@ private fun ProductDetailsScreen(
     onAction: (ProductDetailsAction) -> Unit = {},
     state: ProductDetailsState
 ) {
-    val isInPreview = LocalInspectionMode.current
+    val screenType = rememberScreenType()
 
     Scaffold(
         topBar = {
@@ -96,9 +85,89 @@ private fun ProductDetailsScreen(
                     )
                 }
             )
+        },
+        containerColor = when (screenType) {
+            ScreenType.MOBILE -> MaterialTheme.colorScheme.surface
+            ScreenType.WIDE_SCREEN -> MaterialTheme.colorScheme.background
         }
     ) { innerPadding ->
-        Box(
+        ProductDetailsLayout(
+            image = {
+                AsyncImage(
+                    model = state.product?.imageUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = RoundedCornerShape(bottomEnd = 16.dp)
+                        )
+                )
+            },
+            title = {
+                if (state.product != null) {
+                    Text(state.product.name)
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .height(24.dp)
+                            .width(124.dp)
+                            .shimmer()
+                    )
+                }
+            },
+            subtitle = {
+                if (state.product != null) {
+                    Text(state.product.description ?: "")
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .height(16.dp)
+                            .fillMaxWidth()
+                            .shimmer()
+                    )
+                }
+            },
+            action = {
+                LazyPizzaButton(
+                    onClick = {},
+                    text = stringResource(
+                        R.string.add_to_cart_for,
+                        Formatter.formatCurrency(state.totalPrice)
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = state.canAddToCart
+                )
+            },
+            items = state.toppings,
+            itemContent = { topping ->
+                ToppingListItem(
+                    topping = topping,
+                    onClick = {
+                        onAction(
+                            ProductDetailsAction.OnToppingQuantityChange(
+                                topping = topping,
+                                quantity = 1
+                            )
+                        )
+                    },
+                    onQuantityChange = {
+                        onAction(
+                            ProductDetailsAction.OnToppingQuantityChange(
+                                topping = topping,
+                                quantity = it
+                            )
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            loading = state.isToppingsLoading,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        )
+        /*Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -159,6 +228,8 @@ private fun ProductDetailsScreen(
                                 )
 
                                 if (state.product.description != null) {
+                                    Spacer(modifier = Modifier.height(4.dp))
+
                                     Text(
                                         text = state.product.description,
                                         style = MaterialTheme.typography.bodySmall,
@@ -265,7 +336,7 @@ private fun ProductDetailsScreen(
                     enabled = state.canAddToCart
                 )
             }
-        }
+        }*/
     }
 }
 

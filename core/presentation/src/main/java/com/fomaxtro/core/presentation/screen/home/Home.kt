@@ -243,41 +243,43 @@ private fun HomeScreen(
                 category = ProductCategory.PIZZA,
                 items = state.products[ProductCategory.PIZZA],
                 loading = state.isLoading,
-                screenType = screenType
-            ) { product ->
-                ProductListItem(
-                    product = product,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+                screenType = screenType,
+                itemContent = { product ->
+                    ProductListItem(
+                        product = product,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            )
 
             productCategories.drop(1).forEach { productCategory ->
                 categoryProductList(
                     category = productCategory,
                     items = state.products[productCategory],
                     loading = state.isLoading,
-                    screenType = screenType
-                ) { product ->
-                    ProductListItem(
-                        product = product,
-                        modifier = Modifier.fillMaxWidth(),
-                        onAddClick = {
-                            onAction(
-                                HomeAction.OnProductQuantityChange(product, 1)
-                            )
-                        },
-                        onDeleteClick = {
-                            onAction(
-                                HomeAction.OnProductQuantityChange(product, 0)
-                            )
-                        },
-                        onQuantityChange = {
-                            onAction(
-                                HomeAction.OnProductQuantityChange(product, it)
-                            )
-                        }
-                    )
-                }
+                    screenType = screenType,
+                    itemContent = { product ->
+                        ProductListItem(
+                            product = product,
+                            modifier = Modifier.fillMaxWidth(),
+                            onAddClick = {
+                                onAction(
+                                    HomeAction.OnProductQuantityChange(product, 1)
+                                )
+                            },
+                            onDeleteClick = {
+                                onAction(
+                                    HomeAction.OnProductQuantityChange(product, 0)
+                                )
+                            },
+                            onQuantityChange = {
+                                onAction(
+                                    HomeAction.OnProductQuantityChange(product, it)
+                                )
+                            }
+                        )
+                    }
+                )
             }
         }
     }
