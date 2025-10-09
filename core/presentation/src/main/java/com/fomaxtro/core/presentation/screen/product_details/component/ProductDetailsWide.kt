@@ -52,7 +52,7 @@ fun ProductDetailsWide(
         Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(end = 20.dp)
+                .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             Box(

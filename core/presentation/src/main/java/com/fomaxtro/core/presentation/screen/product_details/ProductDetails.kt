@@ -93,16 +93,24 @@ private fun ProductDetailsScreen(
     ) { innerPadding ->
         ProductDetailsLayout(
             image = {
-                AsyncImage(
-                    model = state.product?.imageUrl,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            color = MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(bottomEnd = 16.dp)
-                        )
-                )
+                if (state.product != null) {
+                    AsyncImage(
+                        model = state.product.imageUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                color = MaterialTheme.colorScheme.background,
+                                shape = RoundedCornerShape(bottomEnd = 16.dp)
+                            )
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .shimmer()
+                    )
+                }
             },
             title = {
                 if (state.product != null) {
@@ -167,176 +175,6 @@ private fun ProductDetailsScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         )
-        /*Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(3f / 2f)
-                            .background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        if (isInPreview) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(
-                                        color = MaterialTheme.colorScheme.background,
-                                        shape = RoundedCornerShape(bottomEnd = 16.dp)
-                                    )
-                            )
-                        } else {
-                            AsyncImage(
-                                model = state.product?.imageUrl,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(
-                                        color = MaterialTheme.colorScheme.background,
-                                        shape = RoundedCornerShape(bottomEnd = 16.dp)
-                                    )
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
-                        ),
-                        shape = RoundedCornerShape(topStart = 16.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                                .padding(top = 20.dp)
-                        ) {
-                            if (state.product != null) {
-                                Text(
-                                    text = state.product.name,
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-
-                                if (state.product.description != null) {
-                                    Spacer(modifier = Modifier.height(4.dp))
-
-                                    Text(
-                                        text = state.product.description,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.textSecondary
-                                    )
-                                }
-                            } else {
-                                Box(
-                                    modifier = Modifier
-                                        .height(24.dp)
-                                        .width(124.dp)
-                                        .shimmer()
-                                )
-                            }
-
-                            if (state.product == null) {
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Box(
-                                    modifier = Modifier
-                                        .height(16.dp)
-                                        .fillMaxWidth()
-                                        .shimmer()
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            Text(
-                                text = stringResource(R.string.add_extra_toppings),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.textSecondary
-                            )
-
-                            Spacer(modifier = Modifier.height(7.dp))
-
-                            FlowRow(
-                                modifier = Modifier.fillMaxWidth(),
-                                maxItemsInEachRow = 3,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                if (state.isToppingsLoading) {
-                                    repeat(6) {
-                                        ToppingItemLoader(
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                    }
-                                } else {
-                                    state.toppings.forEach { topping ->
-                                        ToppingListItem(
-                                            topping = topping,
-                                            onClick = {
-                                                onAction(
-                                                    ProductDetailsAction.OnToppingQuantityChange(
-                                                        topping = topping,
-                                                        quantity = 1
-                                                    )
-                                                )
-                                            },
-                                            onQuantityChange = {
-                                                onAction(
-                                                    ProductDetailsAction.OnToppingQuantityChange(
-                                                        topping = topping,
-                                                        quantity = it
-                                                    )
-                                                )
-                                            },
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                    }
-                                }
-                            }
-
-                            val offsetSpacing = 16.dp + 32.dp + ButtonDefaults.MinHeight
-
-                            Spacer(modifier = Modifier.height(offsetSpacing))
-                        }
-                    }
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.fadeGradient)
-                    .align(Alignment.BottomCenter)
-            ) {
-                LazyPizzaButton(
-                    onClick = {},
-                    text = stringResource(
-                        R.string.add_to_cart_for,
-                        Formatter.formatCurrency(state.totalPrice)
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = 16.dp
-                        )
-                        .padding(
-                            top = 36.dp,
-                            bottom = 16.dp
-                        ),
-                    enabled = state.canAddToCart
-                )
-            }
-        }*/
     }
 }
 
