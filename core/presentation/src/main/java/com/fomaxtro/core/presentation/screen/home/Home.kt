@@ -3,9 +3,11 @@ package com.fomaxtro.core.presentation.screen.home
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -195,56 +197,58 @@ private fun HomeScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            item {
-                LazyPizzaOutlinedTextField(
-                    value = state.search,
-                    onValueChange = {
-                        onAction(HomeAction.OnSearchChange(it))
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = AppIcons.Outlined.Search,
-                            contentDescription = stringResource(R.string.search),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
-                    placeholder = {
-                        Text(stringResource(R.string.search_food))
-                    }
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+            stickyHeader {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
                 ) {
-                    productCategories.forEach { productCategory ->
-                        FilterChip(
-                            selected = state.selectedCategories.contains(productCategory),
-                            onClick = {
-                                onAction(HomeAction.OnProductCategoryToggle(productCategory))
-                            },
-                            label = {
-                                Text(
-                                    text = productCategory
-                                        .toDisplayName()
-                                        .asString(),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                                labelColor = MaterialTheme.colorScheme.textPrimary
+                    LazyPizzaOutlinedTextField(
+                        value = state.search,
+                        onValueChange = {
+                            onAction(HomeAction.OnSearchChange(it))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = AppIcons.Outlined.Search,
+                                contentDescription = stringResource(R.string.search),
+                                tint = MaterialTheme.colorScheme.primary
                             )
-                        )
+                        },
+                        placeholder = {
+                            Text(stringResource(R.string.search_food))
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        productCategories.forEach { productCategory ->
+                            FilterChip(
+                                selected = state.selectedCategories.contains(productCategory),
+                                onClick = {
+                                    onAction(HomeAction.OnProductCategoryToggle(productCategory))
+                                },
+                                label = {
+                                    Text(
+                                        text = productCategory
+                                            .toDisplayName()
+                                            .asString(),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                    labelColor = MaterialTheme.colorScheme.textPrimary
+                                )
+                            )
+                        }
                     }
                 }
             }
