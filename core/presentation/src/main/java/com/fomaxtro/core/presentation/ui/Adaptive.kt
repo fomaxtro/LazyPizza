@@ -1,9 +1,8 @@
 package com.fomaxtro.core.presentation.ui
 
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 
 enum class ScreenType {
     MOBILE,
@@ -12,12 +11,9 @@ enum class ScreenType {
 
 @Composable
 fun rememberScreenType(): ScreenType {
-    val windowInfo = LocalWindowInfo.current
-    val targetWidthPx = with(LocalDensity.current) {
-        840.dp.toPx()
-    }
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
-    return if (windowInfo.containerSize.width > targetWidthPx) {
+    return if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
         ScreenType.WIDE_SCREEN
     } else {
         ScreenType.MOBILE

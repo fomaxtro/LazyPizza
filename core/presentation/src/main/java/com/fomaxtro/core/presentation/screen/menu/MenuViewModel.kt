@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.home
+package com.fomaxtro.core.presentation.screen.menu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,13 +21,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class HomeViewModel(
+class MenuViewModel(
     private val productRepository: ProductRepository
 ) : ViewModel() {
     private var firstLoad = false
     private var products = emptyList<ProductUi>()
 
-    private val _state = MutableStateFlow(HomeState())
+    private val _state = MutableStateFlow(MenuState())
     val state = _state
         .onStart {
             if (!firstLoad) {
@@ -40,10 +40,10 @@ class HomeViewModel(
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            HomeState()
+            MenuState()
         )
 
-    private val eventChannel = Channel<HomeEvent>()
+    private val eventChannel = Channel<MenuEvent>()
     val events = eventChannel.receiveAsFlow()
 
     private suspend fun loadProducts() {
@@ -57,7 +57,7 @@ class HomeViewModel(
         when (result) {
             is Result.Error -> {
                 eventChannel.send(
-                    HomeEvent.ShowSystemMessage(result.error.toUiText())
+                    MenuEvent.ShowSystemMessage(result.error.toUiText())
                 )
             }
 
@@ -110,19 +110,19 @@ class HomeViewModel(
             .launchIn(viewModelScope)
     }
 
-    fun onAction(action: HomeAction) {
+    fun onAction(action: MenuAction) {
         when (action) {
-            is HomeAction.OnSearchChange -> onSearchChange(action.search)
+            is MenuAction.OnSearchChange -> onSearchChange(action.search)
 
-            is HomeAction.OnProductCategoryToggle -> {
+            is MenuAction.OnProductCategoryToggle -> {
                 onProductCategoryToggle(action.category)
             }
 
-            is HomeAction.OnProductQuantityChange -> {
+            is MenuAction.OnProductQuantityChange -> {
                 onProductQuantityChange(action.product, action.quantity)
             }
 
-            is HomeAction.OnProductClick -> Unit
+            is MenuAction.OnProductClick -> Unit
         }
     }
 

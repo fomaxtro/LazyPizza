@@ -12,4 +12,5 @@ android {
 dependencies {
     "implementation"(libraries.findLibrary("androidx-activity-compose").get())
     "implementation"(libraries.findLibrary("koin-compose").get())
+    "implementation"(libraries.findBundle("material3-adaptive").get())
 }

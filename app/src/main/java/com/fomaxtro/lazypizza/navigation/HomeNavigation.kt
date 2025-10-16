@@ -6,12 +6,11 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.fomaxtro.core.presentation.screen.home.HomeScreen
-import com.fomaxtro.core.presentation.screen.product_details.ProductDetailsRoot
+import com.fomaxtro.core.presentation.screen.menu.MenuRoot
 
 @Composable
-fun NavigationRoot() {
-    val backStack = rememberNavBackStack(Route.Home)
+fun HomeNavigation() {
+    val backStack = rememberNavBackStack(HomeRoute.Menu)
 
     NavDisplay(
         backStack = backStack,
@@ -23,21 +22,8 @@ fun NavigationRoot() {
             rememberViewModelStoreNavEntryDecorator()
         ),
         entryProvider = entryProvider {
-            entry<Route.Home> {
-                HomeScreen {
-                    HomeNavigation()
-                }
-            }
-
-            entry<Route.ProductDetails> { entry ->
-                ProductDetailsRoot(
-                    id = entry.id,
-                    navigateBack = {
-                        if (backStack.lastOrNull() is Route.ProductDetails) {
-                            backStack.removeLastOrNull()
-                        }
-                    }
-                )
+            entry<HomeRoute.Menu> {
+                MenuRoot()
             }
         }
     )
