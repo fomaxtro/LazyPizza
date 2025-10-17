@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.primary8
+import com.fomaxtro.core.presentation.designsystem.theme.title3
 
 @Composable
 fun LazyPizzaOutlinedButton(
@@ -33,7 +34,7 @@ fun LazyPizzaOutlinedButton(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.title3
         )
     }
 }

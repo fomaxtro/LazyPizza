@@ -48,7 +48,6 @@ fun LazyPizzaTheme(
 ) {
     MaterialTheme(
         colorScheme = LightColorScheme,
-        typography = Typography,
         content = content
     )
 }

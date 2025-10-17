@@ -19,6 +19,7 @@ import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaIconButton
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
+import com.fomaxtro.core.presentation.designsystem.theme.title2
 
 @Composable
 fun QuantityPicker(
@@ -47,7 +48,7 @@ fun QuantityPicker(
         Text(
             text = quantity.toString(),
             modifier = Modifier.width(52.dp),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.title2,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.MiddleEllipsis
