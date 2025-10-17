@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.home.component
+package com.fomaxtro.core.presentation.screen.menu.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.domain.model.ProductCategory
+import com.fomaxtro.core.presentation.designsystem.theme.label2Semibold
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.model.ProductUi
 import com.fomaxtro.core.presentation.ui.ScreenType
@@ -34,7 +35,7 @@ fun LazyListScope.categoryProductList(
                 text = category
                     .toDisplayName()
                     .asString(),
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.label2Semibold,
                 color = MaterialTheme.colorScheme.textSecondary
             )
         }

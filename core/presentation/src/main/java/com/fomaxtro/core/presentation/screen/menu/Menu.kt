@@ -26,7 +26,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,12 +34,13 @@ import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.designsystem.text_field.LazyPizzaOutlinedTextField
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.body3Medium
 import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
-import com.fomaxtro.core.presentation.screen.home.component.ProductListItem
-import com.fomaxtro.core.presentation.screen.home.component.categoryProductList
+import com.fomaxtro.core.presentation.screen.menu.component.ProductListItem
+import com.fomaxtro.core.presentation.screen.menu.component.categoryProductList
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
-import com.fomaxtro.core.presentation.ui.rememberScreenType
+import com.fomaxtro.core.presentation.ui.currentScreenType
 import com.fomaxtro.core.presentation.util.toDisplayName
 import org.koin.androidx.compose.koinViewModel
 
@@ -74,7 +74,7 @@ private fun MenuScreen(
     onAction: (MenuAction) -> Unit = {},
     state: MenuState
 ) {
-    val screenType = rememberScreenType()
+    val screenType = currentScreenType()
 
     val productCategories = listOf(
         ProductCategory.PIZZA,
@@ -126,9 +126,7 @@ private fun MenuScreen(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     },
-                    placeholder = {
-                        Text(stringResource(R.string.search_food))
-                    }
+                    placeholder = stringResource(R.string.search_food)
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -148,8 +146,7 @@ private fun MenuScreen(
                                     text = productCategory
                                         .toDisplayName()
                                         .asString(),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium
+                                    style = MaterialTheme.typography.body3Medium
                                 )
                             },
                             colors = FilterChipDefaults.filterChipColors(

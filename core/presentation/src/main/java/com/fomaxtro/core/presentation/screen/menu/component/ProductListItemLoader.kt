@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.home.component
+package com.fomaxtro.core.presentation.screen.menu.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer

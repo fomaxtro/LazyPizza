@@ -54,7 +54,7 @@ val Typography.title4: TextStyle
         lineHeight = 16.sp
     )
 
-val Typography.label: TextStyle
+val Typography.label2Semibold: TextStyle
     get() = TextStyle(
         fontFamily = InstrumentSans,
         fontWeight = FontWeight.SemiBold,
@@ -76,6 +76,14 @@ val Typography.body1Medium: TextStyle
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 22.sp
+    )
+
+val Typography.body3Bold: TextStyle
+    get() = TextStyle(
+        fontFamily = InstrumentSans,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp,
+        lineHeight = 18.sp
     )
 
 val Typography.body3Regular: TextStyle

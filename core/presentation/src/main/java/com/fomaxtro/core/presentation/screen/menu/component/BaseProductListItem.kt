@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.home.component
+package com.fomaxtro.core.presentation.screen.menu.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.presentation.designsystem.modifier.shimmer
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
@@ -41,7 +42,8 @@ fun BaseProductListItem(
                 shape = CardDefaults.shape,
                 shadow = Shadow(
                     color = MaterialTheme.colorScheme.textPrimary.copy(alpha = 0.06f),
-                    radius = 16.dp
+                    radius = 16.dp,
+                    offset = DpOffset(0.dp, 4.dp)
                 )
             )
             .then(

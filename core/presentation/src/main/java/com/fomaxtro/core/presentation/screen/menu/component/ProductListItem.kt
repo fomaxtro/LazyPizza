@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.home.component
+package com.fomaxtro.core.presentation.screen.menu.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,8 +25,11 @@ import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaIconButton
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaOutlinedButton
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.body1Medium
+import com.fomaxtro.core.presentation.designsystem.theme.body3Regular
 import com.fomaxtro.core.presentation.designsystem.theme.surfaceHighest
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
+import com.fomaxtro.core.presentation.designsystem.theme.title1SemiBold
 import com.fomaxtro.core.presentation.model.ProductUi
 import com.fomaxtro.core.presentation.ui.Formatter
 import com.fomaxtro.core.presentation.util.ProductUiFactory
@@ -72,8 +74,7 @@ fun ProductListItem(
         ) {
             Text(
                 text = product.name,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.body1Medium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f)
@@ -97,7 +98,7 @@ fun ProductListItem(
         if (product.description != null) {
             Text(
                 text = product.description,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.body3Regular,
                 color = MaterialTheme.colorScheme.textSecondary,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
@@ -119,7 +120,7 @@ fun ProductListItem(
             } else {
                 Text(
                     text = Formatter.formatCurrency(product.price),
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.title1SemiBold
                 )
             }
 
