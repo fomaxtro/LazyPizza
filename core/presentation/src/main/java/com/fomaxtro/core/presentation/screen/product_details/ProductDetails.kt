@@ -34,7 +34,7 @@ import com.fomaxtro.core.presentation.screen.product_details.component.ToppingLi
 import com.fomaxtro.core.presentation.ui.Formatter
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
-import com.fomaxtro.core.presentation.ui.rememberScreenType
+import com.fomaxtro.core.presentation.ui.currentScreenType
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 import org.koin.androidx.compose.koinViewModel
@@ -80,7 +80,7 @@ private fun ProductDetailsScreen(
     onAction: (ProductDetailsAction) -> Unit = {},
     state: ProductDetailsState
 ) {
-    val screenType = rememberScreenType()
+    val screenType = currentScreenType()
 
     Scaffold(
         topBar = {
@@ -178,6 +178,7 @@ private fun ProductDetailsScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             },
+            itemsTitle = { Text(stringResource(R.string.add_extra_toppings)) },
             loading = state.isToppingsLoading,
             modifier = Modifier
                 .fillMaxSize()

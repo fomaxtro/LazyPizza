@@ -13,7 +13,7 @@ import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.model.ToppingUi
 import com.fomaxtro.core.presentation.ui.ScreenType
-import com.fomaxtro.core.presentation.ui.rememberScreenType
+import com.fomaxtro.core.presentation.ui.currentScreenType
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 
 @Composable
@@ -24,10 +24,11 @@ fun ProductDetailsLayout(
     action: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
+    itemsTitle: @Composable () -> Unit,
     itemContent: @Composable (ToppingUi) -> Unit,
     items: List<ToppingUi>
 ) {
-    val screenType = rememberScreenType()
+    val screenType = currentScreenType()
 
     when (screenType) {
         ScreenType.MOBILE -> {
@@ -39,7 +40,8 @@ fun ProductDetailsLayout(
                 modifier = modifier,
                 loading = loading,
                 itemContent = itemContent,
-                items = items
+                items = items,
+                itemsTitle = itemsTitle
             )
 
         }
@@ -53,7 +55,8 @@ fun ProductDetailsLayout(
                 modifier = modifier,
                 loading = loading,
                 itemContent = itemContent,
-                items = items
+                items = items,
+                itemsTitle = itemsTitle
             )
         }
     }
@@ -92,7 +95,8 @@ private fun ProductDetailsLayoutPreview() {
                     text = "Add to cart for $12.99",
                     modifier = Modifier.fillMaxWidth()
                 )
-            }
+            },
+            itemsTitle = { Text("Toppings") }
         )
     }
 }
