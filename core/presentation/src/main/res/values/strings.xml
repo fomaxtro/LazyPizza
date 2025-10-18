@@ -25,4 +25,7 @@
     <string name="add_extra_toppings">Add extra toppings</string>
     <string name="add_to_cart_for">Add to Cart for %s</string>
     <string name="too_many_requests">Too many requests</string>
+    <string name="menu">Menu</string>
+    <string name="cart">Cart</string>
+    <string name="history">History</string>
 </resources>
