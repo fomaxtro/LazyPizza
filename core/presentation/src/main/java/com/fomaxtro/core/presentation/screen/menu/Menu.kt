@@ -75,7 +75,6 @@ private fun MenuScreen(
     state: MenuState
 ) {
     val screenType = currentScreenType()
-
     val productCategories = listOf(
         ProductCategory.PIZZA,
         ProductCategory.DRINKS,
@@ -137,7 +136,7 @@ private fun MenuScreen(
                 ) {
                     productCategories.forEach { productCategory ->
                         FilterChip(
-                            selected = state.selectedCategories.contains(productCategory),
+                            selected = state.selectedCategory == productCategory,
                             onClick = {
                                 onAction(MenuAction.OnProductCategoryToggle(productCategory))
                             },

@@ -1,6 +1,7 @@
 package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.title4
 @Composable
 fun NavigationButton(
     selected: Boolean,
+    onClick: () -> Unit,
     icon: @Composable () -> Unit,
     label: String,
     modifier: Modifier = Modifier
@@ -37,7 +39,8 @@ fun NavigationButton(
     Column(
         modifier = modifier
             .width(96.dp)
-            .height(66.dp),
+            .height(66.dp)
+            .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -89,7 +92,8 @@ private fun NavigationButtonPreview() {
                     contentDescription = null
                 )
             },
-            label = "Menu"
+            label = "Menu",
+            onClick = {}
         )
     }
 }

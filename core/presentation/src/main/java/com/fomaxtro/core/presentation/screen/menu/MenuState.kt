@@ -5,7 +5,7 @@ import com.fomaxtro.core.presentation.model.ProductUi
 
 data class MenuState(
     val search: String = "",
-    val selectedCategories: Set<ProductCategory> = emptySet(),
+    val selectedCategory: ProductCategory? = null,
     val isLoading: Boolean = true,
     val products: Map<ProductCategory, List<ProductUi>> = emptyMap()
 )

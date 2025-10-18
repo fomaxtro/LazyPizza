@@ -1,9 +1,12 @@
 package com.fomaxtro.core.presentation.component
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,6 +17,7 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,7 +35,7 @@ import com.fomaxtro.core.presentation.ui.currentScreenType
 
 @Composable
 fun AdaptiveScaffold(
-    navigation: @Composable RowScope.() -> Unit,
+    navigation: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
@@ -76,12 +80,37 @@ fun AdaptiveScaffold(
         }
 
         ScreenType.WIDE_SCREEN -> {
+            Row(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                NavigationRail(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    modifier = Modifier
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalArrangement = Arrangement
+                            .spacedBy(8.dp, Alignment.CenterVertically)
+                    ) {
+                        navigation()
+                    }
+                }
 
+                Scaffold(
+                    topBar = topBar,
+                    modifier = modifier,
+                    content = content
+                )
+            }
         }
     }
 }
 
-@Preview
+@Preview(device = "id:pixel_tablet")
 @Composable
 private fun AdaptiveScaffoldPreview() {
     LazyPizzaTheme {
@@ -89,6 +118,7 @@ private fun AdaptiveScaffoldPreview() {
             navigation = {
                 NavigationButton(
                     selected = true,
+                    onClick = {},
                     label = "Menu",
                     icon = {
                         Icon(
@@ -100,6 +130,7 @@ private fun AdaptiveScaffoldPreview() {
 
                 NavigationButton(
                     selected = false,
+                    onClick = {},
                     label = "Cart",
                     icon = {
                         BadgedBox(
@@ -119,6 +150,7 @@ private fun AdaptiveScaffoldPreview() {
 
                 NavigationButton(
                     selected = false,
+                    onClick = {},
                     label = "History",
                     icon = {
                         Icon(

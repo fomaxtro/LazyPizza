@@ -80,17 +80,15 @@ class MenuViewModel(
             .distinctUntilChanged()
 
         val selectedCategories = state
-            .map { it.selectedCategories }
+            .map { it.selectedCategory }
             .distinctUntilChanged()
 
-        combine(search, selectedCategories) { search, selectedCategories ->
+        combine(search, selectedCategories) { search, selectedCategory ->
             products
                 .filter { product ->
-                    if (selectedCategories.isEmpty()) {
-                        true
-                    } else {
-                        selectedCategories.contains(product.category)
-                    }
+                    if (selectedCategory != null) {
+                        selectedCategory == product.category
+                    } else true
                 }
                 .filter { product ->
                     if (search.isEmpty()) {
@@ -145,17 +143,11 @@ class MenuViewModel(
     }
 
     private fun onProductCategoryToggle(category: ProductCategory) {
-        val selectedCategories = state.value.selectedCategories.toMutableSet()
-
-        if (selectedCategories.contains(category)) {
-            selectedCategories.remove(category)
-        } else {
-            selectedCategories.add(category)
-        }
-
         _state.update {
             it.copy(
-                selectedCategories = selectedCategories.toSet()
+                selectedCategory = if (it.selectedCategory != category) {
+                    category
+                } else null
             )
         }
     }

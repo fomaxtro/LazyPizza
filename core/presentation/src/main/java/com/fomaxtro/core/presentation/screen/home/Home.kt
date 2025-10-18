@@ -96,6 +96,7 @@ fun HomeScreen(
         navigation = {
             NavigationButton(
                 selected = false,
+                onClick = {},
                 icon = {
                     Icon(
                         imageVector = AppIcons.Filled.Menu,
@@ -107,6 +108,7 @@ fun HomeScreen(
 
             NavigationButton(
                 selected = false,
+                onClick = {},
                 icon = {
                     BadgedBox(
                         badge = {
@@ -126,6 +128,7 @@ fun HomeScreen(
 
             NavigationButton(
                 selected = false,
+                onClick = {},
                 icon = {
                     Icon(
                         imageVector = AppIcons.Filled.History,
