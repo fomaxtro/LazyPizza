@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fomaxtro.core.domain.model.ProductCategory
+import com.fomaxtro.core.domain.model.ProductId
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.designsystem.text_field.LazyPizzaOutlinedTextField
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
@@ -46,6 +47,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MenuRoot(
+    onProductClick: (ProductId) -> Unit,
     viewModel: MenuViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -64,7 +66,12 @@ fun MenuRoot(
     }
 
     MenuScreen(
-        onAction = viewModel::onAction,
+        onAction = { action ->
+            when (action) {
+                is MenuAction.OnProductClick -> onProductClick(action.product.id)
+                else -> viewModel.onAction(action)
+            }
+        },
         state = state
     )
 }

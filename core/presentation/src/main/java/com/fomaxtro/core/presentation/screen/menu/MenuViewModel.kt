@@ -49,12 +49,7 @@ class MenuViewModel(
     private suspend fun loadProducts() {
         _state.update { it.copy(isLoading = true) }
 
-        val result = productRepository.getAll()
-
-        _state.update { it.copy(isLoading = false) }
-
-
-        when (result) {
+        when (val result = productRepository.getAll()) {
             is Result.Error -> {
                 eventChannel.send(
                     MenuEvent.ShowSystemMessage(result.error.toUiText())
@@ -72,6 +67,8 @@ class MenuViewModel(
                 }
             }
         }
+
+        _state.update { it.copy(isLoading = false) }
     }
 
     private fun observeFilters() {
