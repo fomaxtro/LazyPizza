@@ -40,6 +40,8 @@ import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaTopAppBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    currentDestination: HomeDestination,
+    onDestinationClick: (HomeDestination) -> Unit,
     content: @Composable () -> Unit
 ) {
     val isInPreview = LocalInspectionMode.current
@@ -95,8 +97,12 @@ fun HomeScreen(
         },
         navigation = {
             NavigationButton(
-                selected = false,
-                onClick = {},
+                selected = currentDestination == HomeDestination.MENU,
+                onClick = {
+                    if (currentDestination != HomeDestination.MENU) {
+                        onDestinationClick(HomeDestination.MENU)
+                    }
+                },
                 icon = {
                     Icon(
                         imageVector = AppIcons.Filled.Menu,
@@ -107,8 +113,12 @@ fun HomeScreen(
             )
 
             NavigationButton(
-                selected = false,
-                onClick = {},
+                selected = currentDestination == HomeDestination.CART,
+                onClick = {
+                    if (currentDestination != HomeDestination.CART) {
+                        onDestinationClick(HomeDestination.CART)
+                    }
+                },
                 icon = {
                     BadgedBox(
                         badge = {
@@ -127,8 +137,12 @@ fun HomeScreen(
             )
 
             NavigationButton(
-                selected = false,
-                onClick = {},
+                selected = currentDestination == HomeDestination.HISTORY,
+                onClick = {
+                    if (currentDestination != HomeDestination.HISTORY) {
+                        onDestinationClick(HomeDestination.HISTORY)
+                    }
+                },
                 icon = {
                     Icon(
                         imageVector = AppIcons.Filled.History,
@@ -159,7 +173,10 @@ fun HomeScreen(
 @Composable
 private fun HomeScreenPreview() {
     LazyPizzaTheme {
-        HomeScreen {
+        HomeScreen(
+            onDestinationClick = {},
+            currentDestination = HomeDestination.MENU
+        ) {
 
         }
     }

@@ -72,11 +72,7 @@ class ProductDetailsViewModel(
     }
 
     private suspend fun loadToppings() {
-        val result = toppingRepository.getAll()
-
-        _state.update { it.copy(isToppingsLoading = false) }
-
-        when (result) {
+        when (val result = toppingRepository.getAll()) {
             is Result.Error -> {
                 eventChannel.send(
                     ProductDetailsEvent.ShowSystemMessage(
@@ -93,6 +89,8 @@ class ProductDetailsViewModel(
                 }
             }
         }
+
+        _state.update { it.copy(isToppingsLoading = false) }
     }
 
     fun onAction(action: ProductDetailsAction) {
