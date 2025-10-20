@@ -43,7 +43,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun ProductDetailsRoot(
     id: ProductId,
-    navigateBack: () -> Unit,
+    onBackClick: () -> Unit,
     viewModel: ProductDetailsViewModel = koinViewModel {
         parametersOf(id)
     }
@@ -66,7 +66,7 @@ fun ProductDetailsRoot(
     ProductDetailsScreen(
         onAction = { action ->
             when (action) {
-                ProductDetailsAction.OnNavigateBackClick -> navigateBack()
+                ProductDetailsAction.OnNavigateBackClick -> onBackClick()
                 else -> viewModel.onAction(action)
             }
         },

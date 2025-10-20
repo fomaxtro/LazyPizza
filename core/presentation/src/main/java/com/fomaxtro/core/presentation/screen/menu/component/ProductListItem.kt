@@ -3,9 +3,11 @@ package com.fomaxtro.core.presentation.screen.menu.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +52,7 @@ fun ProductListItem(
             if (isInPreview) {
                 Box(
                     modifier = Modifier
-                        .size(122.dp)
+                        .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceHighest)
                 )
             } else {
@@ -58,51 +60,56 @@ fun ProductListItem(
                     model = product.imageUrl,
                     contentDescription = null,
                     modifier = Modifier
-                        .size(122.dp)
+                        .fillMaxSize()
                         .background(MaterialTheme.colorScheme.surfaceHighest)
                 )
             }
         },
         onClick = onClick,
         modifier = modifier
+            .height(128.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
-            verticalAlignment = Alignment.Top
+                .weight(1f)
         ) {
-            Text(
-                text = product.name,
-                style = MaterialTheme.typography.body1Medium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    text = product.name,
+                    style = MaterialTheme.typography.body1Medium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
 
-            if (product.quantity > 0 && onDeleteClick != null) {
-                LazyPizzaIconButton(
-                    onClick = onDeleteClick,
-                    colors = IconButtonDefaults.iconButtonColors(
-                        contentColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Icon(
-                        imageVector = AppIcons.Outlined.Trash,
-                        contentDescription = stringResource(R.string.delete)
-                    )
+                if (product.quantity > 0 && onDeleteClick != null) {
+                    LazyPizzaIconButton(
+                        onClick = onDeleteClick,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Icon(
+                            imageVector = AppIcons.Outlined.Trash,
+                            contentDescription = stringResource(R.string.delete)
+                        )
+                    }
                 }
             }
-        }
 
-        if (product.description != null) {
-            Text(
-                text = product.description,
-                style = MaterialTheme.typography.body3Regular,
-                color = MaterialTheme.colorScheme.textSecondary,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+            if (product.description != null) {
+                Text(
+                    text = product.description,
+                    style = MaterialTheme.typography.body3Regular,
+                    color = MaterialTheme.colorScheme.textSecondary,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
 
         Row(
@@ -146,12 +153,12 @@ private fun ProductListItemPreview() {
         ProductListItem(
             product = ProductUiFactory.create(
                 id = 1,
-                quantity = 1,
+                quantity = 0,
                 description = "Cream sauce, mozzarella, mushrooms, truffle oil, parmesan",
                 price = 13.444
             ),
             modifier = Modifier.fillMaxWidth(),
-            onAddClick = {},
+            onClick = {},
             onDeleteClick = {}
         )
     }

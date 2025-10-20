@@ -65,7 +65,7 @@ fun BaseProductListItem(
             modifier = Modifier.fillMaxWidth()
         ) {
             Box(
-                modifier = Modifier.size(122.dp)
+                modifier = Modifier.size(128.dp)
             ) {
                 image()
             }

@@ -40,7 +40,11 @@ fun NavigationButton(
         modifier = modifier
             .width(96.dp)
             .height(66.dp)
-            .clickable(onClick = onClick),
+            .clickable(
+                onClick = onClick,
+                indication = null,
+                interactionSource = null
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
