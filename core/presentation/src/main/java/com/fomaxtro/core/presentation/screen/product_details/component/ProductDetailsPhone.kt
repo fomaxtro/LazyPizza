@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,8 +45,6 @@ fun ProductDetailsPhone(
     itemContent: @Composable (ToppingUi) -> Unit,
     items: List<ToppingUi>,
 ) {
-    val isInPreview = LocalInspectionMode.current
-
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -60,19 +57,13 @@ fun ProductDetailsPhone(
                         .fillMaxWidth()
                         .aspectRatio(3f / 2f)
                         .background(MaterialTheme.colorScheme.surface)
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = RoundedCornerShape(bottomEnd = 16.dp)
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
-                    if (isInPreview) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    color = MaterialTheme.colorScheme.background,
-                                    shape = RoundedCornerShape(bottomEnd = 16.dp)
-                                )
-                        )
-                    } else {
-                        image()
-                    }
+                    image()
                 }
             }
 

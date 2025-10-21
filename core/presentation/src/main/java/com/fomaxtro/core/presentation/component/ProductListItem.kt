@@ -1,6 +1,5 @@
 package com.fomaxtro.core.presentation.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +27,6 @@ import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.body1Medium
 import com.fomaxtro.core.presentation.designsystem.theme.body3Regular
-import com.fomaxtro.core.presentation.designsystem.theme.surfaceHighest
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.designsystem.theme.title1SemiBold
 import com.fomaxtro.core.presentation.screen.menu.component.PriceDetail
@@ -56,7 +54,6 @@ fun ProductListItem(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceHighest)
                 )
             } else {
                 AsyncImage(
@@ -64,7 +61,6 @@ fun ProductListItem(
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceHighest)
                 )
             }
         },

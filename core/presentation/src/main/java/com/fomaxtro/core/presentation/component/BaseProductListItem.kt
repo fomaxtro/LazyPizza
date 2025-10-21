@@ -1,6 +1,7 @@
 package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.presentation.designsystem.modifier.shimmer
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.surfaceHighest
 import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
 
 @Composable
@@ -65,7 +67,9 @@ fun BaseProductListItem(
             modifier = Modifier.fillMaxWidth()
         ) {
             Box(
-                modifier = Modifier.size(128.dp)
+                modifier = Modifier
+                    .size(128.dp)
+                    .background(MaterialTheme.colorScheme.surfaceHighest)
             ) {
                 image()
             }

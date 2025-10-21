@@ -1,14 +1,12 @@
 package com.fomaxtro.core.presentation.screen.product_details
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -105,12 +103,7 @@ private fun ProductDetailsScreen(
                     AsyncImage(
                         model = state.product.imageUrl,
                         contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                color = MaterialTheme.colorScheme.background,
-                                shape = RoundedCornerShape(bottomEnd = 16.dp)
-                            )
+                        modifier = Modifier.fillMaxSize()
                     )
                 } else {
                     Box(
