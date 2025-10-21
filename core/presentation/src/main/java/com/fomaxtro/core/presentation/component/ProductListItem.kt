@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.menu.component
+package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.fomaxtro.core.presentation.R
-import com.fomaxtro.core.presentation.component.QuantityPicker
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaIconButton
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaOutlinedButton
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
@@ -32,13 +31,17 @@ import com.fomaxtro.core.presentation.designsystem.theme.body3Regular
 import com.fomaxtro.core.presentation.designsystem.theme.surfaceHighest
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.designsystem.theme.title1SemiBold
-import com.fomaxtro.core.presentation.model.ProductUi
+import com.fomaxtro.core.presentation.screen.menu.component.PriceDetail
 import com.fomaxtro.core.presentation.ui.Formatter
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 
 @Composable
 fun ProductListItem(
-    product: ProductUi,
+    imageUrl: String,
+    name: String,
+    description: String?,
+    price: Double,
+    quantity: Int,
     modifier: Modifier = Modifier,
     onAddClick: (() -> Unit)? = null,
     onDeleteClick: (() -> Unit)? = null,
@@ -57,7 +60,7 @@ fun ProductListItem(
                 )
             } else {
                 AsyncImage(
-                    model = product.imageUrl,
+                    model = imageUrl,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
@@ -79,14 +82,14 @@ fun ProductListItem(
                 verticalAlignment = Alignment.Top
             ) {
                 Text(
-                    text = product.name,
+                    text = name,
                     style = MaterialTheme.typography.body1Medium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f)
                 )
 
-                if (product.quantity > 0 && onDeleteClick != null) {
+                if (quantity > 0 && onDeleteClick != null) {
                     LazyPizzaIconButton(
                         onClick = onDeleteClick,
                         colors = IconButtonDefaults.iconButtonColors(
@@ -101,9 +104,9 @@ fun ProductListItem(
                 }
             }
 
-            if (product.description != null) {
+            if (description != null) {
                 Text(
-                    text = product.description,
+                    text = description,
                     style = MaterialTheme.typography.body3Regular,
                     color = MaterialTheme.colorScheme.textSecondary,
                     maxLines = 2,
@@ -117,29 +120,29 @@ fun ProductListItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (product.quantity > 0) {
+            if (quantity > 0) {
                 QuantityPicker(
                     onQuantityChange = {
                         onQuantityChange?.invoke(it)
                     },
-                    quantity = product.quantity
+                    quantity = quantity
                 )
             } else {
                 Text(
-                    text = Formatter.formatCurrency(product.price),
+                    text = Formatter.formatCurrency(price),
                     style = MaterialTheme.typography.title1SemiBold
                 )
             }
 
-            if (onAddClick != null && product.quantity == 0) {
+            if (onAddClick != null && quantity == 0) {
                 LazyPizzaOutlinedButton(
                     onClick = onAddClick,
                     text = stringResource(R.string.add_to_cart)
                 )
-            } else if (product.quantity > 0) {
+            } else if (quantity > 0) {
                 PriceDetail(
-                    price = product.price,
-                    quantity = product.quantity
+                    price = price,
+                    quantity = quantity
                 )
             }
         }
@@ -149,14 +152,20 @@ fun ProductListItem(
 @Preview
 @Composable
 private fun ProductListItemPreview() {
+    val product = ProductUiFactory.create(
+        id = 1,
+        quantity = 0,
+        description = "Cream sauce, mozzarella, mushrooms, truffle oil, parmesan",
+        price = 13.444
+    )
+
     LazyPizzaTheme {
         ProductListItem(
-            product = ProductUiFactory.create(
-                id = 1,
-                quantity = 0,
-                description = "Cream sauce, mozzarella, mushrooms, truffle oil, parmesan",
-                price = 13.444
-            ),
+            imageUrl = product.imageUrl,
+            name = product.name,
+            description = product.description,
+            price = product.price,
+            quantity = product.quantity,
             modifier = Modifier.fillMaxWidth(),
             onClick = {},
             onDeleteClick = {}

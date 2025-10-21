@@ -69,7 +69,7 @@ private fun LazyPizzaPrimaryButtonPreview() {
             onClick = {},
             text = "Primary Button",
             modifier = Modifier.padding(8.dp),
-            enabled = false
+            enabled = true
         )
     }
 }

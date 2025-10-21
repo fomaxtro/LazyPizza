@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.menu.component
+package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
