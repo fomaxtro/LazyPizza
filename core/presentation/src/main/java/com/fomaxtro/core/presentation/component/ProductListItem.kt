@@ -1,7 +1,6 @@
 package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,17 +49,11 @@ fun ProductListItem(
 
     BaseProductListItem(
         image = {
-            if (isInPreview) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                )
-            } else {
+            if (!isInPreview) {
                 AsyncImage(
                     model = imageUrl,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
+                    contentDescription = name,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         },

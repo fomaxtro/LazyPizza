@@ -102,7 +102,7 @@ private fun ProductDetailsScreen(
                 if (state.product != null) {
                     AsyncImage(
                         model = state.product.imageUrl,
-                        contentDescription = null,
+                        contentDescription = state.product.name,
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {
