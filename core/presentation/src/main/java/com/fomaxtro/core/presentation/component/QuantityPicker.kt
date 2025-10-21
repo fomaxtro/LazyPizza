@@ -3,7 +3,6 @@ package com.fomaxtro.core.presentation.component
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,9 +34,7 @@ fun QuantityPicker(
             onClick = {
                 onQuantityChange(quantity - 1)
             },
-            colors = IconButtonDefaults.iconButtonColors(
-                contentColor = MaterialTheme.colorScheme.textSecondary
-            )
+            color = MaterialTheme.colorScheme.textSecondary
         ) {
             Icon(
                 imageVector = AppIcons.Filled.Minus,
@@ -58,9 +55,7 @@ fun QuantityPicker(
             onClick = {
                 onQuantityChange(quantity + 1)
             },
-            colors = IconButtonDefaults.iconButtonColors(
-                contentColor = MaterialTheme.colorScheme.textSecondary
-            )
+            color = MaterialTheme.colorScheme.textSecondary
         ) {
             Icon(
                 imageVector = AppIcons.Filled.Plus,

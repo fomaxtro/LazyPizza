@@ -11,7 +11,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.body4Regular
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.designsystem.theme.title1SemiBold
-import com.fomaxtro.core.presentation.ui.Formatter
+import com.fomaxtro.core.presentation.ui.Formatters
 
 @Composable
 fun PriceDetail(
@@ -24,12 +24,12 @@ fun PriceDetail(
         horizontalAlignment = Alignment.End
     ) {
         Text(
-            text = Formatter.formatCurrency(price * quantity),
+            text = Formatters.formatCurrency(price * quantity),
             style = MaterialTheme.typography.title1SemiBold
         )
 
         Text(
-            text = "$quantity x ${Formatter.formatCurrency(price)}",
+            text = "$quantity x ${Formatters.formatCurrency(price)}",
             style = MaterialTheme.typography.body4Regular,
             color = MaterialTheme.colorScheme.textSecondary
         )

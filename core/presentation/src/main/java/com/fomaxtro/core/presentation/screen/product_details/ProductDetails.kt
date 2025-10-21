@@ -29,7 +29,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaTopAppBar
 import com.fomaxtro.core.presentation.screen.product_details.component.ProductDetailsLayout
 import com.fomaxtro.core.presentation.screen.product_details.component.ToppingListItem
-import com.fomaxtro.core.presentation.ui.Formatter
+import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.currentScreenType
@@ -142,7 +142,7 @@ private fun ProductDetailsScreen(
                     onClick = {},
                     text = stringResource(
                         R.string.add_to_cart_for,
-                        Formatter.formatCurrency(state.totalPrice)
+                        Formatters.formatCurrency(state.totalPrice)
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     enabled = state.canAddToCart

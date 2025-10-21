@@ -17,7 +17,7 @@ import com.fomaxtro.core.presentation.component.QuantityPicker
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.primary8
 import com.fomaxtro.core.presentation.model.ToppingUi
-import com.fomaxtro.core.presentation.ui.Formatter
+import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 
 @Composable
@@ -52,7 +52,7 @@ fun ToppingListItem(
                 )
             } else {
                 Text(
-                    text = Formatter.formatCurrency(topping.price),
+                    text = Formatters.formatCurrency(topping.price),
                     style = MaterialTheme.typography.titleMedium
                 )
             }

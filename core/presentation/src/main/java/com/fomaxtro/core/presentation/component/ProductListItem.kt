@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +28,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.body3Regular
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.designsystem.theme.title1SemiBold
 import com.fomaxtro.core.presentation.screen.menu.component.PriceDetail
-import com.fomaxtro.core.presentation.ui.Formatter
+import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 
 @Composable
@@ -80,10 +79,7 @@ fun ProductListItem(
 
                 if (quantity > 0 && onDeleteClick != null) {
                     LazyPizzaIconButton(
-                        onClick = onDeleteClick,
-                        colors = IconButtonDefaults.iconButtonColors(
-                            contentColor = MaterialTheme.colorScheme.primary
-                        )
+                        onClick = onDeleteClick
                     ) {
                         Icon(
                             imageVector = AppIcons.Outlined.Trash,
@@ -118,7 +114,7 @@ fun ProductListItem(
                 )
             } else {
                 Text(
-                    text = Formatter.formatCurrency(price),
+                    text = Formatters.formatCurrency(price),
                     style = MaterialTheme.typography.title1SemiBold
                 )
             }
