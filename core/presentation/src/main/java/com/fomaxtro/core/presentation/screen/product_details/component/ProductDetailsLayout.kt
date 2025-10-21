@@ -24,7 +24,6 @@ fun ProductDetailsLayout(
     action: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
-    itemsTitle: @Composable () -> Unit,
     itemContent: @Composable (ToppingUi) -> Unit,
     items: List<ToppingUi>
 ) {
@@ -40,8 +39,7 @@ fun ProductDetailsLayout(
                 modifier = modifier,
                 loading = loading,
                 itemContent = itemContent,
-                items = items,
-                itemsTitle = itemsTitle
+                items = items
             )
 
         }
@@ -55,8 +53,7 @@ fun ProductDetailsLayout(
                 modifier = modifier,
                 loading = loading,
                 itemContent = itemContent,
-                items = items,
-                itemsTitle = itemsTitle
+                items = items
             )
         }
     }
@@ -95,8 +92,7 @@ private fun ProductDetailsLayoutPreview() {
                     text = "Add to cart for $12.99",
                     modifier = Modifier.fillMaxWidth()
                 )
-            },
-            itemsTitle = { Text("Toppings") }
+            }
         )
     }
 }

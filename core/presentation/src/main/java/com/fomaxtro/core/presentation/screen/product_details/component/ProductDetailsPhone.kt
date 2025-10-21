@@ -24,11 +24,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.fomaxtro.core.presentation.R
+import com.fomaxtro.core.presentation.component.GradientFadeBox
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
-import com.fomaxtro.core.presentation.designsystem.theme.fadeGradient
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.model.ToppingUi
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
@@ -38,7 +40,6 @@ fun ProductDetailsPhone(
     image: @Composable () -> Unit,
     title: @Composable () -> Unit,
     subtitle: @Composable () -> Unit,
-    itemsTitle: @Composable () -> Unit,
     action: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
@@ -108,13 +109,11 @@ fun ProductDetailsPhone(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        CompositionLocalProvider(
-                            LocalTextStyle provides MaterialTheme.typography.labelMedium.copy(
-                                color = MaterialTheme.colorScheme.textSecondary
-                            )
-                        ) {
-                            itemsTitle()
-                        }
+                        Text(
+                            text = stringResource(R.string.add_extra_toppings),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.textSecondary
+                        )
 
                         Spacer(modifier = Modifier.height(7.dp))
 
@@ -149,26 +148,10 @@ fun ProductDetailsPhone(
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.fadeGradient)
-                .align(Alignment.BottomCenter)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 16.dp
-                    )
-                    .padding(
-                        top = 36.dp,
-                        bottom = 16.dp
-                    )
-            ) {
-                action()
-            }
-        }
+        GradientFadeBox(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            content = action
+        )
     }
 }
 
@@ -199,8 +182,7 @@ private fun ProductDetailsPhonePreview() {
                     text = "Add to cart for $12.99",
                     modifier = Modifier.fillMaxWidth()
                 )
-            },
-            itemsTitle = { Text("Items title") }
+            }
         )
     }
 }

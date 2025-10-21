@@ -178,7 +178,6 @@ private fun ProductDetailsScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             },
-            itemsTitle = { Text(stringResource(R.string.add_extra_toppings)) },
             loading = state.isToppingsLoading,
             modifier = Modifier
                 .fillMaxSize()

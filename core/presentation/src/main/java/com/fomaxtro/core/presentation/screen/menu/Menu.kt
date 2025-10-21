@@ -32,12 +32,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fomaxtro.core.domain.model.ProductCategory
 import com.fomaxtro.core.domain.model.ProductId
 import com.fomaxtro.core.presentation.R
+import com.fomaxtro.core.presentation.component.ProductListItem
 import com.fomaxtro.core.presentation.designsystem.text_field.LazyPizzaOutlinedTextField
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.body3Medium
 import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
-import com.fomaxtro.core.presentation.screen.menu.component.ProductListItem
 import com.fomaxtro.core.presentation.screen.menu.component.categoryProductList
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
@@ -173,7 +173,11 @@ private fun MenuScreen(
             screenType = screenType,
             itemContent = { product ->
                 ProductListItem(
-                    product = product,
+                    imageUrl = product.imageUrl,
+                    name = product.name,
+                    description = product.description,
+                    price = product.price,
+                    quantity = product.quantity,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         onAction(MenuAction.OnProductClick(product))
@@ -190,7 +194,11 @@ private fun MenuScreen(
                 screenType = screenType,
                 itemContent = { product ->
                     ProductListItem(
-                        product = product,
+                        imageUrl = product.imageUrl,
+                        name = product.name,
+                        description = product.description,
+                        price = product.price,
+                        quantity = product.quantity,
                         modifier = Modifier.fillMaxWidth(),
                         onAddClick = {
                             onAction(
