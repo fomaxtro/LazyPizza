@@ -33,4 +33,5 @@
     <string name="back_to_menu">Back to Menu</string>
     <string name="order_recommendation">Recommended to add to your order</string>
     <string name="add">Add</string>
+    <string name="proceed_to_checkout">Proceed to Checkout (%s)</string>
 </resources>

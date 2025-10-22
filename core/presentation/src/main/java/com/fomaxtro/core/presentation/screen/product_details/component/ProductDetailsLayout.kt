@@ -27,9 +27,7 @@ fun ProductDetailsLayout(
     itemContent: @Composable (ToppingUi) -> Unit,
     items: List<ToppingUi>
 ) {
-    val screenType = currentScreenType()
-
-    when (screenType) {
+    when (currentScreenType()) {
         ScreenType.MOBILE -> {
             ProductDetailsPhone(
                 image = image,
