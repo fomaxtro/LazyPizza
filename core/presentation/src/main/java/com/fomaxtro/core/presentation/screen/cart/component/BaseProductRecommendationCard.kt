@@ -1,46 +1,45 @@
-package com.fomaxtro.core.presentation.component
+package com.fomaxtro.core.presentation.screen.cart.component
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.presentation.designsystem.card.LazyPizzaCardDefaults
-import com.fomaxtro.core.presentation.designsystem.modifier.shimmer
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.surfaceHighest
 import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
 
 @Composable
-fun BaseProductListItem(
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
+fun BaseProductRecommendationCard(
     image: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
         modifier = modifier
-            .height(IntrinsicSize.Max)
+            .border(
+                color = MaterialTheme.colorScheme.surface,
+                width = 1.dp,
+                shape = CardDefaults.shape
+            )
             .dropShadow(
                 shape = LazyPizzaCardDefaults.shape,
                 shadow = Shadow(
@@ -49,25 +48,16 @@ fun BaseProductListItem(
                     offset = DpOffset(0.dp, 4.dp)
                 )
             )
-            .then(
-                if (onClick != null) {
-                    Modifier
-                        .clip(LazyPizzaCardDefaults.shape)
-                        .clickable(onClick = onClick)
-                } else Modifier
-            ),
-        border = BorderStroke(
-            color = MaterialTheme.colorScheme.surface,
-            width = 1.dp
-        ),
+            .width(IntrinsicSize.Max),
         shape = LazyPizzaCardDefaults.shape
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier
         ) {
             Box(
                 modifier = Modifier
-                    .size(128.dp)
+                    .width(180.dp)
+                    .height(120.dp)
                     .background(MaterialTheme.colorScheme.surfaceHighest),
                 contentAlignment = Alignment.Center
             ) {
@@ -76,12 +66,9 @@ fun BaseProductListItem(
 
             Column(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 12.dp
-                    ),
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 content = content
             )
         }
@@ -90,15 +77,11 @@ fun BaseProductListItem(
 
 @Preview
 @Composable
-private fun BaseProductListItemPreview() {
+private fun BaseProductRecommendationCardPreview() {
     LazyPizzaTheme {
-        BaseProductListItem(
+        BaseProductRecommendationCard(
             image = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .shimmer()
-                )
+
             }
         ) {
 

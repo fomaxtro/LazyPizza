@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.domain.model.ProductCategory
+import com.fomaxtro.core.presentation.component.ProductListItemLoader
 import com.fomaxtro.core.presentation.designsystem.theme.label2Semibold
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.model.ProductUi
