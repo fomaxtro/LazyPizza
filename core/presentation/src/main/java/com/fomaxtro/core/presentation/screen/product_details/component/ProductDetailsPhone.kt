@@ -31,7 +31,7 @@ import com.fomaxtro.core.presentation.component.GradientFadeBox
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
-import com.fomaxtro.core.presentation.model.ToppingUi
+import com.fomaxtro.core.presentation.model.ToppingSelectionUi
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 
 @Composable
@@ -42,8 +42,8 @@ fun ProductDetailsPhone(
     action: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
-    itemContent: @Composable (ToppingUi) -> Unit,
-    items: List<ToppingUi>,
+    itemContent: @Composable (ToppingSelectionUi) -> Unit,
+    items: List<ToppingSelectionUi>,
 ) {
     Box(
         modifier = modifier.fillMaxSize()
@@ -155,13 +155,15 @@ private fun ProductDetailsPhonePreview() {
             title = { Text("Title") },
             subtitle = { Text("Subtitle") },
             items = (1..6).map {
-                ToppingUiFactory.create(
-                    id = it.toLong()
+                ToppingSelectionUi(
+                    topping = ToppingUiFactory.create(
+                        id = it.toLong()
+                    )
                 )
             },
             itemContent = {
                 ToppingListItem(
-                    topping = it,
+                    toppingSelection = it,
                     onClick = {},
                     onQuantityChange = {},
                     modifier = Modifier.fillMaxWidth()

@@ -9,14 +9,13 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.fomaxtro.core.domain.model.ProductId
 import com.fomaxtro.core.presentation.screen.home.HomeDestination
 import com.fomaxtro.core.presentation.screen.home.HomeScreen
 import com.fomaxtro.core.presentation.screen.menu.MenuRoot
 
 @Composable
 fun HomeNavigationRoot(
-    onNavigateToProductDetails: (ProductId) -> Unit
+    onNavigateToProductDetails: (productId: Long) -> Unit
 ) {
     val backStack = rememberNavBackStack(HomeRoute.Menu)
     val currentRoute = backStack.lastOrNull()

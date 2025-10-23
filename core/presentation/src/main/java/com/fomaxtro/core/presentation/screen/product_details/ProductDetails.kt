@@ -20,13 +20,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.fomaxtro.core.domain.model.ProductId
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaNavigationIconButton
 import com.fomaxtro.core.presentation.designsystem.modifier.shimmer
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaTopAppBar
+import com.fomaxtro.core.presentation.model.ToppingSelectionUi
 import com.fomaxtro.core.presentation.screen.product_details.component.ProductDetailsLayout
 import com.fomaxtro.core.presentation.screen.product_details.component.ToppingListItem
 import com.fomaxtro.core.presentation.ui.Formatters
@@ -40,10 +40,10 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ProductDetailsRoot(
-    id: ProductId,
+    productId: Long,
     onBackClick: () -> Unit,
     viewModel: ProductDetailsViewModel = koinViewModel {
-        parametersOf(id)
+        parametersOf(productId)
     }
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -149,13 +149,13 @@ private fun ProductDetailsScreen(
                 )
             },
             items = state.toppings,
-            itemContent = { topping ->
+            itemContent = { toppingSelection ->
                 ToppingListItem(
-                    topping = topping,
+                    toppingSelection = toppingSelection,
                     onClick = {
                         onAction(
                             ProductDetailsAction.OnToppingQuantityChange(
-                                topping = topping,
+                                toppingId = toppingSelection.topping.id,
                                 quantity = 1
                             )
                         )
@@ -163,7 +163,7 @@ private fun ProductDetailsScreen(
                     onQuantityChange = {
                         onAction(
                             ProductDetailsAction.OnToppingQuantityChange(
-                                topping = topping,
+                                toppingId = toppingSelection.topping.id,
                                 quantity = it
                             )
                         )
@@ -193,8 +193,10 @@ private fun ProductDetailsScreenPreview() {
                 ),
                 isToppingsLoading = false,
                 toppings = (1..12).map {
-                    ToppingUiFactory.create(
-                        id = it.toLong()
+                    ToppingSelectionUi(
+                        topping = ToppingUiFactory.create(
+                            id = it.toLong()
+                        )
                     )
                 }
             ),

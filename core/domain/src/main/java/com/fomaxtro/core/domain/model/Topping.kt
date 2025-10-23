@@ -1,9 +1,7 @@
 package com.fomaxtro.core.domain.model
 
-typealias ToppingId = Long
-
 data class Topping(
-    val id: ToppingId,
+    val id: Long,
     val name: String,
     val price: Double,
     val imageUrl: String

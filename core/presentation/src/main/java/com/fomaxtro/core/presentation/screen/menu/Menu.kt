@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fomaxtro.core.domain.model.ProductCategory
-import com.fomaxtro.core.domain.model.ProductId
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.component.ProductListItem
 import com.fomaxtro.core.presentation.designsystem.text_field.LazyPizzaOutlinedTextField
@@ -47,7 +46,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MenuRoot(
-    onProductClick: (ProductId) -> Unit,
+    onProductClick: (productId: Long) -> Unit,
     viewModel: MenuViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -168,16 +167,18 @@ private fun MenuScreen(
 
         categoryProductList(
             category = ProductCategory.PIZZA,
-            items = state.products[ProductCategory.PIZZA],
+            items = state.cartItems[ProductCategory.PIZZA],
             loading = state.isLoading,
             screenType = screenType,
-            itemContent = { product ->
+            itemContent = { cartItem ->
+                val product = cartItem.product
+
                 ProductListItem(
                     imageUrl = product.imageUrl,
                     name = product.name,
                     description = product.description,
                     price = product.price,
-                    quantity = product.quantity,
+                    quantity = cartItem.quantity,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         onAction(MenuAction.OnProductClick(product))
@@ -189,30 +190,41 @@ private fun MenuScreen(
         productCategories.drop(1).forEach { productCategory ->
             categoryProductList(
                 category = productCategory,
-                items = state.products[productCategory],
+                items = state.cartItems[productCategory],
                 loading = state.isLoading,
                 screenType = screenType,
-                itemContent = { product ->
+                itemContent = { cartItem ->
+                    val product = cartItem.product
+
                     ProductListItem(
                         imageUrl = product.imageUrl,
                         name = product.name,
                         description = product.description,
                         price = product.price,
-                        quantity = product.quantity,
+                        quantity = cartItem.quantity,
                         modifier = Modifier.fillMaxWidth(),
                         onAddClick = {
                             onAction(
-                                MenuAction.OnProductQuantityChange(product, 1)
+                                MenuAction.OnCartItemQuantityChange(
+                                    productId = cartItem.product.id,
+                                    quantity = 1
+                                )
                             )
                         },
                         onDeleteClick = {
                             onAction(
-                                MenuAction.OnProductQuantityChange(product, 0)
+                                MenuAction.OnCartItemQuantityChange(
+                                    productId = cartItem.product.id,
+                                    quantity = 0
+                                )
                             )
                         },
                         onQuantityChange = {
                             onAction(
-                                MenuAction.OnProductQuantityChange(product, it)
+                                MenuAction.OnCartItemQuantityChange(
+                                    productId = cartItem.product.id,
+                                    quantity = it
+                                )
                             )
                         }
                     )

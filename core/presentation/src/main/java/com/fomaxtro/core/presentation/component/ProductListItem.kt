@@ -27,6 +27,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.body1Medium
 import com.fomaxtro.core.presentation.designsystem.theme.body3Regular
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.designsystem.theme.title1SemiBold
+import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.screen.menu.component.PriceDetail
 import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.util.ProductUiFactory
@@ -141,9 +142,11 @@ fun ProductListItem(
 private fun ProductListItemPreview() {
     val product = ProductUiFactory.create(
         id = 1,
-        quantity = 0,
         description = "Cream sauce, mozzarella, mushrooms, truffle oil, parmesan",
         price = 13.444
+    )
+    val cartItem = CartItemUi(
+        product = product
     )
 
     LazyPizzaTheme {
@@ -152,7 +155,7 @@ private fun ProductListItemPreview() {
             name = product.name,
             description = product.description,
             price = product.price,
-            quantity = product.quantity,
+            quantity = cartItem.quantity,
             modifier = Modifier.fillMaxWidth(),
             onClick = {},
             onDeleteClick = {}

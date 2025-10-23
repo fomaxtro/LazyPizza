@@ -15,13 +15,13 @@ import coil3.compose.AsyncImage
 import com.fomaxtro.core.presentation.component.QuantityPicker
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.primary8
-import com.fomaxtro.core.presentation.model.ToppingUi
+import com.fomaxtro.core.presentation.model.ToppingSelectionUi
 import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 
 @Composable
 fun ToppingListItem(
-    topping: ToppingUi,
+    toppingSelection: ToppingSelectionUi,
     onClick: () -> Unit,
     onQuantityChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -29,7 +29,7 @@ fun ToppingListItem(
     BaseToppingItem(
         image = {
             AsyncImage(
-                model = topping.imageUrl,
+                model = toppingSelection.topping.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .size(64.dp)
@@ -41,17 +41,17 @@ fun ToppingListItem(
             )
         },
         name = {
-            Text(topping.name)
+            Text(toppingSelection.topping.name)
         },
         action = {
-            if (topping.quantity > 0) {
+            if (toppingSelection.quantity > 0) {
                 QuantityPicker(
                     onQuantityChange = onQuantityChange,
-                    quantity = topping.quantity
+                    quantity = toppingSelection.quantity
                 )
             } else {
                 Text(
-                    text = Formatters.formatCurrency(topping.price),
+                    text = Formatters.formatCurrency(toppingSelection.topping.price),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
@@ -62,7 +62,7 @@ fun ToppingListItem(
                 indication = null,
                 interactionSource = null
             ),
-        selected = topping.quantity > 0
+        selected = toppingSelection.quantity > 0
     )
 }
 
@@ -71,8 +71,10 @@ fun ToppingListItem(
 private fun IngredientListItemPreview() {
     LazyPizzaTheme {
         ToppingListItem(
-            topping = ToppingUiFactory.create(
-                id = 1,
+            toppingSelection = ToppingSelectionUi(
+                topping = ToppingUiFactory.create(
+                    id = 1
+                ),
                 quantity = 1
             ),
             onClick = {},

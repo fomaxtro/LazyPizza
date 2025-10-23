@@ -10,15 +10,13 @@ object ProductUiFactory {
         description: String? = null,
         price: Double = 10.99,
         imageUrl: String = "",
-        category: ProductCategory = ProductCategory.PIZZA,
-        quantity: Int = 0
+        category: ProductCategory = ProductCategory.PIZZA
     ) = ProductUi(
         id = id,
         name = name,
         description = description,
         price = price,
         imageUrl = imageUrl,
-        category = category,
-        quantity = quantity
+        category = category
     )
 }

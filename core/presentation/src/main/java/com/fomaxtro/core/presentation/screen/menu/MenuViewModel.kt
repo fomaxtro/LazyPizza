@@ -2,12 +2,12 @@ package com.fomaxtro.core.presentation.screen.menu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.ProductCategory
 import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.util.Result
-import com.fomaxtro.core.presentation.mapper.toProductUi
+import com.fomaxtro.core.presentation.mapper.toCartItemUi
 import com.fomaxtro.core.presentation.mapper.toUiText
-import com.fomaxtro.core.presentation.model.ProductUi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,7 +25,7 @@ class MenuViewModel(
     private val productRepository: ProductRepository
 ) : ViewModel() {
     private var firstLoad = false
-    private var products = emptyList<ProductUi>()
+    private var cartItems = MutableStateFlow(emptyList<CartItem>())
 
     private val _state = MutableStateFlow(MenuState())
     val state = _state
@@ -57,14 +57,12 @@ class MenuViewModel(
             }
 
             is Result.Success -> {
-                _state.update { state ->
-                    state.copy(
-                        products = result.data
-                            .map { it.toProductUi() }
-                            .also { products = it }
-                            .groupBy { it.category }
-                    )
-                }
+                cartItems.value = result.data
+                    .map { product ->
+                        CartItem(
+                            product = product
+                        )
+                    }
             }
         }
 
@@ -80,25 +78,31 @@ class MenuViewModel(
             .map { it.selectedCategory }
             .distinctUntilChanged()
 
-        combine(search, selectedCategories) { search, selectedCategory ->
-            products
-                .filter { product ->
+        combine(
+            cartItems,
+            search,
+            selectedCategories
+        ) { cartItems, search, selectedCategory ->
+            cartItems
+                .filter { cartItem ->
                     if (selectedCategory != null) {
-                        selectedCategory == product.category
+                        selectedCategory == cartItem.product.category
                     } else true
                 }
-                .filter { product ->
+                .filter { cartItem ->
                     if (search.isEmpty()) {
                         true
                     } else {
-                        product.name.contains(search, ignoreCase = true)
+                        cartItem.product.name.contains(search, ignoreCase = true)
                     }
                 }
         }
-            .onEach { products ->
+            .onEach { cartItem ->
                 _state.update { state ->
                     state.copy(
-                        products = products.groupBy { it.category }
+                        cartItems = cartItem
+                            .map { it.toCartItemUi() }
+                            .groupBy { it.product.category }
                     )
                 }
             }
@@ -113,30 +117,28 @@ class MenuViewModel(
                 onProductCategoryToggle(action.category)
             }
 
-            is MenuAction.OnProductQuantityChange -> {
-                onProductQuantityChange(action.product, action.quantity)
+            is MenuAction.OnCartItemQuantityChange -> {
+                onCartItemQuantityChange(action.productId, action.quantity)
             }
 
             is MenuAction.OnProductClick -> Unit
         }
     }
 
-    private fun onProductQuantityChange(
-        product: ProductUi,
+    private fun onCartItemQuantityChange(
+        productId: Long,
         quantity: Int
     ) {
-        val productsMap = state.value.products.toMutableMap()
-        val productList = productsMap[product.category]?.toMutableList() ?: return
-        val productIndex = productList.indexOf(product)
+        val mutableCartItems = cartItems.value.toMutableList()
+        val cartItemIndex = mutableCartItems
+            .indexOfFirst { it.product.id == productId }
+            .takeIf { it != -1 } ?: return
 
-        productList[productIndex] = product.copy(quantity = quantity)
-        productsMap[product.category] = productList.toList()
+        mutableCartItems[cartItemIndex] = mutableCartItems[cartItemIndex].copy(
+            quantity = quantity
+        )
 
-        _state.update {
-            it.copy(
-                products = productsMap.toMap()
-            )
-        }
+        cartItems.value = mutableCartItems.toList()
     }
 
     private fun onProductCategoryToggle(category: ProductCategory) {

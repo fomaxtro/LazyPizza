@@ -17,7 +17,7 @@ import com.fomaxtro.core.domain.model.ProductCategory
 import com.fomaxtro.core.presentation.component.ProductListItemLoader
 import com.fomaxtro.core.presentation.designsystem.theme.label2Semibold
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
-import com.fomaxtro.core.presentation.model.ProductUi
+import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.util.toDisplayName
 
@@ -25,8 +25,8 @@ fun LazyListScope.categoryProductList(
     category: ProductCategory,
     loading: Boolean,
     screenType: ScreenType,
-    itemContent: @Composable (ProductUi) -> Unit,
-    items: List<ProductUi>?
+    itemContent: @Composable (CartItemUi) -> Unit,
+    items: List<CartItemUi>?
 ) {
     if (loading || (items != null && items.isNotEmpty())) {
         item {
@@ -52,7 +52,7 @@ fun LazyListScope.categoryProductList(
                         )
                     }
                 } else {
-                    items(items!!, key = { it.id }) { item ->
+                    items(items!!, key = { it.product.id }) { item ->
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Box(

@@ -25,9 +25,9 @@ fun NavigationRoot() {
         entryProvider = entryProvider {
             entry<Route.Home> {
                 HomeNavigationRoot(
-                    onNavigateToProductDetails = { id ->
+                    onNavigateToProductDetails = { productId ->
                         if (backStack.lastOrNull() !is Route.ProductDetails) {
-                            backStack.add(Route.ProductDetails(id))
+                            backStack.add(Route.ProductDetails(productId))
                         }
                     }
                 )
@@ -35,7 +35,7 @@ fun NavigationRoot() {
 
             entry<Route.ProductDetails> { entry ->
                 ProductDetailsRoot(
-                    id = entry.id,
+                    productId = entry.productId,
                     onBackClick = {
                         if (backStack.lastOrNull() is Route.ProductDetails) {
                             backStack.removeLastOrNull()
