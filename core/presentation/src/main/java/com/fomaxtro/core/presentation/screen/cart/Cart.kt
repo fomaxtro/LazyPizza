@@ -104,7 +104,10 @@ private fun CartScreen(
                         description = product.description,
                         price = product.price,
                         quantity = product.quantity,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        onQuantityChange = {},
+                        onDeleteClick = {},
+                        minQuantity = 1
                     )
                 },
                 recommendations = state.productRecommendations,
@@ -139,7 +142,8 @@ private fun CartScreen(
 private fun CartScreenPreview() {
     val products = (1..3).map {
         ProductUiFactory.create(
-            id = it.toLong()
+            id = it.toLong(),
+            quantity = 1
         )
     }
 

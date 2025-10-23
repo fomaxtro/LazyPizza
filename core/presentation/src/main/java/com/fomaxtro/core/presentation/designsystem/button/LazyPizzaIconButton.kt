@@ -24,6 +24,7 @@ fun LazyPizzaIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
+    enabled: Boolean = true,
     content: @Composable () -> Unit
 ) {
     IconButton(
@@ -37,7 +38,8 @@ fun LazyPizzaIconButton(
                 color = MaterialTheme.colorScheme.outline50,
                 shape = RoundedCornerShape(8.dp)
             )
-            .size(22.dp)
+            .size(22.dp),
+        enabled = enabled
     ) {
         Box(
             modifier = Modifier.size(14.dp)

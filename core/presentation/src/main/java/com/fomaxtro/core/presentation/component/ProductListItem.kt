@@ -42,7 +42,8 @@ fun ProductListItem(
     onAddClick: (() -> Unit)? = null,
     onDeleteClick: (() -> Unit)? = null,
     onQuantityChange: ((Int) -> Unit)? = null,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
+    minQuantity: Int = 0
 ) {
     val isInPreview = LocalInspectionMode.current
 
@@ -110,7 +111,8 @@ fun ProductListItem(
                     onQuantityChange = {
                         onQuantityChange?.invoke(it)
                     },
-                    quantity = quantity
+                    quantity = quantity,
+                    minQuantity = minQuantity
                 )
             } else {
                 Text(

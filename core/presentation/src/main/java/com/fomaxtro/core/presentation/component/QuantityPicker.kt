@@ -24,7 +24,8 @@ import com.fomaxtro.core.presentation.designsystem.theme.title2
 fun QuantityPicker(
     onQuantityChange: (Int) -> Unit,
     quantity: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    minQuantity: Int = 0
 ) {
     Row(
         modifier = modifier,
@@ -34,7 +35,8 @@ fun QuantityPicker(
             onClick = {
                 onQuantityChange(quantity - 1)
             },
-            color = MaterialTheme.colorScheme.textSecondary
+            color = MaterialTheme.colorScheme.textSecondary,
+            enabled = quantity > minQuantity
         ) {
             Icon(
                 imageVector = AppIcons.Filled.Minus,
@@ -71,7 +73,8 @@ private fun QuantityPickerPreview() {
     LazyPizzaTheme {
         QuantityPicker(
             quantity = 1,
-            onQuantityChange = {}
+            onQuantityChange = {},
+            minQuantity = 1
         )
     }
 }
