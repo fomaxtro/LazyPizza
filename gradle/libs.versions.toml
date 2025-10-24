@@ -21,6 +21,7 @@ timber = "5.0.1"
 ktor = "3.3.1"
 koin = "4.1.1"
 datastore = "1.1.7"
+coroutines = "1.10.2"
 
 nav3Core = "1.0.0-beta01"
 lifecycleViewmodelNav3 = "2.10.0-beta01"
@@ -67,7 +68,9 @@ koin-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navig
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
+
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 

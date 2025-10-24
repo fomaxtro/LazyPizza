@@ -38,8 +38,9 @@ class SessionStorage(
     suspend fun removeCartItem(item: CartItemSession) {
         dataStore.edit { preferences ->
             val cartItems = getCartItems().first()
+            val newCartItems = cartItems.filterNot { it.id == item.id }
 
-            preferences[CART_ITEMS_KEY] = Json.encodeToString(cartItems - item)
+            preferences[CART_ITEMS_KEY] = Json.encodeToString(newCartItems)
         }
     }
 

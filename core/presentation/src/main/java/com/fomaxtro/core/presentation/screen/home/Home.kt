@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -28,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.component.AdaptiveScaffold
 import com.fomaxtro.core.presentation.component.NavigationButton
@@ -36,10 +38,29 @@ import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.body1Regular
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaTopAppBar
+import org.koin.androidx.compose.koinViewModel
+
+@Composable
+fun HomeRoot(
+    viewModel: HomeViewModel = koinViewModel(),
+    currentDestination: HomeDestination,
+    onDestinationClick: (HomeDestination) -> Unit,
+    content: @Composable () -> Unit
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    HomeScreen(
+        state = state,
+        currentDestination = currentDestination,
+        onDestinationClick = onDestinationClick,
+        content = content
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
+private fun HomeScreen(
+    state: HomeState,
     currentDestination: HomeDestination,
     onDestinationClick: (HomeDestination) -> Unit,
     content: @Composable () -> Unit
@@ -122,9 +143,11 @@ fun HomeScreen(
                 icon = {
                     BadgedBox(
                         badge = {
-                            NotificationBadge(
-                                value = 2
-                            )
+                            if (state.cartItemsCount > 0) {
+                                NotificationBadge(
+                                    value = state.cartItemsCount
+                                )
+                            }
                         }
                     ) {
                         Icon(
@@ -174,8 +197,9 @@ fun HomeScreen(
 private fun HomeScreenPreview() {
     LazyPizzaTheme {
         HomeScreen(
+            state = HomeState(),
             onDestinationClick = {},
-            currentDestination = HomeDestination.MENU
+            currentDestination = HomeDestination.MENU,
         ) {
 
         }

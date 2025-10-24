@@ -22,7 +22,7 @@ fun NotificationBadge(
     modifier: Modifier = Modifier
 ) {
     Badge(
-        modifier = Modifier
+        modifier = modifier
             .padding(
                 bottom = 6.dp,
                 start = 6.dp

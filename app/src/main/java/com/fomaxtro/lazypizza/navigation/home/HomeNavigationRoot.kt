@@ -10,7 +10,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.fomaxtro.core.presentation.screen.home.HomeDestination
-import com.fomaxtro.core.presentation.screen.home.HomeScreen
+import com.fomaxtro.core.presentation.screen.home.HomeRoot
 import com.fomaxtro.core.presentation.screen.menu.MenuRoot
 
 @Composable
@@ -27,7 +27,7 @@ fun HomeNavigationRoot(
         else -> HomeDestination.MENU
     }
 
-    HomeScreen(
+    HomeRoot(
         currentDestination = currentDestination,
         onDestinationClick = { destination ->
             val route = when (destination) {

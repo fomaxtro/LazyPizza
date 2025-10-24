@@ -14,7 +14,9 @@ import com.fomaxtro.core.domain.repository.CartRepository
 import com.fomaxtro.core.domain.util.Result
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 class CartRepositoryImpl(
     private val sessionStorage: SessionStorage,
@@ -87,5 +89,11 @@ class CartRepositoryImpl(
 
     override suspend fun removeCartItem(item: CartItem) {
         sessionStorage.removeCartItem(item.toCartItemSession())
+    }
+
+    override fun countCartItems(): Flow<Int> {
+        return sessionStorage
+            .getCartItems()
+            .map { cartItems -> cartItems.sumOf { it.quantity } }
     }
 }

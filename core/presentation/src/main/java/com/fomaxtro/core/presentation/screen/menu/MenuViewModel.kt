@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.ProductCategory
 import com.fomaxtro.core.domain.repository.ProductRepository
+import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.presentation.mapper.toCartItemUi
 import com.fomaxtro.core.presentation.mapper.toUiText
@@ -20,9 +21,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class MenuViewModel(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val updateCartItemQuantity: UpdateCartItemQuantity
 ) : ViewModel() {
     private var firstLoad = false
     private var cartItems = MutableStateFlow(emptyList<CartItem>())
@@ -134,11 +137,17 @@ class MenuViewModel(
             .indexOfFirst { it.product.id == productId }
             .takeIf { it != -1 } ?: return
 
-        mutableCartItems[cartItemIndex] = mutableCartItems[cartItemIndex].copy(
+        val updatedCartItem = mutableCartItems[cartItemIndex].copy(
             quantity = quantity
         )
 
+        mutableCartItems[cartItemIndex] = updatedCartItem
+
         cartItems.value = mutableCartItems.toList()
+
+        viewModelScope.launch {
+            updateCartItemQuantity(updatedCartItem)
+        }
     }
 
     private fun onProductCategoryToggle(category: ProductCategory) {

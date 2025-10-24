@@ -1,5 +1,6 @@
 package com.fomaxtro.core.presentation.di
 
+import com.fomaxtro.core.presentation.screen.home.HomeViewModel
 import com.fomaxtro.core.presentation.screen.menu.MenuViewModel
 import com.fomaxtro.core.presentation.screen.product_details.ProductDetailsViewModel
 import org.koin.core.module.dsl.viewModel
@@ -15,4 +16,5 @@ val presentationModule = module {
             toppingRepository = get()
         )
     }
+    viewModelOf(::HomeViewModel)
 }
