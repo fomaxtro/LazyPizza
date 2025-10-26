@@ -3,7 +3,9 @@ package com.fomaxtro.core.presentation.screen.menu
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.model.CartItem
+import com.fomaxtro.core.domain.model.Product
 import com.fomaxtro.core.domain.model.ProductCategory
+import com.fomaxtro.core.domain.repository.CartRepository
 import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
@@ -25,10 +27,11 @@ import kotlinx.coroutines.launch
 
 class MenuViewModel(
     private val productRepository: ProductRepository,
-    private val updateCartItemQuantity: UpdateCartItemQuantity
+    private val updateCartItemQuantity: UpdateCartItemQuantity,
+    cartRepository: CartRepository
 ) : ViewModel() {
     private var firstLoad = false
-    private var cartItems = MutableStateFlow(emptyList<CartItem>())
+    private val products = MutableStateFlow(emptyList<Product>())
 
     private val _state = MutableStateFlow(MenuState())
     val state = _state
@@ -49,6 +52,26 @@ class MenuViewModel(
     private val eventChannel = Channel<MenuEvent>()
     val events = eventChannel.receiveAsFlow()
 
+    private val cartItems = products
+        .combine(cartRepository.getCartItemsLocal()) { products, cartItems ->
+            products
+                .map { product ->
+                    val foundCartItem = cartItems
+                        .find { product.id == it.productId }
+
+                    CartItem(
+                        id = foundCartItem?.id,
+                        product = product,
+                        quantity = foundCartItem?.quantity ?: 0
+                    )
+                }
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            emptyList()
+        )
+
     private suspend fun loadProducts() {
         _state.update { it.copy(isLoading = true) }
 
@@ -60,12 +83,7 @@ class MenuViewModel(
             }
 
             is Result.Success -> {
-                cartItems.value = result.data
-                    .map { product ->
-                        CartItem(
-                            product = product
-                        )
-                    }
+                products.value = result.data
             }
         }
 
@@ -131,23 +149,10 @@ class MenuViewModel(
     private fun onCartItemQuantityChange(
         productId: Long,
         quantity: Int
-    ) {
-        val mutableCartItems = cartItems.value.toMutableList()
-        val cartItemIndex = mutableCartItems
-            .indexOfFirst { it.product.id == productId }
-            .takeIf { it != -1 } ?: return
+    ) = viewModelScope.launch {
+        val cartItem = cartItems.value.find { productId == it.product.id } ?: return@launch
 
-        val updatedCartItem = mutableCartItems[cartItemIndex].copy(
-            quantity = quantity
-        )
-
-        mutableCartItems[cartItemIndex] = updatedCartItem
-
-        cartItems.value = mutableCartItems.toList()
-
-        viewModelScope.launch {
-            updateCartItemQuantity(updatedCartItem)
-        }
+        updateCartItemQuantity(cartItem.copy(quantity = quantity))
     }
 
     private fun onProductCategoryToggle(category: ProductCategory) {
@@ -162,5 +167,9 @@ class MenuViewModel(
 
     private fun onSearchChange(search: String) {
         _state.update { it.copy(search = search) }
+    }
+
+    override fun onCleared() {
+
     }
 }
