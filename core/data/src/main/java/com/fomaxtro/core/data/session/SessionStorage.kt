@@ -21,24 +21,23 @@ class SessionStorage(
     suspend fun upsertCartItem(item: CartItemSession) {
         dataStore.edit { preferences ->
             val cartItems = getCartItems().first()
-
             val mutableCartItems = cartItems.toMutableList()
-            val existingItemIndex = mutableCartItems.indexOfFirst { it.id == item.id }
+            val cartItemIndex = mutableCartItems.indexOfFirst { item.id == it.id }
 
-            if (existingItemIndex >= 0) {
-                mutableCartItems[existingItemIndex] = item
+            if (cartItemIndex != -1) {
+                mutableCartItems[cartItemIndex] = item
             } else {
                 mutableCartItems += item
             }
 
-            preferences[CART_ITEMS_KEY] = Json.encodeToString(mutableCartItems)
+            preferences[CART_ITEMS_KEY] = Json.encodeToString(mutableCartItems.toList())
         }
     }
 
-    suspend fun removeCartItem(item: CartItemSession) {
+    suspend fun removeCartItem(cartId: String) {
         dataStore.edit { preferences ->
             val cartItems = getCartItems().first()
-            val newCartItems = cartItems.filterNot { it.id == item.id }
+            val newCartItems = cartItems.filterNot { it.id == cartId }
 
             preferences[CART_ITEMS_KEY] = Json.encodeToString(newCartItems)
         }
