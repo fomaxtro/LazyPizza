@@ -1,34 +1,19 @@
 package com.fomaxtro.core.presentation.screen.home
 
-import android.content.Intent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.component.AdaptiveScaffold
@@ -36,8 +21,8 @@ import com.fomaxtro.core.presentation.component.NavigationButton
 import com.fomaxtro.core.presentation.component.NotificationBadge
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
-import com.fomaxtro.core.presentation.designsystem.theme.body1Regular
-import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaTopAppBar
+import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaCenteredAlignedTopAppBar
+import com.fomaxtro.core.presentation.screen.home.component.MenuTopAppBar
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -65,56 +50,25 @@ private fun HomeScreen(
     onDestinationClick: (HomeDestination) -> Unit,
     content: @Composable () -> Unit
 ) {
-    val isInPreview = LocalInspectionMode.current
-    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
     AdaptiveScaffold(
         topBar = {
-            LazyPizzaTopAppBar(
-                title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.ic_launcher_foreground),
-                            contentDescription = stringResource(R.string.app_name),
-                            modifier = Modifier.size(36.dp)
-                        )
+            when (currentDestination) {
+                HomeDestination.MENU -> MenuTopAppBar()
 
-                        Spacer(modifier = Modifier.width(6.dp))
-
-                        Text(stringResource(R.string.app_name))
-                    }
-                },
-                actions = {
-                    Icon(
-                        imageVector = AppIcons.Filled.Phone,
-                        contentDescription = stringResource(R.string.contact)
+                HomeDestination.CART -> {
+                    LazyPizzaCenteredAlignedTopAppBar(
+                        title = stringResource(R.string.cart)
                     )
-
-                    Spacer(modifier = Modifier.width(4.dp))
-
-                    val contactPhoneNumber = stringResource(R.string.contact_phone_number)
-
-                    Text(
-                        text = contactPhoneNumber,
-                        style = MaterialTheme.typography.body1Regular,
-                        modifier = Modifier
-                            .clickable {
-                                if (!isInPreview) {
-                                    val dialerIntent = Intent(Intent.ACTION_DIAL).apply {
-                                        data = "tel:$contactPhoneNumber".toUri()
-                                    }
-
-                                    context.startActivity(dialerIntent)
-                                }
-                            }
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
                 }
-            )
+
+                HomeDestination.HISTORY -> {
+                    LazyPizzaCenteredAlignedTopAppBar(
+                        title = stringResource(R.string.history)
+                    )
+                }
+            }
         },
         navigation = {
             NavigationButton(

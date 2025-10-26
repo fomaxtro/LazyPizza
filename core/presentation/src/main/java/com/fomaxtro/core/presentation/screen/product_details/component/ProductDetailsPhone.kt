@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LocalTextStyle
@@ -28,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.component.GradientFadeBox
+import com.fomaxtro.core.presentation.component.GradientFadeBoxDefaults
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
@@ -131,9 +131,8 @@ fun ProductDetailsPhone(
                             }
                         }
 
-                        val offsetSpacing = 16.dp + 32.dp + ButtonDefaults.MinHeight
 
-                        Spacer(modifier = Modifier.height(offsetSpacing))
+                        Spacer(modifier = Modifier.height(GradientFadeBoxDefaults.offsetSpacing))
                     }
                 }
             }
