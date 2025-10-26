@@ -4,7 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CartItemSession(
-    val id: Long,
+    val id: String,
+    val productId: Long,
     val quantity: Int,
     val selectedToppings: List<ToppingSelectionSession> = emptyList()
 )
