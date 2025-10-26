@@ -146,6 +146,7 @@ private fun ProductListItemPreview() {
         price = 13.444
     )
     val cartItem = CartItemUi(
+        id = "1",
         product = product
     )
 
