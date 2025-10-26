@@ -7,4 +7,5 @@ import com.fomaxtro.core.domain.util.Result
 interface ProductRepository {
     suspend fun getAll(): Result<List<Product>, DataError>
     suspend fun findById(id: Long): Result<Product, DataError>
+    suspend fun getRecommendations(): Result<List<Product>, DataError>
 }
