@@ -12,3 +12,13 @@ fun CategoryDto.toProductCategory(): ProductCategory {
         else -> ProductCategory.OTHER
     }
 }
+
+fun ProductCategory.toCategoryId(): Long {
+    return when (this) {
+        ProductCategory.PIZZA -> 1L
+        ProductCategory.DRINKS -> 2L
+        ProductCategory.SAUCES -> 3L
+        ProductCategory.ICE_CREAM -> 4L
+        ProductCategory.OTHER -> -1L
+    }
+}

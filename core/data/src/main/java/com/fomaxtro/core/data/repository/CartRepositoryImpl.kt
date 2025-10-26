@@ -1,22 +1,27 @@
 package com.fomaxtro.core.data.repository
 
-import com.fomaxtro.core.data.mapper.toCartItemSession
+import com.fomaxtro.core.data.mapper.toCartItemLocal
 import com.fomaxtro.core.data.mapper.toProduct
 import com.fomaxtro.core.data.mapper.toTopping
+import com.fomaxtro.core.data.mapper.toToppingSelectionSession
 import com.fomaxtro.core.data.remote.datasource.ProductRemoteDataSource
 import com.fomaxtro.core.data.remote.datasource.ToppingRemoteDataSource
 import com.fomaxtro.core.data.session.SessionStorage
+import com.fomaxtro.core.data.session.model.CartItemSession
 import com.fomaxtro.core.data.util.safeRemoteCall
 import com.fomaxtro.core.domain.error.DataError
 import com.fomaxtro.core.domain.model.CartItem
+import com.fomaxtro.core.domain.model.CartItemLocal
 import com.fomaxtro.core.domain.model.ToppingSelection
 import com.fomaxtro.core.domain.repository.CartRepository
 import com.fomaxtro.core.domain.util.Result
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import java.util.UUID
 
 class CartRepositoryImpl(
     private val sessionStorage: SessionStorage,
@@ -40,30 +45,21 @@ class CartRepositoryImpl(
             safeRemoteCall { productDataSource.fetchAll() }
         }
 
-        val toppingsResult = when (val result = toppingsDeferred.await()) {
+        val toppings = when (val result = toppingsDeferred.await()) {
             is Result.Error -> return@coroutineScope result
             is Result.Success -> result.data
         }
-        val productsResult = when (val result = productsDeferred.await()) {
+        val products = when (val result = productsDeferred.await()) {
             is Result.Error -> return@coroutineScope result
             is Result.Success -> result.data
         }
-
-        val filteredToppings = toppingsResult
-            .filter { topping ->
-                cartToppingsSession.any { it.id == topping.id }
-            }
-        val filteredProducts = productsResult
-            .filter { product ->
-                cartItemsSession.any { it.id == product.id }
-            }
 
         val cartItems = cartItemsSession
             .mapNotNull { cartItem ->
-                val product = filteredProducts.find { it.id == cartItem.id }
+                val product = products.find { it.id == cartItem.productId }
                 val selectedToppings = cartItem.selectedToppings
                     .mapNotNull { selectedTopping ->
-                        val topping = filteredToppings
+                        val topping = toppings
                             .find { it.id == selectedTopping.id }
                             ?.toTopping()
 
@@ -74,6 +70,7 @@ class CartRepositoryImpl(
                     }
 
                 CartItem(
+                    id = UUID.fromString(cartItem.id),
                     product = product?.toProduct() ?: return@mapNotNull null,
                     quantity = cartItem.quantity,
                     selectedToppings = selectedToppings
@@ -83,17 +80,40 @@ class CartRepositoryImpl(
         Result.Success(cartItems)
     }
 
-    override suspend fun upsertCartItem(item: CartItem) {
-        sessionStorage.upsertCartItem(item.toCartItemSession())
+    override fun getCartItemsLocal(): Flow<List<CartItemLocal>> {
+        return sessionStorage
+            .getCartItems()
+            .map { cartItems ->
+                cartItems.map { it.toCartItemLocal() }
+            }
+            .distinctUntilChanged()
     }
 
     override suspend fun removeCartItem(item: CartItem) {
-        sessionStorage.removeCartItem(item.toCartItemSession())
+        item.id?.let { id ->
+            sessionStorage.removeCartItem(id.toString())
+        }
     }
 
     override fun countCartItems(): Flow<Int> {
         return sessionStorage
             .getCartItems()
             .map { cartItems -> cartItems.sumOf { it.quantity } }
+            .distinctUntilChanged()
+    }
+
+    override suspend fun upsertCartItem(item: CartItem): UUID {
+        val id = item.id ?: UUID.randomUUID()
+
+        val upsertItem = CartItemSession(
+            id = id.toString(),
+            productId = item.product.id,
+            quantity = item.quantity,
+            selectedToppings = item.selectedToppings.map { it.toToppingSelectionSession() }
+        )
+
+        sessionStorage.upsertCartItem(upsertItem)
+
+        return id
     }
 }

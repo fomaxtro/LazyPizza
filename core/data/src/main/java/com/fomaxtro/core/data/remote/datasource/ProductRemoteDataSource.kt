@@ -21,4 +21,11 @@ class ProductRemoteDataSource(
             parameter("with", "category")
         }.body()
     }
+
+    suspend fun fetchAllByCategories(categoryIds: List<Long>): List<ProductDto> {
+        return httpClient.get(createRoute("/products")) {
+            parameter("with", "category")
+            parameter("categoryIds", categoryIds.joinToString(","))
+        }.body()
+    }
 }
