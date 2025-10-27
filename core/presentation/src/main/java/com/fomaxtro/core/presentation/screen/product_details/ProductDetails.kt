@@ -42,6 +42,7 @@ import org.koin.core.parameter.parametersOf
 fun ProductDetailsRoot(
     productId: Long,
     onBackClick: () -> Unit,
+    onNavigateToCart: () -> Unit,
     viewModel: ProductDetailsViewModel = koinViewModel {
         parametersOf(productId)
     }
@@ -58,6 +59,8 @@ fun ProductDetailsRoot(
                     Toast.LENGTH_LONG
                 ).show()
             }
+
+            ProductDetailsEvent.NavigateToCart -> onNavigateToCart()
         }
     }
 
@@ -139,7 +142,9 @@ private fun ProductDetailsScreen(
             },
             action = {
                 LazyPizzaButton(
-                    onClick = {},
+                    onClick = {
+                        onAction(ProductDetailsAction.OnAddToCartClick)
+                    },
                     text = stringResource(
                         R.string.add_to_cart_for,
                         Formatters.formatCurrency(state.totalPrice)

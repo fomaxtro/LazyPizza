@@ -6,4 +6,5 @@ sealed interface ProductDetailsAction {
         val quantity: Int
     ) : ProductDetailsAction
     data object OnNavigateBackClick : ProductDetailsAction
+    data object OnAddToCartClick : ProductDetailsAction
 }

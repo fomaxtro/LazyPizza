@@ -8,9 +8,12 @@ data class CartItemUi(
 ) {
     val totalPrice: Double
         get() {
-            val toppingsPrice = selectedToppings
-                .sumOf { it.quantity * it.topping.price }
+            val toppingsPrice = selectedToppings.sumOf { it.totalPrice }
 
-            return quantity * (product.price + toppingsPrice)
+            return if (quantity > 0) {
+                quantity * (product.price + toppingsPrice)
+            } else {
+                product.price
+            }
         }
 }

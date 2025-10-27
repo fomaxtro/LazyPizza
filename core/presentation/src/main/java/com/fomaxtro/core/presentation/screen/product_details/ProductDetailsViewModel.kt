@@ -2,7 +2,10 @@ package com.fomaxtro.core.presentation.screen.product_details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fomaxtro.core.domain.model.CartItem
+import com.fomaxtro.core.domain.model.Product
 import com.fomaxtro.core.domain.model.ToppingSelection
+import com.fomaxtro.core.domain.repository.CartRepository
 import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.repository.ToppingRepository
 import com.fomaxtro.core.domain.util.Result
@@ -25,10 +28,12 @@ import kotlinx.coroutines.launch
 class ProductDetailsViewModel(
     private val productId: Long,
     private val productRepository: ProductRepository,
-    private val toppingRepository: ToppingRepository
+    private val toppingRepository: ToppingRepository,
+    private val cartRepository: CartRepository
 ) : ViewModel() {
     private var firstLoad = false
-    private val toppingSelections = MutableStateFlow(emptyList<ToppingSelection>())
+    private lateinit var product: Product
+    private val toppingSelections = MutableStateFlow<List<ToppingSelection>>(emptyList())
 
     private val _state = MutableStateFlow(ProductDetailsState())
     val state = _state
@@ -64,9 +69,11 @@ class ProductDetailsViewModel(
             }
 
             is Result.Success -> {
+                product = result.data
+
                 _state.update {
                     it.copy(
-                        product = result.data.toProductUi()
+                        product = product.toProductUi()
                     )
                 }
             }
@@ -114,10 +121,25 @@ class ProductDetailsViewModel(
             }
 
             ProductDetailsAction.OnNavigateBackClick -> Unit
+            ProductDetailsAction.OnAddToCartClick -> onAddToCartClick()
         }
     }
 
-    private fun updateToppingQuantity(toppingId: Long, quantity: Int) {
+    private fun onAddToCartClick() = viewModelScope.launch {
+        val cartItem = CartItem(
+            product = product,
+            quantity = 1,
+            selectedToppings = toppingSelections.value.filter { it.quantity > 0 }
+        )
+
+        cartRepository.upsertCartItem(cartItem)
+        eventChannel.send(ProductDetailsEvent.NavigateToCart)
+    }
+
+    private fun onToppingQuantityChange(
+        toppingId: Long,
+        quantity: Int
+    ) {
         val toppings = toppingSelections.value.toMutableList()
         val toppingIndex = toppings
             .indexOfFirst { it.topping.id == toppingId }
@@ -126,12 +148,5 @@ class ProductDetailsViewModel(
         toppings[toppingIndex] = toppings[toppingIndex].copy(quantity = quantity)
 
         toppingSelections.value = toppings.toList()
-    }
-
-    private fun onToppingQuantityChange(
-        toppingId: Long,
-        quantity: Int
-    ) {
-        updateToppingQuantity(toppingId, quantity)
     }
 }

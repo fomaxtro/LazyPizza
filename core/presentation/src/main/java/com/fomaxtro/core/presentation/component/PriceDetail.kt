@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.menu.component
+package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +24,7 @@ fun PriceDetail(
         horizontalAlignment = Alignment.End
     ) {
         Text(
-            text = Formatters.formatCurrency(price * quantity),
+            text = Formatters.formatCurrency(price),
             style = MaterialTheme.typography.title1SemiBold
         )
 

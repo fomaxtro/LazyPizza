@@ -28,7 +28,6 @@ import com.fomaxtro.core.presentation.designsystem.theme.body3Regular
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.designsystem.theme.title1SemiBold
 import com.fomaxtro.core.presentation.model.CartItemUi
-import com.fomaxtro.core.presentation.screen.menu.component.PriceDetail
 import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 
@@ -107,10 +106,10 @@ fun ProductListItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (quantity > 0) {
+            if (onQuantityChange != null && quantity > 0) {
                 QuantityPicker(
                     onQuantityChange = {
-                        onQuantityChange?.invoke(it)
+                        onQuantityChange(it)
                     },
                     quantity = quantity,
                     minQuantity = minQuantity
@@ -127,7 +126,7 @@ fun ProductListItem(
                     onClick = onAddClick,
                     text = stringResource(R.string.add_to_cart)
                 )
-            } else if (quantity > 0) {
+            } else if (onQuantityChange != null && quantity > 0) {
                 PriceDetail(
                     price = price,
                     quantity = quantity

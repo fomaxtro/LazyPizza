@@ -14,7 +14,8 @@ val presentationModule = module {
         ProductDetailsViewModel(
             productId = productId,
             productRepository = get(),
-            toppingRepository = get()
+            toppingRepository = get(),
+            cartRepository = get()
         )
     }
     viewModelOf(::HomeViewModel)

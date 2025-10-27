@@ -35,6 +35,7 @@ import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.currentScreenType
 import com.fomaxtro.core.presentation.util.ProductUiFactory
+import com.fomaxtro.core.presentation.util.toDisplayText
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -115,12 +116,19 @@ private fun CartScreen(
             cartItems = state.cartItems,
             productItemContent = { cartItem ->
                 val product = cartItem.product
+                val description = if (cartItem.selectedToppings.isNotEmpty()) {
+                    cartItem.selectedToppings.joinToString("\n") {
+                        it.toDisplayText()
+                    }
+                } else {
+                    product.description
+                }
 
                 ProductListItem(
                     imageUrl = product.imageUrl,
                     name = product.name,
-                    description = product.description,
-                    price = product.price,
+                    description = description,
+                    price = cartItem.totalPrice,
                     quantity = cartItem.quantity,
                     modifier = Modifier.fillMaxWidth(),
                     onQuantityChange = {
