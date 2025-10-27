@@ -63,7 +63,7 @@ fun MenuTopAppBar(
                 text = contactPhoneNumber,
                 style = MaterialTheme.typography.body1Regular,
                 modifier = Modifier
-                    .clickable(enabled = isInPreview) {
+                    .clickable(enabled = !isInPreview) {
                         val dialerIntent = Intent(Intent.ACTION_DIAL).apply {
                             data = "tel:$contactPhoneNumber".toUri()
                         }

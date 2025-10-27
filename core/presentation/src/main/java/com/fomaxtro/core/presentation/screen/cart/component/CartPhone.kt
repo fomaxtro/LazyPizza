@@ -20,20 +20,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.component.GradientFadeBox
+import com.fomaxtro.core.presentation.component.GradientFadeBoxDefaults
 import com.fomaxtro.core.presentation.component.ProductListItem
 import com.fomaxtro.core.presentation.component.ProductListItemLoader
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.label2Semibold
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
+import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.model.ProductUi
+import com.fomaxtro.core.presentation.model.ToppingSelectionUi
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 
 @Composable
 fun CartPhone(
-    products: List<ProductUi>,
-    productItemContent: @Composable (ProductUi) -> Unit,
+    cartItems: List<CartItemUi>,
+    productItemContent: @Composable (CartItemUi) -> Unit,
     recommendations: List<ProductUi>,
     recommendationItemContent: @Composable (ProductUi) -> Unit,
     loading: Boolean,
@@ -57,8 +60,8 @@ fun CartPhone(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             } else {
-                items(products, key = { it.id }) { product ->
-                    productItemContent(product)
+                items(cartItems, key = { it.id }) { cartItem ->
+                    productItemContent(cartItem)
 
                     Spacer(modifier = Modifier.height(8.dp))
                 }
@@ -96,6 +99,10 @@ fun CartPhone(
                     }
                 }
             }
+
+            item {
+                Spacer(modifier = Modifier.height(GradientFadeBoxDefaults.offsetSpacing))
+            }
         }
 
         GradientFadeBox(
@@ -109,19 +116,23 @@ fun CartPhone(
 @Composable
 private fun CartPhonePreview() {
     val toppings = (1..2).map {
-        ToppingUiFactory.create(
-            id = it.toLong(),
+        ToppingSelectionUi(
+            topping = ToppingUiFactory.create(
+                id = it.toLong(),
+                price = 2.0
+            ),
             quantity = 2
         )
     }
 
-    val products = (1..2).map { id ->
-        ProductUiFactory.create(
-            id = id.toLong(),
-            description = toppings.joinToString("\n") {
-                "${it.quantity} x ${it.name}"
-            },
-            price = 10.99 + toppings.sumOf { it.quantity * it.price }
+    val cartItems = (1..2).map { id ->
+        CartItemUi(
+            id = "1",
+            product = ProductUiFactory.create(
+                id = id.toLong(),
+                price = 10.99
+            ),
+            selectedToppings = toppings
         )
     }
 
@@ -140,14 +151,16 @@ private fun CartPhonePreview() {
                     modifier = Modifier.fillMaxWidth()
                 )
             },
-            products = products,
-            productItemContent = { product ->
+            cartItems = cartItems,
+            productItemContent = { cartItem ->
+                val product = cartItem.product
+
                 ProductListItem(
                     imageUrl = product.imageUrl,
                     name = product.name,
                     description = product.description,
                     price = product.price,
-                    quantity = product.quantity,
+                    quantity = cartItem.quantity,
                     modifier = Modifier.fillMaxWidth()
                 )
             },

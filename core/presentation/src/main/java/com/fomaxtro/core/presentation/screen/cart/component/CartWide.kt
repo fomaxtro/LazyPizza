@@ -28,14 +28,16 @@ import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.label2Semibold
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
+import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.model.ProductUi
+import com.fomaxtro.core.presentation.model.ToppingSelectionUi
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 
 @Composable
 fun CartWide(
-    products: List<ProductUi>,
-    productItemContent: @Composable (ProductUi) -> Unit,
+    cartItems: List<CartItemUi>,
+    productItemContent: @Composable (CartItemUi) -> Unit,
     recommendations: List<ProductUi>,
     recommendationItemContent: @Composable (ProductUi) -> Unit,
     loading: Boolean,
@@ -61,7 +63,7 @@ fun CartWide(
 
                 }
             } else {
-                items(products) { product ->
+                items(cartItems, key = { it.id }) { product ->
                     productItemContent(product)
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -98,7 +100,7 @@ fun CartWide(
                             ProductRecommendationCardLoader()
                         }
                     } else {
-                        items(recommendations) { product ->
+                        items(recommendations, key = { it.id }) { product ->
                             recommendationItemContent(product)
                         }
                     }
@@ -122,19 +124,23 @@ fun CartWide(
 @Composable
 private fun CartWidePreview() {
     val toppings = (1..2).map {
-        ToppingUiFactory.create(
-            id = it.toLong(),
+        ToppingSelectionUi(
+            topping = ToppingUiFactory.create(
+                id = it.toLong(),
+                price = 2.0
+            ),
             quantity = 2
         )
     }
 
-    val products = (1..2).map { id ->
-        ProductUiFactory.create(
-            id = id.toLong(),
-            description = toppings.joinToString("\n") {
-                "${it.quantity} x ${it.name}"
-            },
-            price = 10.99 + toppings.sumOf { it.quantity * it.price }
+    val cartItems = (1..2).map { id ->
+        CartItemUi(
+            id = id.toString(),
+            product = ProductUiFactory.create(
+                id = id.toLong(),
+                price = 10.99
+            ),
+            selectedToppings = toppings
         )
     }
 
@@ -153,14 +159,16 @@ private fun CartWidePreview() {
                     modifier = Modifier.fillMaxWidth()
                 )
             },
-            products = products,
-            productItemContent = { product ->
+            cartItems = cartItems,
+            productItemContent = { cartItem ->
+                val product = cartItem.product
+
                 ProductListItem(
                     imageUrl = product.imageUrl,
                     name = product.name,
                     description = product.description,
                     price = product.price,
-                    quantity = product.quantity,
+                    quantity = cartItem.quantity,
                     modifier = Modifier.fillMaxWidth()
                 )
             },
