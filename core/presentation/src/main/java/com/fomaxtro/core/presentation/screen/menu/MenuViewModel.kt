@@ -7,8 +7,10 @@ import com.fomaxtro.core.domain.use_case.ObserveProductsWithCartItems
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.onError
 import com.fomaxtro.core.domain.util.unwrapOr
+import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.mapper.toCartItemUi
 import com.fomaxtro.core.presentation.mapper.toUiText
+import com.fomaxtro.core.presentation.ui.UiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -119,7 +121,17 @@ class MenuViewModel(
             }
 
             is MenuAction.OnProductClick -> Unit
+            is MenuAction.OnCartItemAddClick -> onCartItemAddClick(action.cartItemId)
         }
+    }
+
+    private fun onCartItemAddClick(cartItemId: String) = viewModelScope.launch {
+        onCartItemQuantityChange(cartItemId, 1)
+        eventChannel.send(
+            MenuEvent.ShowMessage(
+                message = UiText.StringResource(R.string.added_to_cart)
+            )
+        )
     }
 
     private fun onCartItemQuantityChange(

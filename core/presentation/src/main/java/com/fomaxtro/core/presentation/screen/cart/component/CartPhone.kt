@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -36,9 +37,9 @@ import com.fomaxtro.core.presentation.util.ToppingUiFactory
 @Composable
 fun CartPhone(
     cartItems: List<CartItemUi>,
-    productItemContent: @Composable (CartItemUi) -> Unit,
+    productItemContent: @Composable LazyItemScope.(CartItemUi) -> Unit,
     recommendations: List<ProductUi>,
-    recommendationItemContent: @Composable (ProductUi) -> Unit,
+    recommendationItemContent: @Composable LazyItemScope.(ProductUi) -> Unit,
     loading: Boolean,
     action: @Composable () -> Unit,
     modifier: Modifier = Modifier

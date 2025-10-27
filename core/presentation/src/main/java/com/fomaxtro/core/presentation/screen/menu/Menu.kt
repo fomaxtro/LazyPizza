@@ -1,5 +1,6 @@
 package com.fomaxtro.core.presentation.screen.menu
 
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,10 +18,14 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -51,6 +56,7 @@ fun MenuRoot(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
@@ -60,6 +66,10 @@ fun MenuRoot(
                     event.message.asString(context),
                     Toast.LENGTH_LONG
                 ).show()
+            }
+
+            is MenuEvent.ShowMessage -> {
+                snackbarHostState.showSnackbar(event.message.asString(context))
             }
         }
     }
@@ -71,14 +81,16 @@ fun MenuRoot(
                 else -> viewModel.onAction(action)
             }
         },
-        state = state
+        state = state,
+        snackbarHostState = snackbarHostState
     )
 }
 
 @Composable
 private fun MenuScreen(
     onAction: (MenuAction) -> Unit = {},
-    state: MenuState
+    state: MenuState,
+    snackbarHostState: SnackbarHostState = SnackbarHostState()
 ) {
     val screenType = currentScreenType()
     val productCategories = listOf(
@@ -88,109 +100,92 @@ private fun MenuScreen(
         ProductCategory.ICE_CREAM
     )
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-            .imePadding()
-    ) {
-        item {
-            val bannerImage = when (screenType) {
-                ScreenType.MOBILE -> painterResource(R.drawable.banner)
-                ScreenType.WIDE_SCREEN -> painterResource(R.drawable.banner_wide)
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        }
+    ) { _ ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+                .imePadding()
+        ) {
+            item {
+                val bannerImage = when (screenType) {
+                    ScreenType.MOBILE -> painterResource(R.drawable.banner)
+                    ScreenType.WIDE_SCREEN -> painterResource(R.drawable.banner_wide)
+                }
+
+                Image(
+                    painter = bannerImage,
+                    contentDescription = stringResource(R.string.banner),
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.FillWidth
+                )
             }
 
-            Image(
-                painter = bannerImage,
-                contentDescription = stringResource(R.string.banner),
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.FillWidth
-            )
-        }
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        stickyHeader {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
-            ) {
-                LazyPizzaOutlinedTextField(
-                    value = state.search,
-                    onValueChange = {
-                        onAction(MenuAction.OnSearchChange(it))
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = AppIcons.Outlined.Search,
-                            contentDescription = stringResource(R.string.search),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
-                    placeholder = stringResource(R.string.search_food)
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+            stickyHeader {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
                 ) {
-                    productCategories.forEach { productCategory ->
-                        FilterChip(
-                            selected = state.selectedCategory == productCategory,
-                            onClick = {
-                                onAction(MenuAction.OnProductCategoryToggle(productCategory))
-                            },
-                            label = {
-                                Text(
-                                    text = productCategory
-                                        .toDisplayName()
-                                        .asString(),
-                                    style = MaterialTheme.typography.body3Medium
-                                )
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primary,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                                labelColor = MaterialTheme.colorScheme.textPrimary
+                    LazyPizzaOutlinedTextField(
+                        value = state.search,
+                        onValueChange = {
+                            onAction(MenuAction.OnSearchChange(it))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = AppIcons.Outlined.Search,
+                                contentDescription = stringResource(R.string.search),
+                                tint = MaterialTheme.colorScheme.primary
                             )
-                        )
+                        },
+                        placeholder = stringResource(R.string.search_food)
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        productCategories.forEach { productCategory ->
+                            FilterChip(
+                                selected = state.selectedCategory == productCategory,
+                                onClick = {
+                                    onAction(MenuAction.OnProductCategoryToggle(productCategory))
+                                },
+                                label = {
+                                    Text(
+                                        text = productCategory
+                                            .toDisplayName()
+                                            .asString(),
+                                        style = MaterialTheme.typography.body3Medium
+                                    )
+                                },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                    labelColor = MaterialTheme.colorScheme.textPrimary
+                                )
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        categoryProductList(
-            category = ProductCategory.PIZZA,
-            items = state.cartItems[ProductCategory.PIZZA],
-            loading = state.isLoading,
-            screenType = screenType,
-            itemContent = { cartItem ->
-                val product = cartItem.product
-
-                ProductListItem(
-                    imageUrl = product.imageUrl,
-                    name = product.name,
-                    description = product.description,
-                    price = cartItem.totalPrice,
-                    quantity = cartItem.quantity,
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        onAction(MenuAction.OnProductClick(product))
-                    }
-                )
-            }
-        )
-
-        productCategories.drop(1).forEach { productCategory ->
             categoryProductList(
-                category = productCategory,
-                items = state.cartItems[productCategory],
+                category = ProductCategory.PIZZA,
+                items = state.cartItems[ProductCategory.PIZZA],
                 loading = state.isLoading,
                 screenType = screenType,
                 itemContent = { cartItem ->
@@ -203,33 +198,52 @@ private fun MenuScreen(
                         price = cartItem.totalPrice,
                         quantity = cartItem.quantity,
                         modifier = Modifier.fillMaxWidth(),
-                        onAddClick = {
-                            onAction(
-                                MenuAction.OnCartItemQuantityChange(
-                                    cartItemId = cartItem.id,
-                                    quantity = 1
-                                )
-                            )
-                        },
-                        onDeleteClick = {
-                            onAction(
-                                MenuAction.OnCartItemQuantityChange(
-                                    cartItemId = cartItem.id,
-                                    quantity = 0
-                                )
-                            )
-                        },
-                        onQuantityChange = {
-                            onAction(
-                                MenuAction.OnCartItemQuantityChange(
-                                    cartItemId = cartItem.id,
-                                    quantity = it
-                                )
-                            )
+                        onClick = {
+                            onAction(MenuAction.OnProductClick(product))
                         }
                     )
                 }
             )
+
+            productCategories.drop(1).forEach { productCategory ->
+                categoryProductList(
+                    category = productCategory,
+                    items = state.cartItems[productCategory],
+                    loading = state.isLoading,
+                    screenType = screenType,
+                    itemContent = { cartItem ->
+                        val product = cartItem.product
+
+                        ProductListItem(
+                            imageUrl = product.imageUrl,
+                            name = product.name,
+                            description = product.description,
+                            price = cartItem.totalPrice,
+                            quantity = cartItem.quantity,
+                            modifier = Modifier.fillMaxWidth(),
+                            onAddClick = {
+                                onAction(MenuAction.OnCartItemAddClick(cartItem.id))
+                            },
+                            onDeleteClick = {
+                                onAction(
+                                    MenuAction.OnCartItemQuantityChange(
+                                        cartItemId = cartItem.id,
+                                        quantity = 0
+                                    )
+                                )
+                            },
+                            onQuantityChange = {
+                                onAction(
+                                    MenuAction.OnCartItemQuantityChange(
+                                        cartItemId = cartItem.id,
+                                        quantity = it
+                                    )
+                                )
+                            }
+                        )
+                    }
+                )
+            }
         }
     }
 }

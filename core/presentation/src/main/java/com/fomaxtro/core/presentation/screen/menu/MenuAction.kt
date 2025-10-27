@@ -8,4 +8,5 @@ sealed interface MenuAction {
     data class OnProductCategoryToggle(val category: ProductCategory) : MenuAction
     data class OnCartItemQuantityChange(val cartItemId: String, val quantity: Int) : MenuAction
     data class OnProductClick(val product: ProductUi) : MenuAction
+    data class OnCartItemAddClick(val cartItemId: String) : MenuAction
 }

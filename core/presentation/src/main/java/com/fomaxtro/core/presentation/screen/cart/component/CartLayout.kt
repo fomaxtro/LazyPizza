@@ -1,5 +1,6 @@
 package com.fomaxtro.core.presentation.screen.cart.component
 
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.fomaxtro.core.presentation.model.CartItemUi
@@ -10,9 +11,9 @@ import com.fomaxtro.core.presentation.ui.currentScreenType
 @Composable
 fun CartLayout(
     cartItems: List<CartItemUi>,
-    productItemContent: @Composable (CartItemUi) -> Unit,
+    productItemContent: @Composable LazyItemScope.(CartItemUi) -> Unit,
     recommendations: List<ProductUi>,
-    recommendationItemContent: @Composable (ProductUi) -> Unit,
+    recommendationItemContent: @Composable LazyItemScope.(ProductUi) -> Unit,
     loading: Boolean,
     action: @Composable () -> Unit,
     modifier: Modifier = Modifier
