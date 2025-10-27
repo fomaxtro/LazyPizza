@@ -1,5 +1,6 @@
 package com.fomaxtro.core.presentation.di
 
+import com.fomaxtro.core.presentation.screen.cart.CartViewModel
 import com.fomaxtro.core.presentation.screen.home.HomeViewModel
 import com.fomaxtro.core.presentation.screen.menu.MenuViewModel
 import com.fomaxtro.core.presentation.screen.product_details.ProductDetailsViewModel
@@ -17,4 +18,5 @@ val presentationModule = module {
         )
     }
     viewModelOf(::HomeViewModel)
+    viewModelOf(::CartViewModel)
 }

@@ -2,13 +2,11 @@ package com.fomaxtro.core.presentation.screen.menu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fomaxtro.core.domain.model.CartItem
-import com.fomaxtro.core.domain.model.Product
 import com.fomaxtro.core.domain.model.ProductCategory
-import com.fomaxtro.core.domain.repository.CartRepository
-import com.fomaxtro.core.domain.repository.ProductRepository
+import com.fomaxtro.core.domain.use_case.ObserveProductsWithCartItems
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
-import com.fomaxtro.core.domain.util.Result
+import com.fomaxtro.core.domain.util.onError
+import com.fomaxtro.core.domain.util.unwrapOr
 import com.fomaxtro.core.presentation.mapper.toCartItemUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import kotlinx.coroutines.channels.Channel
@@ -24,20 +22,18 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class MenuViewModel(
-    private val productRepository: ProductRepository,
     private val updateCartItemQuantity: UpdateCartItemQuantity,
-    cartRepository: CartRepository
+    observeProductsWithCartItems: ObserveProductsWithCartItems
 ) : ViewModel() {
     private var firstLoad = false
-    private val products = MutableStateFlow(emptyList<Product>())
 
     private val _state = MutableStateFlow(MenuState())
     val state = _state
         .onStart {
             if (!firstLoad) {
-                loadProducts()
                 observeFilters()
 
                 firstLoad = true
@@ -52,43 +48,23 @@ class MenuViewModel(
     private val eventChannel = Channel<MenuEvent>()
     val events = eventChannel.receiveAsFlow()
 
-    private val cartItems = products
-        .combine(cartRepository.getCartItemsLocal()) { products, cartItems ->
-            products
-                .map { product ->
-                    val foundCartItem = cartItems
-                        .find { product.id == it.productId }
-
-                    CartItem(
-                        id = foundCartItem?.id,
-                        product = product,
-                        quantity = foundCartItem?.quantity ?: 0
-                    )
-                }
+    private val cartItems = observeProductsWithCartItems()
+        .onEach {
+            _state.update { it.copy(isLoading = false) }
         }
+        .onError { error ->
+            eventChannel.send(
+                MenuEvent.ShowSystemMessage(
+                    error.toUiText()
+                )
+            )
+        }
+        .unwrapOr(emptyList())
         .stateIn(
             viewModelScope,
             SharingStarted.Eagerly,
             emptyList()
         )
-
-    private suspend fun loadProducts() {
-        _state.update { it.copy(isLoading = true) }
-
-        when (val result = productRepository.getAll()) {
-            is Result.Error -> {
-                eventChannel.send(
-                    MenuEvent.ShowSystemMessage(result.error.toUiText())
-                )
-            }
-
-            is Result.Success -> {
-                products.value = result.data
-            }
-        }
-
-        _state.update { it.copy(isLoading = false) }
-    }
 
     private fun observeFilters() {
         val search = state
@@ -139,7 +115,7 @@ class MenuViewModel(
             }
 
             is MenuAction.OnCartItemQuantityChange -> {
-                onCartItemQuantityChange(action.productId, action.quantity)
+                onCartItemQuantityChange(action.cartItemId, action.quantity)
             }
 
             is MenuAction.OnProductClick -> Unit
@@ -147,10 +123,11 @@ class MenuViewModel(
     }
 
     private fun onCartItemQuantityChange(
-        productId: Long,
+        cartItemId: String,
         quantity: Int
     ) = viewModelScope.launch {
-        val cartItem = cartItems.value.find { productId == it.product.id } ?: return@launch
+        val cartItem = cartItems.value
+            .find { UUID.fromString(cartItemId) == it.id } ?: return@launch
 
         updateCartItemQuantity(cartItem.copy(quantity = quantity))
     }
@@ -167,9 +144,5 @@ class MenuViewModel(
 
     private fun onSearchChange(search: String) {
         _state.update { it.copy(search = search) }
-    }
-
-    override fun onCleared() {
-
     }
 }

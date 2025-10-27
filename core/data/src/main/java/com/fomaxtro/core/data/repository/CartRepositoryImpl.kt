@@ -90,9 +90,7 @@ class CartRepositoryImpl(
     }
 
     override suspend fun removeCartItem(item: CartItem) {
-        item.id?.let { id ->
-            sessionStorage.removeCartItem(id.toString())
-        }
+        sessionStorage.removeCartItem(item.id.toString())
     }
 
     override fun countCartItems(): Flow<Int> {
@@ -102,18 +100,14 @@ class CartRepositoryImpl(
             .distinctUntilChanged()
     }
 
-    override suspend fun upsertCartItem(item: CartItem): UUID {
-        val id = item.id ?: UUID.randomUUID()
-
+    override suspend fun upsertCartItem(item: CartItem) {
         val upsertItem = CartItemSession(
-            id = id.toString(),
+            id = item.id.toString(),
             productId = item.product.id,
             quantity = item.quantity,
             selectedToppings = item.selectedToppings.map { it.toToppingSelectionSession() }
         )
 
         sessionStorage.upsertCartItem(upsertItem)
-
-        return id
     }
 }
