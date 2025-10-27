@@ -174,7 +174,7 @@ private fun CartWidePreview() {
                 )
             },
             recommendations = recommendations,
-            loading = false,
+            loading = true,
             recommendationItemContent = { product ->
                 ProductRecommendationCard(
                     product = product,

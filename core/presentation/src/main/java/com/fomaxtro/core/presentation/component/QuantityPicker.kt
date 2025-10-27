@@ -1,7 +1,7 @@
 package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,7 +28,7 @@ fun QuantityPicker(
     minQuantity: Int = 0
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.widthIn(max = 96.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         LazyPizzaIconButton(
@@ -46,7 +46,8 @@ fun QuantityPicker(
 
         Text(
             text = quantity.toString(),
-            modifier = Modifier.width(52.dp),
+            modifier = Modifier
+                .weight(1f),
             style = MaterialTheme.typography.title2,
             textAlign = TextAlign.Center,
             maxLines = 1,

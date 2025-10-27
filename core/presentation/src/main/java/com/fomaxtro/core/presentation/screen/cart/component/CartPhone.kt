@@ -53,7 +53,7 @@ fun CartPhone(
                 .padding(16.dp)
         ) {
             if (loading) {
-                items(3) {
+                items(2) {
                     ProductListItemLoader(
                         modifier = Modifier.fillMaxWidth()
                     )
