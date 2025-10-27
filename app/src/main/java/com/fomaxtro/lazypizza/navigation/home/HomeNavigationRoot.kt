@@ -16,10 +16,9 @@ import com.fomaxtro.core.presentation.screen.menu.MenuRoot
 
 @Composable
 fun HomeNavigationRoot(
-    onNavigateToProductDetails: (productId: Long) -> Unit,
-    startRoute: HomeRoute
+    onNavigateToProductDetails: (productId: Long) -> Unit
 ) {
-    val backStack = rememberNavBackStack(startRoute)
+    val backStack = rememberNavBackStack(HomeRoute.Menu)
     val currentRoute = backStack.lastOrNull()
 
     val currentDestination = when (currentRoute) {
