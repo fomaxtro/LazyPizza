@@ -1,14 +1,12 @@
 package com.fomaxtro.core.presentation.screen.product_details
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,19 +20,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.fomaxtro.core.domain.model.ProductId
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaNavigationIconButton
 import com.fomaxtro.core.presentation.designsystem.modifier.shimmer
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaTopAppBar
+import com.fomaxtro.core.presentation.model.ToppingSelectionUi
 import com.fomaxtro.core.presentation.screen.product_details.component.ProductDetailsLayout
 import com.fomaxtro.core.presentation.screen.product_details.component.ToppingListItem
-import com.fomaxtro.core.presentation.ui.Formatter
+import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
-import com.fomaxtro.core.presentation.ui.rememberScreenType
+import com.fomaxtro.core.presentation.ui.currentScreenType
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 import org.koin.androidx.compose.koinViewModel
@@ -42,10 +40,11 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ProductDetailsRoot(
-    id: ProductId,
-    navigateBack: () -> Unit,
+    productId: Long,
+    onBackClick: () -> Unit,
+    onNavigateToCart: () -> Unit,
     viewModel: ProductDetailsViewModel = koinViewModel {
-        parametersOf(id)
+        parametersOf(productId)
     }
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -60,13 +59,15 @@ fun ProductDetailsRoot(
                     Toast.LENGTH_LONG
                 ).show()
             }
+
+            ProductDetailsEvent.NavigateToCart -> onNavigateToCart()
         }
     }
 
     ProductDetailsScreen(
         onAction = { action ->
             when (action) {
-                ProductDetailsAction.OnNavigateBackClick -> navigateBack()
+                ProductDetailsAction.OnNavigateBackClick -> onBackClick()
                 else -> viewModel.onAction(action)
             }
         },
@@ -80,7 +81,7 @@ private fun ProductDetailsScreen(
     onAction: (ProductDetailsAction) -> Unit = {},
     state: ProductDetailsState
 ) {
-    val screenType = rememberScreenType()
+    val screenType = currentScreenType()
 
     Scaffold(
         topBar = {
@@ -104,13 +105,8 @@ private fun ProductDetailsScreen(
                 if (state.product != null) {
                     AsyncImage(
                         model = state.product.imageUrl,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                color = MaterialTheme.colorScheme.background,
-                                shape = RoundedCornerShape(bottomEnd = 16.dp)
-                            )
+                        contentDescription = state.product.name,
+                        modifier = Modifier.fillMaxSize()
                     )
                 } else {
                     Box(
@@ -146,23 +142,25 @@ private fun ProductDetailsScreen(
             },
             action = {
                 LazyPizzaButton(
-                    onClick = {},
+                    onClick = {
+                        onAction(ProductDetailsAction.OnAddToCartClick)
+                    },
                     text = stringResource(
                         R.string.add_to_cart_for,
-                        Formatter.formatCurrency(state.totalPrice)
+                        Formatters.formatCurrency(state.totalPrice)
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     enabled = state.canAddToCart
                 )
             },
             items = state.toppings,
-            itemContent = { topping ->
+            itemContent = { toppingSelection ->
                 ToppingListItem(
-                    topping = topping,
+                    toppingSelection = toppingSelection,
                     onClick = {
                         onAction(
                             ProductDetailsAction.OnToppingQuantityChange(
-                                topping = topping,
+                                toppingId = toppingSelection.topping.id,
                                 quantity = 1
                             )
                         )
@@ -170,7 +168,7 @@ private fun ProductDetailsScreen(
                     onQuantityChange = {
                         onAction(
                             ProductDetailsAction.OnToppingQuantityChange(
-                                topping = topping,
+                                toppingId = toppingSelection.topping.id,
                                 quantity = it
                             )
                         )
@@ -200,8 +198,10 @@ private fun ProductDetailsScreenPreview() {
                 ),
                 isToppingsLoading = false,
                 toppings = (1..12).map {
-                    ToppingUiFactory.create(
-                        id = it.toLong()
+                    ToppingSelectionUi(
+                        topping = ToppingUiFactory.create(
+                            id = it.toLong()
+                        )
                     )
                 }
             ),

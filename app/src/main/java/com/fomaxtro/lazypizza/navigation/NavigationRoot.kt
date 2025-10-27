@@ -6,8 +6,8 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.fomaxtro.core.presentation.screen.home.HomeRoot
 import com.fomaxtro.core.presentation.screen.product_details.ProductDetailsRoot
+import com.fomaxtro.lazypizza.navigation.home.HomeNavigationRoot
 
 @Composable
 fun NavigationRoot() {
@@ -23,15 +23,11 @@ fun NavigationRoot() {
             rememberViewModelStoreNavEntryDecorator()
         ),
         entryProvider = entryProvider {
-            entry<Route.Home> {
-                HomeRoot(
-                    navigateToProductDetails = { id ->
+            entry<Route.Home> { entry ->
+                HomeNavigationRoot(
+                    onNavigateToProductDetails = { productId ->
                         if (backStack.lastOrNull() !is Route.ProductDetails) {
-                            backStack.add(
-                                Route.ProductDetails(
-                                    id = id
-                                )
-                            )
+                            backStack.add(Route.ProductDetails(productId))
                         }
                     }
                 )
@@ -39,10 +35,20 @@ fun NavigationRoot() {
 
             entry<Route.ProductDetails> { entry ->
                 ProductDetailsRoot(
-                    id = entry.id,
-                    navigateBack = {
+                    productId = entry.productId,
+                    onBackClick = {
                         if (backStack.lastOrNull() is Route.ProductDetails) {
                             backStack.removeLastOrNull()
+                        }
+                    },
+                    onNavigateToCart = {
+                        val currentRoute = backStack.lastOrNull()
+                        val lastHome = backStack.lastOrNull { it is Route.Home }
+
+                        if (currentRoute is Route.ProductDetails) {
+                            backStack.add(Route.Home)
+                            backStack.remove(currentRoute)
+                            backStack.remove(lastHome)
                         }
                     }
                 )

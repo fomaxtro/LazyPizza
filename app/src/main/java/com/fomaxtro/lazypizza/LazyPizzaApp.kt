@@ -2,6 +2,7 @@ package com.fomaxtro.lazypizza
 
 import android.app.Application
 import com.fomaxtro.core.data.di.dataModule
+import com.fomaxtro.core.domain.di.domainModule
 import com.fomaxtro.core.presentation.di.presentationModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -13,7 +14,7 @@ class LazyPizzaApp : Application() {
         super.onCreate()
 
         if (BuildConfig.DEBUG) {
-            Timber.Forest.plant(Timber.DebugTree())
+            Timber.plant(Timber.DebugTree())
         }
 
         startKoin {
@@ -22,6 +23,7 @@ class LazyPizzaApp : Application() {
 
             modules(
                 dataModule,
+                domainModule,
                 presentationModule
             )
         }

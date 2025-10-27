@@ -1,0 +1,4 @@
+package com.fomaxtro.core.presentation.screen.history
+
+sealed interface HistoryEvent {
+}

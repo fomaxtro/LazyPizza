@@ -18,6 +18,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.PrimaryGradientStart
 import com.fomaxtro.core.presentation.designsystem.theme.primaryGradient
 import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
+import com.fomaxtro.core.presentation.designsystem.theme.title3
 
 @Composable
 fun LazyPizzaButton(
@@ -46,10 +47,7 @@ fun LazyPizzaButton(
                             shadow = Shadow(
                                 color = PrimaryGradientStart.copy(alpha = 0.25f),
                                 radius = 6.dp,
-                                offset = DpOffset(
-                                    x = 0.dp,
-                                    y = 4.dp
-                                )
+                                offset = DpOffset(0.dp, 4.dp)
                             )
                         )
                 } else Modifier
@@ -58,7 +56,7 @@ fun LazyPizzaButton(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.title3
         )
     }
 }
@@ -71,7 +69,7 @@ private fun LazyPizzaPrimaryButtonPreview() {
             onClick = {},
             text = "Primary Button",
             modifier = Modifier.padding(8.dp),
-            enabled = false
+            enabled = true
         )
     }
 }

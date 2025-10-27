@@ -1,7 +1,6 @@
 package com.fomaxtro.lazypizza.navigation
 
 import androidx.navigation3.runtime.NavKey
-import com.fomaxtro.core.domain.model.ProductId
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,5 +9,5 @@ sealed interface Route : NavKey {
     data object Home : Route
 
     @Serializable
-    data class ProductDetails(val id: ProductId) : Route
+    data class ProductDetails(val productId: Long) : Route
 }

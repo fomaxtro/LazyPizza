@@ -1,30 +1,35 @@
-package com.fomaxtro.core.presentation.screen.home.component
+package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.fomaxtro.core.presentation.designsystem.card.LazyPizzaCardDefaults
 import com.fomaxtro.core.presentation.designsystem.modifier.shimmer
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.surfaceHighest
 import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
 
 @Composable
@@ -34,20 +39,21 @@ fun BaseProductListItem(
     image: @Composable () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Card(
+    Surface(
         modifier = modifier
-            .height(IntrinsicSize.Max)
+            .height(IntrinsicSize.Min)
             .dropShadow(
-                shape = CardDefaults.shape,
+                shape = LazyPizzaCardDefaults.shape,
                 shadow = Shadow(
                     color = MaterialTheme.colorScheme.textPrimary.copy(alpha = 0.06f),
-                    radius = 16.dp
+                    radius = 16.dp,
+                    offset = DpOffset(0.dp, 4.dp)
                 )
             )
             .then(
                 if (onClick != null) {
                     Modifier
-                        .clip(CardDefaults.shape)
+                        .clip(LazyPizzaCardDefaults.shape)
                         .clickable(onClick = onClick)
                 } else Modifier
             ),
@@ -55,15 +61,18 @@ fun BaseProductListItem(
             color = MaterialTheme.colorScheme.surface,
             width = 1.dp
         ),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+        shape = LazyPizzaCardDefaults.shape
     ) {
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
             Box(
-                modifier = Modifier.size(122.dp)
+                modifier = Modifier
+                    .heightIn(max = 128.dp)
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .background(MaterialTheme.colorScheme.surfaceHighest),
+                contentAlignment = Alignment.Center
             ) {
                 image()
             }
@@ -71,7 +80,7 @@ fun BaseProductListItem(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .weight(1f)
+                    .weight(2f)
                     .padding(
                         horizontal = 16.dp,
                         vertical = 12.dp

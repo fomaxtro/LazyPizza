@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.home.component
+package com.fomaxtro.core.presentation.screen.menu.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,8 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.domain.model.ProductCategory
+import com.fomaxtro.core.presentation.component.ProductListItemLoader
+import com.fomaxtro.core.presentation.designsystem.theme.label2Semibold
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
-import com.fomaxtro.core.presentation.model.ProductUi
+import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.util.toDisplayName
 
@@ -23,8 +25,8 @@ fun LazyListScope.categoryProductList(
     category: ProductCategory,
     loading: Boolean,
     screenType: ScreenType,
-    itemContent: @Composable (ProductUi) -> Unit,
-    items: List<ProductUi>?
+    itemContent: @Composable (CartItemUi) -> Unit,
+    items: List<CartItemUi>?
 ) {
     if (loading || (items != null && items.isNotEmpty())) {
         item {
@@ -34,7 +36,7 @@ fun LazyListScope.categoryProductList(
                 text = category
                     .toDisplayName()
                     .asString(),
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.label2Semibold,
                 color = MaterialTheme.colorScheme.textSecondary
             )
         }
@@ -50,7 +52,7 @@ fun LazyListScope.categoryProductList(
                         )
                     }
                 } else {
-                    items(items!!, key = { it.id }) { item ->
+                    items(items!!, key = { it.product.id }) { item ->
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Box(

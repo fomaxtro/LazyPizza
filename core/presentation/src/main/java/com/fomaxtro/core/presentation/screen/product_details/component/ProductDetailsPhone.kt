@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LocalTextStyle
@@ -23,16 +22,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.presentation.R
+import com.fomaxtro.core.presentation.component.GradientFadeBox
+import com.fomaxtro.core.presentation.component.GradientFadeBoxDefaults
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
-import com.fomaxtro.core.presentation.designsystem.theme.fadeGradient
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
-import com.fomaxtro.core.presentation.model.ToppingUi
+import com.fomaxtro.core.presentation.model.ToppingSelectionUi
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 
 @Composable
@@ -43,11 +42,9 @@ fun ProductDetailsPhone(
     action: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
-    itemContent: @Composable (ToppingUi) -> Unit,
-    items: List<ToppingUi>,
+    itemContent: @Composable (ToppingSelectionUi) -> Unit,
+    items: List<ToppingSelectionUi>,
 ) {
-    val isInPreview = LocalInspectionMode.current
-
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -60,19 +57,13 @@ fun ProductDetailsPhone(
                         .fillMaxWidth()
                         .aspectRatio(3f / 2f)
                         .background(MaterialTheme.colorScheme.surface)
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = RoundedCornerShape(bottomEnd = 16.dp)
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
-                    if (isInPreview) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    color = MaterialTheme.colorScheme.background,
-                                    shape = RoundedCornerShape(bottomEnd = 16.dp)
-                                )
-                        )
-                    } else {
-                        image()
-                    }
+                    image()
                 }
             }
 
@@ -140,34 +131,17 @@ fun ProductDetailsPhone(
                             }
                         }
 
-                        val offsetSpacing = 16.dp + 32.dp + ButtonDefaults.MinHeight
 
-                        Spacer(modifier = Modifier.height(offsetSpacing))
+                        Spacer(modifier = Modifier.height(GradientFadeBoxDefaults.offsetSpacing))
                     }
                 }
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.fadeGradient)
-                .align(Alignment.BottomCenter)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = 16.dp
-                    )
-                    .padding(
-                        top = 36.dp,
-                        bottom = 16.dp
-                    )
-            ) {
-                action()
-            }
-        }
+        GradientFadeBox(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            content = action
+        )
     }
 }
 
@@ -177,16 +151,18 @@ private fun ProductDetailsPhonePreview() {
     LazyPizzaTheme {
         ProductDetailsPhone(
             image = {},
-            title = {},
-            subtitle = {},
+            title = { Text("Title") },
+            subtitle = { Text("Subtitle") },
             items = (1..6).map {
-                ToppingUiFactory.create(
-                    id = it.toLong()
+                ToppingSelectionUi(
+                    topping = ToppingUiFactory.create(
+                        id = it.toLong()
+                    )
                 )
             },
             itemContent = {
                 ToppingListItem(
-                    topping = it,
+                    toppingSelection = it,
                     onClick = {},
                     onQuantityChange = {},
                     modifier = Modifier.fillMaxWidth()

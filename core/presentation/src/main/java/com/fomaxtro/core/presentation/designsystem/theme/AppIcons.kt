@@ -26,5 +26,14 @@ object AppIcons {
 
         val Phone: ImageVector
             @Composable get() = ImageVector.vectorResource(R.drawable.phone_filled)
+
+        val Menu: ImageVector
+            @Composable get() = ImageVector.vectorResource(R.drawable.menu_filled)
+
+        val Cart: ImageVector
+            @Composable get() = ImageVector.vectorResource(R.drawable.cart_filled)
+
+        val History: ImageVector
+            @Composable get() = ImageVector.vectorResource(R.drawable.history_filled)
     }
 }

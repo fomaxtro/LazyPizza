@@ -4,7 +4,7 @@ import android.icu.math.BigDecimal
 import android.icu.text.NumberFormat
 import android.icu.util.Currency
 
-object Formatter {
+object Formatters {
     fun formatCurrency(price: Double): String {
         return NumberFormat
             .getCurrencyInstance()

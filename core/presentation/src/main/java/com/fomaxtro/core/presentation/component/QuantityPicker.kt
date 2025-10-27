@@ -1,9 +1,8 @@
 package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,24 +18,25 @@ import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaIconButton
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
+import com.fomaxtro.core.presentation.designsystem.theme.title2
 
 @Composable
 fun QuantityPicker(
     onQuantityChange: (Int) -> Unit,
     quantity: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    minQuantity: Int = 0
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.widthIn(max = 96.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         LazyPizzaIconButton(
             onClick = {
                 onQuantityChange(quantity - 1)
             },
-            colors = IconButtonDefaults.iconButtonColors(
-                contentColor = MaterialTheme.colorScheme.textSecondary
-            )
+            color = MaterialTheme.colorScheme.textSecondary,
+            enabled = quantity > minQuantity
         ) {
             Icon(
                 imageVector = AppIcons.Filled.Minus,
@@ -46,8 +46,9 @@ fun QuantityPicker(
 
         Text(
             text = quantity.toString(),
-            modifier = Modifier.width(52.dp),
-            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier
+                .weight(1f),
+            style = MaterialTheme.typography.title2,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.MiddleEllipsis
@@ -57,9 +58,7 @@ fun QuantityPicker(
             onClick = {
                 onQuantityChange(quantity + 1)
             },
-            colors = IconButtonDefaults.iconButtonColors(
-                contentColor = MaterialTheme.colorScheme.textSecondary
-            )
+            color = MaterialTheme.colorScheme.textSecondary
         ) {
             Icon(
                 imageVector = AppIcons.Filled.Plus,
@@ -75,7 +74,8 @@ private fun QuantityPickerPreview() {
     LazyPizzaTheme {
         QuantityPicker(
             quantity = 1,
-            onQuantityChange = {}
+            onQuantityChange = {},
+            minQuantity = 1
         )
     }
 }

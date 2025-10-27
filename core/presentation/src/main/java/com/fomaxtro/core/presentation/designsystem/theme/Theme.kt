@@ -33,6 +33,9 @@ val ColorScheme.surfaceHighest: Color
 val ColorScheme.outline50: Color
     get() = Outline50
 
+val ColorScheme.overlay: Color
+    get() = Overlay
+
 val ColorScheme.primary8: Color
     get() = Primary8
 
@@ -48,7 +51,6 @@ fun LazyPizzaTheme(
 ) {
     MaterialTheme(
         colorScheme = LightColorScheme,
-        typography = Typography,
         content = content
     )
 }

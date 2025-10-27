@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
-import com.fomaxtro.core.presentation.model.ToppingUi
+import com.fomaxtro.core.presentation.model.ToppingSelectionUi
 import com.fomaxtro.core.presentation.ui.ScreenType
-import com.fomaxtro.core.presentation.ui.rememberScreenType
+import com.fomaxtro.core.presentation.ui.currentScreenType
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 
 @Composable
@@ -24,12 +24,10 @@ fun ProductDetailsLayout(
     action: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
-    itemContent: @Composable (ToppingUi) -> Unit,
-    items: List<ToppingUi>
+    itemContent: @Composable (ToppingSelectionUi) -> Unit,
+    items: List<ToppingSelectionUi>
 ) {
-    val screenType = rememberScreenType()
-
-    when (screenType) {
+    when (currentScreenType()) {
         ScreenType.MOBILE -> {
             ProductDetailsPhone(
                 image = image,
@@ -74,13 +72,15 @@ private fun ProductDetailsLayoutPreview() {
             title = { Text("Margherita") },
             subtitle = { Text("Tomato sauce, Mozzarella, Fresh basil, Olive oil") },
             items = (1..15).map {
-                ToppingUiFactory.create(
-                    id = it.toLong()
+                ToppingSelectionUi(
+                    topping = ToppingUiFactory.create(
+                        id = it.toLong()
+                    )
                 )
             },
             itemContent = { topping ->
                 ToppingListItem(
-                    topping = topping,
+                    toppingSelection = topping,
                     onClick = {},
                     onQuantityChange = {},
                     modifier = Modifier.fillMaxWidth()

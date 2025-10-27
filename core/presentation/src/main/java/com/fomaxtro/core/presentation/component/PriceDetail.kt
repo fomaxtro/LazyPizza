@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.home.component
+package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
@@ -8,8 +8,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.body4Regular
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
-import com.fomaxtro.core.presentation.ui.Formatter
+import com.fomaxtro.core.presentation.designsystem.theme.title1SemiBold
+import com.fomaxtro.core.presentation.ui.Formatters
 
 @Composable
 fun PriceDetail(
@@ -22,13 +24,13 @@ fun PriceDetail(
         horizontalAlignment = Alignment.End
     ) {
         Text(
-            text = Formatter.formatCurrency(price * quantity),
-            style = MaterialTheme.typography.titleLarge
+            text = Formatters.formatCurrency(price),
+            style = MaterialTheme.typography.title1SemiBold
         )
 
         Text(
-            text = "$quantity x ${Formatter.formatCurrency(price)}",
-            style = MaterialTheme.typography.bodySmall,
+            text = "$quantity x ${Formatters.formatCurrency(price)}",
+            style = MaterialTheme.typography.body4Regular,
             color = MaterialTheme.colorScheme.textSecondary
         )
     }

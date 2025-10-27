@@ -32,7 +32,7 @@ import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
-import com.fomaxtro.core.presentation.model.ToppingUi
+import com.fomaxtro.core.presentation.model.ToppingSelectionUi
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
 
 @Composable
@@ -43,8 +43,8 @@ fun ProductDetailsWide(
     action: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     loading: Boolean = false,
-    itemContent: @Composable (ToppingUi) -> Unit,
-    items: List<ToppingUi>
+    itemContent: @Composable (ToppingSelectionUi) -> Unit,
+    items: List<ToppingSelectionUi>
 ) {
     Row(
         modifier = modifier.fillMaxSize()
@@ -120,7 +120,7 @@ fun ProductDetailsWide(
                             )
                         }
                     } else {
-                        items(items, key = { it.id }) { product ->
+                        items(items, key = { it.topping.id }) { product ->
                             Box(
                                 modifier = Modifier.weight(1f)
                             ) {
@@ -153,13 +153,15 @@ private fun ProductDetailsWidePreview() {
             title = { Text("Margherita") },
             subtitle = { Text("Tomato sauce, Mozzarella, Fresh basil, Olive oil") },
             items = (1..15).map {
-                ToppingUiFactory.create(
-                    id = it.toLong()
+                ToppingSelectionUi(
+                    topping = ToppingUiFactory.create(
+                        id = it.toLong()
+                    )
                 )
             },
             itemContent = { topping ->
                 ToppingListItem(
-                    topping = topping,
+                    toppingSelection = topping,
                     onClick = {},
                     onQuantityChange = {},
                     modifier = Modifier.fillMaxWidth()

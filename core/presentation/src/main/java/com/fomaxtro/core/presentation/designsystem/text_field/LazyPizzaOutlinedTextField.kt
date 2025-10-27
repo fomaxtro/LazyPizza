@@ -12,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.body1Regular
 import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 
@@ -22,7 +24,7 @@ fun LazyPizzaOutlinedTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: @Composable (() -> Unit)? = null,
+    placeholder: String?,
     leadingIcon: @Composable (() -> Unit)? = null
 ) {
     val shape = CircleShape
@@ -35,7 +37,8 @@ fun LazyPizzaOutlinedTextField(
                 shape = shape,
                 shadow = Shadow(
                     radius = 16.dp,
-                    color = MaterialTheme.colorScheme.textPrimary.copy(alpha = 0.04f)
+                    color = MaterialTheme.colorScheme.textPrimary.copy(alpha = 0.04f),
+                    offset = DpOffset(0.dp, 4.dp)
                 )
             ),
         colors = OutlinedTextFieldDefaults.colors(
@@ -45,9 +48,16 @@ fun LazyPizzaOutlinedTextField(
             focusedPlaceholderColor = MaterialTheme.colorScheme.textSecondary
         ),
         shape = shape,
-        placeholder = placeholder,
+        placeholder = placeholder?.let { placeholder ->
+            @Composable {
+                Text(
+                    text = placeholder,
+                    style = MaterialTheme.typography.body1Regular
+                )
+            }
+        },
         leadingIcon = leadingIcon,
-        textStyle = MaterialTheme.typography.bodyLarge
+        textStyle = MaterialTheme.typography.body1Regular
     )
 }
 
@@ -61,9 +71,7 @@ private fun LazyPizzaOutlinedTextFieldPreview() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            placeholder = {
-                Text("Placeholder...")
-            }
+            placeholder = "Placeholder..."
         )
     }
 }

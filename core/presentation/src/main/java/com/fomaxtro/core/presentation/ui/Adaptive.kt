@@ -11,7 +11,7 @@ enum class ScreenType {
 }
 
 @Composable
-fun rememberScreenType(): ScreenType {
+fun currentScreenType(): ScreenType {
     val windowInfo = LocalWindowInfo.current
     val targetWidthPx = with(LocalDensity.current) {
         840.dp.toPx()
