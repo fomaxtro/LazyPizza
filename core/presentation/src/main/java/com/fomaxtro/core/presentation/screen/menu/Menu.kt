@@ -177,7 +177,7 @@ private fun MenuScreen(
                     imageUrl = product.imageUrl,
                     name = product.name,
                     description = product.description,
-                    price = product.price,
+                    price = cartItem.totalPrice,
                     quantity = cartItem.quantity,
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
@@ -200,7 +200,7 @@ private fun MenuScreen(
                         imageUrl = product.imageUrl,
                         name = product.name,
                         description = product.description,
-                        price = product.price,
+                        price = cartItem.totalPrice,
                         quantity = cartItem.quantity,
                         modifier = Modifier.fillMaxWidth(),
                         onAddClick = {
