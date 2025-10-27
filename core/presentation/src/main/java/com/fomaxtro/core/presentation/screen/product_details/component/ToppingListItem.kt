@@ -60,7 +60,8 @@ fun ToppingListItem(
             .clickable(
                 onClick = onClick,
                 indication = null,
-                interactionSource = null
+                interactionSource = null,
+                enabled = toppingSelection.quantity == 0
             ),
         selected = toppingSelection.quantity > 0
     )
