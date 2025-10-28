@@ -92,7 +92,7 @@ private fun CartScreen(
                     imageUrl = product.imageUrl,
                     name = product.name,
                     description = description,
-                    price = cartItem.totalPrice,
+                    price = cartItem.priceWithToppings,
                     quantity = cartItem.quantity,
                     modifier = Modifier
                         .fillMaxWidth()

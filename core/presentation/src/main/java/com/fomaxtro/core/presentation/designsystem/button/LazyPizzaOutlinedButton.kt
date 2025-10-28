@@ -1,7 +1,7 @@
 package com.fomaxtro.core.presentation.designsystem.button
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -23,7 +23,7 @@ fun LazyPizzaOutlinedButton(
     OutlinedButton(
         onClick = onClick,
         modifier = modifier
-            .height(40.dp),
+            .heightIn(min = 40.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = MaterialTheme.colorScheme.primary
         ),
@@ -34,7 +34,7 @@ fun LazyPizzaOutlinedButton(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.title3
+            style = MaterialTheme.typography.title3,
         )
     }
 }

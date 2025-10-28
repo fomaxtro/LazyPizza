@@ -1,10 +1,8 @@
 package com.fomaxtro.core.presentation.screen.cart
 
-import androidx.compose.runtime.Stable
 import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.model.ProductUi
 
-@Stable
 data class CartState(
     val isCartItemsLoading: Boolean = true,
     val isProductRecommendationsLoading: Boolean = true,

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ fun HomeRoot(
     viewModel: HomeViewModel = koinViewModel(),
     currentDestination: HomeDestination,
     onDestinationClick: (HomeDestination) -> Unit,
+    hostState: SnackbarHostState,
     content: @Composable () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -38,6 +40,7 @@ fun HomeRoot(
         state = state,
         currentDestination = currentDestination,
         onDestinationClick = onDestinationClick,
+        hostState = hostState,
         content = content
     )
 }
@@ -48,6 +51,7 @@ private fun HomeScreen(
     state: HomeState,
     currentDestination: HomeDestination,
     onDestinationClick: (HomeDestination) -> Unit,
+    hostState: SnackbarHostState,
     content: @Composable () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -134,7 +138,8 @@ private fun HomeScreen(
                 detectTapGestures {
                     focusManager.clearFocus()
                 }
-            }
+            },
+        hostState = hostState
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -154,6 +159,7 @@ private fun HomeScreenPreview() {
             state = HomeState(),
             onDestinationClick = {},
             currentDestination = HomeDestination.MENU,
+            hostState = SnackbarHostState()
         ) {
 
         }

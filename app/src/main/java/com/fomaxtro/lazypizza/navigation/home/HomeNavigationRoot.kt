@@ -3,7 +3,11 @@ package com.fomaxtro.lazypizza.navigation.home
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.togetherWith
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -14,6 +18,7 @@ import com.fomaxtro.core.presentation.screen.history.HistoryRoot
 import com.fomaxtro.core.presentation.screen.home.HomeDestination
 import com.fomaxtro.core.presentation.screen.home.HomeRoot
 import com.fomaxtro.core.presentation.screen.menu.MenuRoot
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeNavigationRoot(
@@ -29,6 +34,10 @@ fun HomeNavigationRoot(
         else -> HomeDestination.MENU
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
     HomeRoot(
         currentDestination = currentDestination,
         onDestinationClick = { destination ->
@@ -40,7 +49,8 @@ fun HomeNavigationRoot(
 
             backStack.add(route)
             backStack.remove(currentRoute)
-        }
+        },
+        hostState = snackbarHostState
     ) {
         NavDisplay(
             backStack = backStack,
@@ -63,7 +73,12 @@ fun HomeNavigationRoot(
             entryProvider = entryProvider {
                 entry<HomeRoute.Menu> {
                     MenuRoot(
-                        onProductClick = onNavigateToProductDetails
+                        onProductClick = onNavigateToProductDetails,
+                        onShowMessage = { message ->
+                            scope.launch {
+                                snackbarHostState.showSnackbar(message.asString(context))
+                            }
+                        }
                     )
                 }
 

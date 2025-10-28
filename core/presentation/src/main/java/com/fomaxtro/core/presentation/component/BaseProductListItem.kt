@@ -6,13 +6,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +39,7 @@ fun BaseProductListItem(
 ) {
     Surface(
         modifier = modifier
-            .height(IntrinsicSize.Min)
+            .heightIn(max = 128.dp)
             .dropShadow(
                 shape = LazyPizzaCardDefaults.shape,
                 shadow = Shadow(
@@ -68,8 +66,7 @@ fun BaseProductListItem(
         ) {
             Box(
                 modifier = Modifier
-                    .heightIn(max = 128.dp)
-                    .weight(1f)
+                    .fillMaxHeight()
                     .aspectRatio(1f)
                     .background(MaterialTheme.colorScheme.surfaceHighest),
                 contentAlignment = Alignment.Center
@@ -80,7 +77,6 @@ fun BaseProductListItem(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .weight(2f)
                     .padding(
                         horizontal = 16.dp,
                         vertical = 12.dp

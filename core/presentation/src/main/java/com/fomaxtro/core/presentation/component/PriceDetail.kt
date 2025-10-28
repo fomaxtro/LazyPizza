@@ -24,7 +24,7 @@ fun PriceDetail(
         horizontalAlignment = Alignment.End
     ) {
         Text(
-            text = Formatters.formatCurrency(price),
+            text = Formatters.formatCurrency(price * quantity),
             style = MaterialTheme.typography.title1SemiBold
         )
 

@@ -6,14 +6,11 @@ data class CartItemUi(
     val quantity: Int = 0,
     val selectedToppings: List<ToppingSelectionUi> = emptyList()
 ) {
-    val totalPrice: Double
+    val priceWithToppings: Double
         get() {
             val toppingsPrice = selectedToppings.sumOf { it.totalPrice }
 
-            return if (quantity > 0) {
-                quantity * (product.price + toppingsPrice)
-            } else {
-                product.price
-            }
+            return product.price + toppingsPrice
         }
+    val totalPrice: Double = priceWithToppings * quantity
 }
