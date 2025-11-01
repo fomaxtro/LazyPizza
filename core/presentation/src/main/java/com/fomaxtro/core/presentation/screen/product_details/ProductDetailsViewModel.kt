@@ -9,8 +9,7 @@ import com.fomaxtro.core.domain.repository.CartRepository
 import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.repository.ToppingRepository
 import com.fomaxtro.core.domain.util.Result
-import com.fomaxtro.core.presentation.mapper.toProductUi
-import com.fomaxtro.core.presentation.mapper.toToppingSelectionUi
+import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
@@ -73,7 +72,7 @@ class ProductDetailsViewModel(
 
                 _state.update {
                     it.copy(
-                        product = product.toProductUi()
+                        product = product.toUi()
                     )
                 }
             }
@@ -102,7 +101,7 @@ class ProductDetailsViewModel(
                         _state.update {
                             it.copy(
                                 toppings = toppingSelections.map { topping ->
-                                    topping.toToppingSelectionUi()
+                                    topping.toUi()
                                 }
                             )
                         }

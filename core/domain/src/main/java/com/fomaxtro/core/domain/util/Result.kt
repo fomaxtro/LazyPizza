@@ -27,6 +27,20 @@ inline fun <D, E : Error, R : Error> Result<D, E>.mapError(
     }
 }
 
+fun <D, E : Error> Result<D, E>.getOrNull(): D? {
+    return when (this) {
+        is Result.Error -> null
+        is Result.Success -> data
+    }
+}
+
+fun <D, E : Error> Result<D, E>.getOrDefault(default: D): D {
+    return when (this) {
+        is Result.Error -> default
+        is Result.Success -> data
+    }
+}
+
 fun <D, E : Error> Flow<Result<D, E>>.unwrapOr(default: D): Flow<D> {
     return map {
         when (it) {

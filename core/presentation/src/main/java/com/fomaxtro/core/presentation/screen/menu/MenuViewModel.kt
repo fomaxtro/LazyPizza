@@ -2,21 +2,25 @@ package com.fomaxtro.core.presentation.screen.menu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.ProductCategory
 import com.fomaxtro.core.domain.use_case.ObserveProductsWithCartItems
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
-import com.fomaxtro.core.domain.util.onError
-import com.fomaxtro.core.domain.util.unwrapOr
+import com.fomaxtro.core.domain.util.Result
+import com.fomaxtro.core.domain.util.getOrNull
 import com.fomaxtro.core.presentation.R
-import com.fomaxtro.core.presentation.mapper.toCartItemUi
+import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.ui.UiText
+import com.fomaxtro.core.presentation.util.Resource
+import com.fomaxtro.core.presentation.util.getOrNull
+import com.fomaxtro.core.presentation.util.map
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -25,63 +29,50 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
+@OptIn(ExperimentalAtomicApi::class, ExperimentalCoroutinesApi::class)
 class MenuViewModel(
     private val updateCartItemQuantity: UpdateCartItemQuantity,
     observeProductsWithCartItems: ObserveProductsWithCartItems
 ) : ViewModel() {
-    private var firstLoad = false
-
-    private val _state = MutableStateFlow(MenuState())
-    val state = _state
-        .onStart {
-            if (!firstLoad) {
-                observeFilters()
-
-                firstLoad = true
-            }
-        }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            MenuState()
-        )
+    private val _state = MutableStateFlow(MenuInternalState())
 
     private val eventChannel = Channel<MenuEvent>()
     val events = eventChannel.receiveAsFlow()
 
     private val cartItems = observeProductsWithCartItems()
-        .onEach {
-            _state.update { it.copy(isLoading = false) }
-        }
-        .onError { error ->
-            eventChannel.send(
-                MenuEvent.ShowSystemMessage(
-                    error.toUiText()
-                )
-            )
-        }
-        .unwrapOr(emptyList())
         .stateIn(
             viewModelScope,
-            SharingStarted.Eagerly,
-            emptyList()
+            SharingStarted.Lazily,
+            Result.Success(emptyList())
         )
 
-    private fun observeFilters() {
-        val search = state
-            .map { it.search }
-            .distinctUntilChanged()
+    private val cartItemsResource = cartItems
+        .onEach { cartItemsResult ->
+            if (cartItemsResult is Result.Error) {
+                eventChannel.send(
+                    MenuEvent.ShowSystemMessage(
+                        message = cartItemsResult.error.toUiText()
+                    )
+                )
+            }
+        }
+        .map { cartItemsResult ->
+            when (cartItemsResult) {
+                is Result.Error -> Resource.Error
+                is Result.Success -> Resource.Success(cartItemsResult.data)
+            }
+        }
+        .onStart { emit(Resource.Loading) }
 
-        val selectedCategories = state
-            .map { it.selectedCategory }
-            .distinctUntilChanged()
 
-        combine(
-            cartItems,
-            search,
-            selectedCategories
-        ) { cartItems, search, selectedCategory ->
+    private val filteredCartItems = combine(
+        cartItemsResource,
+        _state.map { it.search }.distinctUntilChanged(),
+        _state.map { it.selectedCategory }.distinctUntilChanged()
+    ) { cartItems, search, selectedCategory ->
+        cartItems.map { cartItems ->
             cartItems
                 .filter { cartItem ->
                     if (selectedCategory != null) {
@@ -96,17 +87,18 @@ class MenuViewModel(
                     }
                 }
         }
-            .onEach { cartItem ->
-                _state.update { state ->
-                    state.copy(
-                        cartItems = cartItem
-                            .map { it.toCartItemUi() }
-                            .groupBy { it.product.category }
-                    )
-                }
-            }
-            .launchIn(viewModelScope)
     }
+
+    val state = combine(
+        _state,
+        filteredCartItems
+    ) { state, cartItems ->
+        state.toUi(cartItems)
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        MenuState()
+    )
 
     fun onAction(action: MenuAction) {
         when (action) {
@@ -138,8 +130,8 @@ class MenuViewModel(
         cartItemId: String,
         quantity: Int
     ) = viewModelScope.launch {
-        val cartItem = cartItems.value
-            .find { UUID.fromString(cartItemId) == it.id } ?: return@launch
+        val cartItem = cartItems.value.getOrNull()
+            ?.find { UUID.fromString(cartItemId) == it.id } ?: return@launch
 
         updateCartItemQuantity(cartItem.copy(quantity = quantity))
     }
@@ -158,3 +150,20 @@ class MenuViewModel(
         _state.update { it.copy(search = search) }
     }
 }
+
+private data class MenuInternalState(
+    val search: String = "",
+    val selectedCategory: ProductCategory? = null
+)
+
+private fun MenuInternalState.toUi(
+    cartItems: Resource<List<CartItem>>
+) = MenuState(
+    search = search,
+    selectedCategory = selectedCategory,
+    isLoading = cartItems.isLoading,
+    cartItems = cartItems.getOrNull()
+        ?.map { it.toUi() }
+        ?.groupBy { it.product.category }
+        ?: emptyMap()
+)

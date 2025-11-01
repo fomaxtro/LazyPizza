@@ -10,8 +10,7 @@ import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.domain.util.onError
 import com.fomaxtro.core.domain.util.unwrapOr
-import com.fomaxtro.core.presentation.mapper.toCartItemUi
-import com.fomaxtro.core.presentation.mapper.toProductUi
+import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -90,7 +89,7 @@ class CartViewModel(
     private fun observe() {
         cartItems
             .map { cartItems ->
-                cartItems.map { it.toCartItemUi() }
+                cartItems.map { it.toUi() }
             }
             .onEach { cartItems ->
                 _state.update { it.copy(cartItems = cartItems) }
@@ -107,7 +106,7 @@ class CartViewModel(
                 }
         }
             .map { products ->
-                products.map { it.toProductUi() }
+                products.map { it.toUi() }
             }
             .onEach { products ->
                 _state.update { it.copy(productRecommendations = products) }
