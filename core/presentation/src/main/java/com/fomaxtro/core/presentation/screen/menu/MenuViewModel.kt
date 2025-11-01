@@ -12,6 +12,7 @@ import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.ui.UiText
 import com.fomaxtro.core.presentation.util.Resource
+import com.fomaxtro.core.presentation.util.getOrDefault
 import com.fomaxtro.core.presentation.util.getOrNull
 import com.fomaxtro.core.presentation.util.map
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -81,7 +82,11 @@ class MenuViewModel(
                     }
                 }
         }
-    }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        Resource.Loading
+    )
 
     val state = combine(
         _state,
@@ -125,8 +130,7 @@ class MenuViewModel(
         quantity: Int
     ) = viewModelScope.launch {
         val cartItem = cartItems.value.getOrNull()
-            ?.find { UUID.fromString(cartItemId) == it.id }
-            ?: return@launch
+            ?.find { UUID.fromString(cartItemId) == it.id } ?: return@launch
 
         updateCartItemQuantity(cartItem.copy(quantity = quantity))
     }
@@ -157,8 +161,7 @@ private fun MenuInternalState.toUi(
     search = search,
     selectedCategory = selectedCategory,
     isLoading = cartItems.isLoading,
-    cartItems = cartItems.getOrNull()
-        ?.map { it.toUi() }
-        ?.groupBy { it.product.category }
-        ?: emptyMap()
+    cartItems = cartItems.getOrDefault(emptyList())
+        .map { it.toUi() }
+        .groupBy { it.product.category }
 )

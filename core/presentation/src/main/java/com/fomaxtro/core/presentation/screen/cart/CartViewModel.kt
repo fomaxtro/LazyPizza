@@ -8,65 +8,95 @@ import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.use_case.ObserveCartItems
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
-import com.fomaxtro.core.domain.util.onError
-import com.fomaxtro.core.domain.util.unwrapOr
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
+import com.fomaxtro.core.presentation.util.Resource
+import com.fomaxtro.core.presentation.util.getOrDefault
+import com.fomaxtro.core.presentation.util.map
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
+@OptIn(ExperimentalAtomicApi::class)
 class CartViewModel(
     private val productRepository: ProductRepository,
     private val updateCartItemQuantity: UpdateCartItemQuantity,
     observeCartItems: ObserveCartItems
 ) : ViewModel() {
-    private var firstLaunch = false
+    private var firstLaunch = AtomicBoolean(false)
+
+    private val eventChannel = Channel<CartEvent>()
+    val events = eventChannel.receiveAsFlow()
+
     private val productRecommendations = MutableStateFlow<List<Product>>(emptyList())
 
-    private val _state = MutableStateFlow(CartState())
-    val state = _state
-        .onStart {
-            if (!firstLaunch) {
-                loadProductRecommendations()
-                observe()
-
-                firstLaunch = true
+    private val cartItems = observeCartItems()
+        .onEach { cartItemsResult ->
+            if (cartItemsResult is Result.Error) {
+                eventChannel.send(
+                    CartEvent.ShowSystemMessage(
+                        message = cartItemsResult.error.toUiText()
+                    )
+                )
+            }
+        }
+        .map { cartItemsResult ->
+            when (cartItemsResult) {
+                is Result.Error -> Resource.Error
+                is Result.Success -> Resource.Success(cartItemsResult.data)
             }
         }
         .stateIn(
             viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            CartState()
+            SharingStarted.Lazily,
+            Resource.Loading
         )
 
-    private val cartItems = observeCartItems()
-        .onEach {
-            _state.update { it.copy(isCartItemsLoading = false) }
+    private val filteredProductRecommendations = combine(
+        productRecommendations,
+        cartItems
+    ) { productRecommendations, cartItems ->
+        cartItems.map { cartItems ->
+            productRecommendations.filterNot { product ->
+                cartItems.any { it.product.id == product.id }
+            }
         }
-        .onError { error ->
-            eventChannel.send(
-                CartEvent.ShowSystemMessage(
-                    message = error.toUiText()
-                )
-            )
-        }
-        .unwrapOr(emptyList())
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            emptyList()
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        Resource.Loading
+    )
+
+    val state = combine(
+        cartItems,
+        filteredProductRecommendations
+    ) { cartItems, productRecommendations ->
+        CartState(
+            isCartItemsLoading = cartItems.isLoading,
+            cartItems = cartItems.getOrDefault(emptyList())
+                .map { it.toUi() },
+            isProductRecommendationsLoading = productRecommendations.isLoading,
+            productRecommendations = productRecommendations.getOrDefault(emptyList())
+                .map { it.toUi() }
         )
+    }.onEach {
+        if (firstLaunch.compareAndSet(expectedValue = false, newValue = true)) {
+            loadProductRecommendations()
+        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        CartState()
+    )
 
     private suspend fun loadProductRecommendations() {
         when (val result = productRepository.getRecommendations()) {
@@ -82,40 +112,7 @@ class CartViewModel(
                 productRecommendations.value = result.data
             }
         }
-
-        _state.update { it.copy(isProductRecommendationsLoading = false) }
     }
-
-    private fun observe() {
-        cartItems
-            .map { cartItems ->
-                cartItems.map { it.toUi() }
-            }
-            .onEach { cartItems ->
-                _state.update { it.copy(cartItems = cartItems) }
-            }
-            .launchIn(viewModelScope)
-
-        combine(
-            productRecommendations,
-            cartItems
-        ) { productRecommendations, cartItems ->
-            productRecommendations
-                .filterNot { product ->
-                    cartItems.any { it.product.id == product.id }
-                }
-        }
-            .map { products ->
-                products.map { it.toUi() }
-            }
-            .onEach { products ->
-                _state.update { it.copy(productRecommendations = products) }
-            }
-            .launchIn(viewModelScope)
-    }
-
-    private val eventChannel = Channel<CartEvent>()
-    val events = eventChannel.receiveAsFlow()
 
     fun onAction(action: CartAction) {
         when (action) {
@@ -126,7 +123,7 @@ class CartViewModel(
     }
 
     private fun onQuantityChange(cartItemId: String, quantity: Int) = viewModelScope.launch {
-        val cartItem = cartItems.value
+        val cartItem = cartItems.value.getOrDefault(emptyList())
             .find { UUID.fromString(cartItemId) == it.id } ?: return@launch
 
         updateCartItemQuantity(cartItem.copy(quantity = quantity))
