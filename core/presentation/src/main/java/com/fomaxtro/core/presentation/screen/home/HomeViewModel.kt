@@ -10,19 +10,20 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
+@OptIn(ExperimentalAtomicApi::class)
 class HomeViewModel(
     private val cartRepository: CartRepository
 ) : ViewModel() {
-    private var firstLaunch = false
+    private var firstLaunch = AtomicBoolean(false)
 
     private val _state = MutableStateFlow(HomeState())
     val state = _state
         .onStart {
-            if (!firstLaunch) {
+            if (firstLaunch.compareAndSet(expectedValue = false, newValue = true)) {
                 loadCartItemsCount()
-
-                firstLaunch = true
             }
         }
         .stateIn(
