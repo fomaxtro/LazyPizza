@@ -20,3 +20,7 @@ fun <D, R> Resource<D>.map(transform: (D) -> R): Resource<R> {
 fun <D> Resource<D>.getOrNull(): D? {
     return (this as? Resource.Success)?.data
 }
+
+fun <D> Resource<D>.getOrDefault(default: D): D {
+    return (this as? Resource.Success)?.data ?: default
+}

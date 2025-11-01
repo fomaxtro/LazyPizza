@@ -7,7 +7,6 @@ import com.fomaxtro.core.domain.model.ProductCategory
 import com.fomaxtro.core.domain.use_case.ObserveProductsWithCartItems
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
-import com.fomaxtro.core.domain.util.getOrNull
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
@@ -23,7 +22,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -42,13 +40,6 @@ class MenuViewModel(
     val events = eventChannel.receiveAsFlow()
 
     private val cartItems = observeProductsWithCartItems()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Lazily,
-            Result.Success(emptyList())
-        )
-
-    private val cartItemsResource = cartItems
         .onEach { cartItemsResult ->
             if (cartItemsResult is Result.Error) {
                 eventChannel.send(
@@ -64,11 +55,14 @@ class MenuViewModel(
                 is Result.Success -> Resource.Success(cartItemsResult.data)
             }
         }
-        .onStart { emit(Resource.Loading) }
-
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            Resource.Loading
+        )
 
     private val filteredCartItems = combine(
-        cartItemsResource,
+        cartItems,
         _state.map { it.search }.distinctUntilChanged(),
         _state.map { it.selectedCategory }.distinctUntilChanged()
     ) { cartItems, search, selectedCategory ->
@@ -131,7 +125,8 @@ class MenuViewModel(
         quantity: Int
     ) = viewModelScope.launch {
         val cartItem = cartItems.value.getOrNull()
-            ?.find { UUID.fromString(cartItemId) == it.id } ?: return@launch
+            ?.find { UUID.fromString(cartItemId) == it.id }
+            ?: return@launch
 
         updateCartItemQuantity(cartItem.copy(quantity = quantity))
     }
