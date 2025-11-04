@@ -35,6 +35,8 @@ class ProductDetailsViewModel(
     private val toppingRepository: ToppingRepository,
     private val cartRepository: CartRepository
 ) : ViewModel() {
+    private val firstLaunch = AtomicBoolean(false)
+
     private val _state = MutableStateFlow(ProductDetailsInternalState())
 
     private val eventChannel = Channel<ProductDetailsEvent>()
@@ -79,8 +81,6 @@ class ProductDetailsViewModel(
             }
         }
     }
-
-    private val firstLaunch = AtomicBoolean(false)
 
     val state = _state
         .onStart {
