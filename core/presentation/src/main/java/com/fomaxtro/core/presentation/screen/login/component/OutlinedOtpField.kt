@@ -35,14 +35,23 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.drop
 
+@OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun OutlinedOtpField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
     fields: Int = 4
 ) {
-    val otpStates = remember {
-        List(fields) { OtpState() }
+    val otpStates = remember(state, fields) {
+        state.text
+            .map { it.toString() }
+            .toTypedArray()
+            .copyOf(fields) { "" }
+            .map {
+                OtpState(
+                    state = TextFieldState(it)
+                )
+            }
     }
     val focusManager = LocalFocusManager.current
 
