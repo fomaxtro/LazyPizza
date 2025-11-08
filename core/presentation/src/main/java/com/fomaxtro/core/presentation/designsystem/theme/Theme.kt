@@ -12,7 +12,8 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = TextOnPrimary,
     background = BG,
     surface = SurfaceHigher,
-    outline = Outline
+    outline = Outline,
+    error = Primary
 )
 
 val ColorScheme.textPrimary: Color

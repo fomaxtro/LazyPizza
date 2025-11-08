@@ -78,6 +78,14 @@ val Typography.body1Medium: TextStyle
         lineHeight = 22.sp
     )
 
+val Typography.body2Regular: TextStyle
+    get() = TextStyle(
+        fontFamily = InstrumentSans,
+        fontWeight = FontWeight.Normal,
+        fontSize = 15.sp,
+        lineHeight = 22.sp
+    )
+
 val Typography.body3Bold: TextStyle
     get() = TextStyle(
         fontFamily = InstrumentSans,

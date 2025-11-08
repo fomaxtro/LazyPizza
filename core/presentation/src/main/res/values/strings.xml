@@ -38,4 +38,11 @@
     <string name="not_signed_in_subtitle">Please sign in to view your order history.</string>
     <string name="sign_in">Sign In</string>
     <string name="added_to_cart">Added to cart</string>
+    <string name="welcome_to_lazypizza">Welcome to LazyPizza</string>
+    <string name="enter_code">Enter code</string>
+    <string name="phone_number_placeholder">+1 000 000 0000</string>
+    <string name="continue_text">Continue</string>
+    <string name="continue_without_signing">Continue without signing in</string>
+    <string name="resend_code">Resend code</string>
+    <string name="resend_code_countdown">You can request a new code in %s</string>
 </resources>
