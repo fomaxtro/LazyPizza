@@ -5,6 +5,7 @@ import androidx.datastore.core.Serializer
 import com.fomaxtro.core.data.security.Encryptor
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
+import timber.log.Timber
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -25,6 +26,8 @@ class EncryptedSecureSessionSerializer : Serializer<SecureSessionData> {
             Json.decodeFromString(decryptedBytes.decodeToString())
         } catch (e: Exception) {
             if (e is CancellationException) throw e
+
+            Timber.tag("EncryptedSecureSessionSerializer").e(e)
 
             throw CorruptionException("Cannot decrypt or read data", e)
         }

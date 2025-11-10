@@ -61,3 +61,10 @@ inline fun <D, E : Error> Flow<Result<D, E>>.onError(
 }
 
 typealias EmptyResult<E> = Result<Unit, E>
+
+fun <D, E : Error> Result<D, E>.asEmptyResult(): EmptyResult<E> {
+    return when (this) {
+        is Result.Error -> Result.Error(error)
+        is Result.Success -> Result.Success(Unit)
+    }
+}

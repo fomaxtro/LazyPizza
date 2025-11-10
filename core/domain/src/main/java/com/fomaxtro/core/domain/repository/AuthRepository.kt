@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface AuthRepository {
     fun isAuthenticated(): Flow<Boolean>
     suspend fun sendOtp(phoneNumber: String): EmptyResult<DataError>
+    suspend fun verifyOtp(phoneNumber: String, code: String): EmptyResult<DataError>
 }
