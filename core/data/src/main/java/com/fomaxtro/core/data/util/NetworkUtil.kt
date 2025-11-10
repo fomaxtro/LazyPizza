@@ -1,6 +1,6 @@
 package com.fomaxtro.core.data.util
 
-import com.fomaxtro.core.domain.error.DataError
+import com.fomaxtro.core.domain.util.DataError
 import com.fomaxtro.core.domain.util.Result
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.ServerResponseException

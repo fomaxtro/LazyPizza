@@ -12,6 +12,7 @@ object Encryptor {
     private const val ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
     private const val BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM
     private const val PADDING = KeyProperties.ENCRYPTION_PADDING_NONE
+
     private const val GCM_TAG_LENGTH = 128
     private const val GCM_IV_LENGTH = 12
 
