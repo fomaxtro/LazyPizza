@@ -58,7 +58,13 @@ fun NavigationRoot(
             }
 
             entry<Route.Login> {
-                LoginRoot()
+                LoginRoot(
+                    onNavigateToHome = {
+                        val previousRoute = backStack.last()
+                        backStack.add(Route.Home)
+                        backStack.remove(previousRoute)
+                    }
+                )
             }
         }
     )

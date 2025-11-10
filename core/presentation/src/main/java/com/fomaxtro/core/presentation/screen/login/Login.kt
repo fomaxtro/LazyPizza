@@ -49,6 +49,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun LoginRoot(
+    onNavigateToHome: () -> Unit,
     viewModel: LoginViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -62,6 +63,8 @@ fun LoginRoot(
                     message = event.message.asString(context)
                 )
             }
+
+            LoginEvent.NavigateToHome -> onNavigateToHome()
         }
     }
 

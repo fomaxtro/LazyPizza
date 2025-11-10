@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.lazypizza.app.AppViewModel
 import com.fomaxtro.lazypizza.navigation.NavigationRoot
@@ -22,10 +24,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+            val state by viewModel.state.collectAsStateWithLifecycle()
+
             LazyPizzaTheme {
-                NavigationRoot(
-                    isAuthenticated = viewModel.state.value.isAuthenticated
-                )
+                if (state.isAuthChecked) {
+                    NavigationRoot(
+                        isAuthenticated = state.isAuthenticated
+                    )
+                }
             }
         }
     }

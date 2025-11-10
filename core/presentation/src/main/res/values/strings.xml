@@ -45,4 +45,5 @@
     <string name="continue_without_signing">Continue without signing in</string>
     <string name="resend_code">Resend code</string>
     <string name="resend_code_countdown">You can request a new code in %s</string>
+    <string name="incorrect_code">Incorrect code. Please try again</string>
 </resources>

@@ -5,10 +5,13 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.repository.AuthRepository
+import com.fomaxtro.core.domain.util.DataError
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.domain.validation.OtpValidator
 import com.fomaxtro.core.domain.validation.PhoneNumberValidator
+import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.mapper.toUiText
+import com.fomaxtro.core.presentation.ui.UiText
 import com.fomaxtro.core.presentation.util.countdownTimer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -133,6 +136,8 @@ class LoginViewModel(
     }
 
     private fun submitLogin() = viewModelScope.launch {
+        _state.update { it.copy(otpError = null) }
+
         if (!_state.value.isOtpInputVisible) {
             _state.update { it.copy(isSubmittingLogin = true) }
 
@@ -156,6 +161,43 @@ class LoginViewModel(
 
             return@launch
         }
+
+        _state.update { it.copy(isSubmittingLogin = true) }
+
+        try {
+            when (
+                val result = authRepository.verifyOtp(
+                    phoneNumber = _state.value.phoneNumber,
+                    code = _state.value.otpCode.text.toString()
+                )
+            ) {
+                is Result.Error -> {
+                    when (result.error) {
+                        DataError.Validation.INVALID_INPUT -> {
+                            _state.update {
+                                it.copy(
+                                    otpError = UiText.StringResource(R.string.incorrect_code)
+                                )
+                            }
+                        }
+
+                        else -> {
+                            eventChannel.send(
+                                LoginEvent.ShowMessage(
+                                    message = result.error.toUiText()
+                                )
+                            )
+                        }
+                    }
+                }
+
+                is Result.Success -> {
+                    eventChannel.send(LoginEvent.NavigateToHome)
+                }
+            }
+        } finally {
+            _state.update { it.copy(isSubmittingLogin = false) }
+        }
     }
 
     private data class LoginInternalState(
@@ -163,7 +205,8 @@ class LoginViewModel(
         val isOtpInputVisible: Boolean = false,
         val otpCode: TextFieldState = TextFieldState(),
         val canResendOtp: Boolean = false,
-        val isSubmittingLogin: Boolean = false
+        val isSubmittingLogin: Boolean = false,
+        val otpError: UiText? = null
     )
 
     private fun LoginInternalState.toUi(
@@ -173,7 +216,7 @@ class LoginViewModel(
         phoneNumber = phoneNumber,
         otpCode = otpCode,
         isOtpInputVisible = isOtpInputVisible,
-        otpError = null,
+        otpError = otpError,
         canResendOtp = canResendOtp,
         canSubmitLogin = canSubmitLogin,
         isSubmittingLogin = isSubmittingLogin,
