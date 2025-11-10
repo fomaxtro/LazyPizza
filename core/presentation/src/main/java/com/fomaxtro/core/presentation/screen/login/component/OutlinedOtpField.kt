@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.body2Regular
 import com.fomaxtro.core.presentation.designsystem.theme.body4Regular
@@ -176,7 +177,13 @@ fun OutlinedOtpField(
                         textAlign = TextAlign.Center
                     ),
                     inputTransformation = {
-                        if (length > 1) {
+                        val currentText = asCharSequence().toString()
+
+                        if (length == 1 && !currentText.isDigitsOnly()) {
+                            delete(0, 1)
+                        } else if (length > 1 && !currentText.isDigitsOnly()) {
+                            delete(1, 2)
+                        } else if (length > 1) {
                             delete(0, 1)
                         }
                     },

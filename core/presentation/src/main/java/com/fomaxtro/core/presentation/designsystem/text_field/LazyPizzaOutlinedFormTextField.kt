@@ -1,6 +1,7 @@
 package com.fomaxtro.core.presentation.designsystem.text_field
 
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -15,7 +16,9 @@ fun LazyPizzaOutlinedFormTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String? = null
+    placeholder: String? = null,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    singleLine: Boolean = false
 ) {
 
     OutlinedTextField(
@@ -32,7 +35,9 @@ fun LazyPizzaOutlinedFormTextField(
                 )
             }
         },
-        textStyle = MaterialTheme.typography.body2Regular
+        textStyle = MaterialTheme.typography.body2Regular,
+        keyboardOptions = keyboardOptions,
+        singleLine = singleLine
     )
 }
 
