@@ -10,4 +10,7 @@ sealed interface Route : NavKey {
 
     @Serializable
     data class ProductDetails(val productId: Long) : Route
+
+    @Serializable
+    data object Login : Route
 }

@@ -6,12 +6,15 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.fomaxtro.core.presentation.screen.login.LoginRoot
 import com.fomaxtro.core.presentation.screen.product_details.ProductDetailsRoot
 import com.fomaxtro.lazypizza.navigation.home.HomeNavigationRoot
 
 @Composable
-fun NavigationRoot() {
-    val backStack = rememberNavBackStack(Route.Home)
+fun NavigationRoot(
+    isAuthenticated: Boolean
+) {
+    val backStack = rememberNavBackStack(if (isAuthenticated) Route.Home else Route.Login)
 
     NavDisplay(
         backStack = backStack,
@@ -23,7 +26,7 @@ fun NavigationRoot() {
             rememberViewModelStoreNavEntryDecorator()
         ),
         entryProvider = entryProvider {
-            entry<Route.Home> { entry ->
+            entry<Route.Home> {
                 HomeNavigationRoot(
                     onNavigateToProductDetails = { productId ->
                         if (backStack.lastOrNull() !is Route.ProductDetails) {
@@ -52,6 +55,10 @@ fun NavigationRoot() {
                         }
                     }
                 )
+            }
+
+            entry<Route.Login> {
+                LoginRoot()
             }
         }
     )
