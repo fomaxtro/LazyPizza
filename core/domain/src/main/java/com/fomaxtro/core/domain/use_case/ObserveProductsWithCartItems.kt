@@ -1,6 +1,6 @@
 package com.fomaxtro.core.domain.use_case
 
-import com.fomaxtro.core.domain.error.DataError
+import com.fomaxtro.core.domain.util.DataError
 import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.repository.CartRepository
 import com.fomaxtro.core.domain.repository.ProductRepository

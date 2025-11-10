@@ -59,3 +59,5 @@ inline fun <D, E : Error> Flow<Result<D, E>>.onError(
         }
     }
 }
+
+typealias EmptyResult<E> = Result<Unit, E>
