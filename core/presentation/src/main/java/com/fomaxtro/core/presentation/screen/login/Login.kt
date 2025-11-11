@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -43,7 +44,9 @@ import com.fomaxtro.core.presentation.designsystem.theme.title1Medium
 import com.fomaxtro.core.presentation.designsystem.theme.title3
 import com.fomaxtro.core.presentation.screen.login.component.OutlinedOtpField
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
+import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.UiText
+import com.fomaxtro.core.presentation.ui.currentScreenType
 import org.koin.androidx.compose.koinViewModel
 import kotlin.time.Duration.Companion.seconds
 
@@ -87,6 +90,7 @@ private fun LoginScreen(
     snackbarHostState: SnackbarHostState
 ) {
     val focusManager = LocalFocusManager.current
+    val screenType = currentScreenType()
 
     Scaffold(
         modifier = Modifier
@@ -105,6 +109,11 @@ private fun LoginScreen(
                 .wrapContentSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
+                .then(
+                    if (screenType == ScreenType.WIDE_SCREEN) {
+                        Modifier.width(400.dp)
+                    } else Modifier
+                )
                 .verticalScroll(rememberScrollState())
                 .imePadding(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -203,7 +212,7 @@ private fun LoginScreen(
     }
 }
 
-@Preview
+@Preview(device = "id:pixel_tablet")
 @Composable
 private fun LoginScreenPreview() {
     LazyPizzaTheme {
