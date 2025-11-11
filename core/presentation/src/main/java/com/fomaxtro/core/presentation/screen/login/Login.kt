@@ -69,7 +69,12 @@ fun LoginRoot(
     }
 
     LoginScreen(
-        onAction = viewModel::onAction,
+        onAction = { action ->
+            when (action) {
+                LoginAction.OnContiueWithoutLoginClick -> onNavigateToHome()
+                else -> viewModel.onAction(action)
+            }
+        },
         state = state,
         snackbarHostState = snackbarHostState
     )
@@ -161,7 +166,9 @@ private fun LoginScreen(
             )
 
             TextButton(
-                onClick = {}
+                onClick = {
+                    onAction(LoginAction.OnContiueWithoutLoginClick)
+                }
             ) {
                 Text(
                     text = stringResource(R.string.continue_without_signing),

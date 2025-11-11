@@ -142,6 +142,7 @@ class LoginViewModel(
             is LoginAction.OnPhoneNumberChange -> onPhoneNumberChange(action.phoneNumber)
             LoginAction.SubmitLogin -> submitLogin()
             LoginAction.OnResendCodeClick -> onResendCodeClick()
+            else -> Unit
         }
     }
 
