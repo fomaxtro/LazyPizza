@@ -19,4 +19,5 @@ dependencies {
     implementation(libs.androidx.core.spashscreen)
     implementation(libs.bundles.navigation3)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.bundles.play.services.auth)
 }

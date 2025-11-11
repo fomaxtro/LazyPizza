@@ -9,4 +9,5 @@ android {
 dependencies {
     implementation(projects.core.domain)
     implementation(libs.bundles.coil)
+    implementation(libs.bundles.play.services.auth)
 }

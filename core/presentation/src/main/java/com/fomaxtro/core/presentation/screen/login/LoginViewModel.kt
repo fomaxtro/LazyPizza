@@ -13,6 +13,8 @@ import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.ui.UiText
 import com.fomaxtro.core.presentation.util.countdownTimer
+import com.fomaxtro.core.presentation.verification.OtpCodeEventBus
+import com.google.android.gms.auth.api.phone.SmsRetrieverClient
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,24 +24,34 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
+@OptIn(ExperimentalAtomicApi::class)
 class LoginViewModel(
     private val phoneNumberValidator: PhoneNumberValidator,
     private val otpValidator: OtpValidator,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val smsRetrieverClient: SmsRetrieverClient,
+    private val otpCodeEventBus: OtpCodeEventBus
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginInternalState())
 
     private val eventChannel = Channel<LoginEvent>()
     val events = eventChannel.receiveAsFlow()
+
+    private val firstLaunch = AtomicBoolean(false)
 
     private val otpCodeFlow = snapshotFlow { _state.value.otpCode.text.toString() }
         .stateIn(
@@ -103,11 +115,27 @@ class LoginViewModel(
             canSubmitLogin = canSubmitLogin,
             remainingOtpResendTime = remainingOtpResendTime
         )
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
-        LoginState()
-    )
+    }
+        .onStart {
+            if (firstLaunch.compareAndSet(expectedValue = false, newValue = true)) {
+                otpCodeEventBus.events
+                    .onEach { otpCode ->
+                        _state.update {
+                            it.copy(
+                                otpCode = TextFieldState(otpCode)
+                            )
+                        }
+
+                        submitLogin()
+                    }
+                    .launchIn(viewModelScope)
+            }
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            LoginState()
+        )
 
     fun onAction(action: LoginAction) {
         when (action) {
@@ -142,6 +170,8 @@ class LoginViewModel(
             _state.update { it.copy(isSubmittingLogin = true) }
 
             try {
+                smsRetrieverClient.startSmsRetriever().await()
+
                 when (val result = authRepository.sendOtp(_state.value.phoneNumber)) {
                     is Result.Error -> {
                         eventChannel.send(
