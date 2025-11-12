@@ -1,5 +1,6 @@
 package com.fomaxtro.core.data.remote.datasource
 
+import com.fomaxtro.core.data.remote.dto.RefreshTokenRequest
 import com.fomaxtro.core.data.remote.dto.SendOtpRequest
 import com.fomaxtro.core.data.remote.dto.TokensResponse
 import com.fomaxtro.core.data.remote.dto.VerifyOtpRequest
@@ -22,5 +23,11 @@ class AuthRemoteDataSource(
         return httpClient.post(createRoute("/auth/verify-otp")) {
             setBody(request)
         }.body()
+    }
+
+    suspend fun logout(request: RefreshTokenRequest) {
+        httpClient.post(createRoute("/auth/logout")) {
+            setBody(request)
+        }
     }
 }
