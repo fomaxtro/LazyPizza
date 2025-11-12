@@ -32,6 +32,14 @@ fun NavigationRoot(
                         if (backStack.lastOrNull() !is Route.ProductDetails) {
                             backStack.add(Route.ProductDetails(productId))
                         }
+                    },
+                    onNavigateToLogin = {
+                        val currentRoute = backStack.lastOrNull()
+
+                        if (currentRoute is Route.Home) {
+                            backStack.add(Route.Login)
+                            backStack.remove(currentRoute)
+                        }
                     }
                 )
             }

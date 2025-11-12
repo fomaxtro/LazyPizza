@@ -22,7 +22,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun HomeNavigationRoot(
-    onNavigateToProductDetails: (productId: Long) -> Unit
+    onNavigateToProductDetails: (productId: Long) -> Unit,
+    onNavigateToLogin: () -> Unit
 ) {
     val backStack = rememberNavBackStack(HomeRoute.Menu)
     val currentRoute = backStack.lastOrNull()
@@ -50,6 +51,7 @@ fun HomeNavigationRoot(
             backStack.add(route)
             backStack.remove(currentRoute)
         },
+        onNavigateToLogin = onNavigateToLogin,
         hostState = snackbarHostState
     ) {
         NavDisplay(
