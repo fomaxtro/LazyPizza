@@ -4,10 +4,14 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -20,8 +24,11 @@ import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.component.AdaptiveScaffold
 import com.fomaxtro.core.presentation.component.NavigationButton
 import com.fomaxtro.core.presentation.component.NotificationBadge
+import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.title1Medium
+import com.fomaxtro.core.presentation.designsystem.theme.title3
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaCenteredAlignedTopAppBar
 import com.fomaxtro.core.presentation.screen.home.component.MenuTopAppBar
 import org.koin.androidx.compose.koinViewModel
@@ -31,6 +38,7 @@ fun HomeRoot(
     viewModel: HomeViewModel = koinViewModel(),
     currentDestination: HomeDestination,
     onDestinationClick: (HomeDestination) -> Unit,
+    onNavigateToLogin: () -> Unit,
     hostState: SnackbarHostState,
     content: @Composable () -> Unit
 ) {
@@ -41,7 +49,13 @@ fun HomeRoot(
         currentDestination = currentDestination,
         onDestinationClick = onDestinationClick,
         hostState = hostState,
-        content = content
+        content = content,
+        onAction = { action ->
+            when (action) {
+                HomeAction.OnLoginClick -> onNavigateToLogin()
+                else -> viewModel.onAction(action)
+            }
+        }
     )
 }
 
@@ -52,14 +66,61 @@ private fun HomeScreen(
     currentDestination: HomeDestination,
     onDestinationClick: (HomeDestination) -> Unit,
     hostState: SnackbarHostState,
+    onAction: (HomeAction) -> Unit = {},
     content: @Composable () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
 
+    if (state.isLogoutDialogVisible) {
+        AlertDialog(
+            onDismissRequest = {
+                onAction(HomeAction.OnLogoutDismiss)
+            },
+            title = {
+                Text(
+                    text = stringResource(R.string.logout_message),
+                    style = MaterialTheme.typography.title1Medium
+                )
+            },
+            confirmButton = {
+                LazyPizzaButton(
+                    onClick = {
+                        onAction(HomeAction.OnLogoutConfirmClick)
+                    },
+                    text = stringResource(R.string.logout)
+                )
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        onAction(HomeAction.OnLogoutDismiss)
+                    }
+                ) {
+                    Text(
+                        text = stringResource(R.string.cancel),
+                        style = MaterialTheme.typography.title3
+                    )
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    }
+
     AdaptiveScaffold(
         topBar = {
             when (currentDestination) {
-                HomeDestination.MENU -> MenuTopAppBar()
+                HomeDestination.MENU -> {
+                    MenuTopAppBar(
+                        authenticated = state.isAuthenticated,
+                        onAuthenticationClick = {
+                            if (state.isAuthenticated) {
+                                onAction(HomeAction.OnLogoutClick)
+                            } else {
+                                onAction(HomeAction.OnLoginClick)
+                            }
+                        }
+                    )
+                }
 
                 HomeDestination.CART -> {
                     LazyPizzaCenteredAlignedTopAppBar(
@@ -156,7 +217,9 @@ private fun HomeScreen(
 private fun HomeScreenPreview() {
     LazyPizzaTheme {
         HomeScreen(
-            state = HomeState(),
+            state = HomeState(
+                isLogoutDialogVisible = true
+            ),
             onDestinationClick = {},
             currentDestination = HomeDestination.MENU,
             hostState = SnackbarHostState()

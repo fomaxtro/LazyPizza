@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,10 +26,15 @@ import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.body1Regular
+import com.fomaxtro.core.presentation.designsystem.theme.primary8
+import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
+import com.fomaxtro.core.presentation.designsystem.theme.textSecondary8
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaTopAppBar
 
 @Composable
 fun MenuTopAppBar(
+    authenticated: Boolean,
+    onAuthenticationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isInPreview = LocalInspectionMode.current
@@ -72,6 +79,35 @@ fun MenuTopAppBar(
                     }
             )
 
+            Spacer(modifier = Modifier.width(6.dp))
+
+            IconButton(
+                onClick = onAuthenticationClick,
+                modifier = Modifier.size(32.dp),
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = if (authenticated) {
+                        MaterialTheme.colorScheme.primary8
+                    } else {
+                        MaterialTheme.colorScheme.textSecondary8
+                    },
+                    contentColor = if (authenticated) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.textSecondary
+                    }
+                )
+            ) {
+                Icon(
+                    imageVector = if (authenticated) {
+                        AppIcons.Outlined.LogOut
+                    } else {
+                        AppIcons.Outlined.User
+                    },
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+
             Spacer(modifier = Modifier.width(16.dp))
         },
         modifier = modifier
@@ -82,6 +118,9 @@ fun MenuTopAppBar(
 @Composable
 private fun MenuTopAppBarPreview() {
     LazyPizzaTheme {
-        MenuTopAppBar()
+        MenuTopAppBar(
+            authenticated = true,
+            onAuthenticationClick = {}
+        )
     }
 }
