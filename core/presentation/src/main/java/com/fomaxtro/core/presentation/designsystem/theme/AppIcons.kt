@@ -15,6 +15,12 @@ object AppIcons {
 
         val Trash: ImageVector
             @Composable get() = ImageVector.vectorResource(R.drawable.trash)
+
+        val User: ImageVector
+            @Composable get() = ImageVector.vectorResource(R.drawable.user)
+
+        val LogOut: ImageVector
+            @Composable get() = ImageVector.vectorResource(R.drawable.log_out)
     }
 
     object Filled {

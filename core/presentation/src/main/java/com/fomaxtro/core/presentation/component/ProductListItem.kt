@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
 import com.fomaxtro.core.presentation.R
-import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaIconButton
+import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaOutlinedIconButton
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaOutlinedButton
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
@@ -76,7 +76,7 @@ fun ProductListItem(
                 )
 
                 if (quantity > 0 && onDeleteClick != null) {
-                    LazyPizzaIconButton(
+                    LazyPizzaOutlinedIconButton(
                         onClick = onDeleteClick
                     ) {
                         Icon(

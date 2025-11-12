@@ -46,4 +46,7 @@
     <string name="resend_code">Resend code</string>
     <string name="resend_code_countdown">You can request a new code in %s</string>
     <string name="incorrect_code">Incorrect code. Please try again</string>
+    <string name="logout_message">Are you sure you want\nto log out?</string>
+    <string name="logout">Log Out</string>
+    <string name="cancel">Cancel</string>
 </resources>
