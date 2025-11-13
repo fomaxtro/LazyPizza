@@ -22,6 +22,8 @@ ktor = "3.3.2"
 koin = "4.1.1"
 datastore = "1.1.7"
 coroutines = "1.10.2"
+room = "2.8.3"
+ksp = "2.3.2"
 
 nav3Core = "1.0.0-rc01"
 lifecycleViewmodelNav3 = "2.10.0-rc01"
@@ -81,6 +83,10 @@ gms-play-services-auth-api-phone = { module = "com.google.android.gms:play-servi
 
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+
 [bundles]
 compose-icons = [
     "androidx-compose-material3-icons-core",
@@ -107,6 +113,10 @@ play-services-auth = [
     "gms-play-services-auth",
     "gms-play-services-auth-api-phone"
 ]
+room = [
+    "room-runtime",
+    "room-ktx"
+]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -122,3 +132,6 @@ lazypizza-library-compose = { id = "lazypizza.library.compose" }
 lazypizza-library-jvm = { id = "lazypizza.library.jvm" }
 lazypizza-android-library = { id = "lazypizza.android.library" }
 lazypizza-feature-ui = { id = "lazypizza.feature.ui" }
+
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+room = { id = "androidx.room", version.ref = "room" }
