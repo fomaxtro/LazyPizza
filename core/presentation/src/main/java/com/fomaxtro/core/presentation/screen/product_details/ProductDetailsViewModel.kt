@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.Product
 import com.fomaxtro.core.domain.model.ToppingSelection
-import com.fomaxtro.core.domain.repository.CartRepository
 import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.repository.ToppingRepository
+import com.fomaxtro.core.domain.use_case.UpsertCartItem
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
@@ -33,7 +33,7 @@ class ProductDetailsViewModel(
     private val productId: Long,
     private val productRepository: ProductRepository,
     private val toppingRepository: ToppingRepository,
-    private val cartRepository: CartRepository
+    private val upsertCartItem: UpsertCartItem
 ) : ViewModel() {
     private val firstLaunch = AtomicBoolean(false)
 
@@ -131,7 +131,7 @@ class ProductDetailsViewModel(
             selectedToppings = selectedToppings
         )
 
-        cartRepository.upsertCartItem(cartItem)
+        upsertCartItem(cartItem)
         eventChannel.send(ProductDetailsEvent.NavigateToCart)
     }
 

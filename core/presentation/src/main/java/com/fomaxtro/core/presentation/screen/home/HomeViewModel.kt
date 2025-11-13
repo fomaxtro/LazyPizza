@@ -3,7 +3,7 @@ package com.fomaxtro.core.presentation.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.repository.AuthRepository
-import com.fomaxtro.core.domain.repository.CartRepository
+import com.fomaxtro.core.domain.use_case.CountCartItems
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -13,13 +13,13 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val authRepository: AuthRepository,
-    cartRepository: CartRepository
+    countCartItems: CountCartItems
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeInternalState())
 
     val state = combine(
         _state,
-        cartRepository.countCartItems(),
+        countCartItems(),
         authRepository.isAuthenticated()
     ) { state, cartItemsCount, isAuthenticated ->
         HomeState(
