@@ -6,14 +6,14 @@ import com.fomaxtro.core.data.session.SessionStorage
 import com.fomaxtro.core.data.session.model.CartItemSession
 import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.CartItemLocal
-import com.fomaxtro.core.domain.repository.CartRepository
+import com.fomaxtro.core.domain.repository.GuestCartRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-class CartRepositoryImpl(
+class SessionCartRepository(
     private val sessionStorage: SessionStorage
-) : CartRepository {
+) : GuestCartRepository {
     override fun getCartItemsLocal(): Flow<List<CartItemLocal>> {
         return sessionStorage
             .getCartItems()
