@@ -1,8 +1,12 @@
 package com.fomaxtro.core.domain.di
 
+import com.fomaxtro.core.domain.use_case.CountCartItems
+import com.fomaxtro.core.domain.use_case.GetCartItemsLocal
 import com.fomaxtro.core.domain.use_case.ObserveCartItems
 import com.fomaxtro.core.domain.use_case.ObserveProductsWithCartItems
+import com.fomaxtro.core.domain.use_case.RemoveCartItem
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
+import com.fomaxtro.core.domain.use_case.UpsertCartItem
 import com.fomaxtro.core.domain.validation.OtpValidator
 import com.fomaxtro.core.domain.validation.PhoneNumberValidator
 import org.koin.core.module.dsl.singleOf
@@ -14,4 +18,8 @@ val domainModule = module {
     singleOf(::ObserveCartItems)
     singleOf(::PhoneNumberValidator)
     singleOf(::OtpValidator)
+    singleOf(::CountCartItems)
+    singleOf(::GetCartItemsLocal)
+    singleOf(::RemoveCartItem)
+    singleOf(::UpsertCartItem)
 }
