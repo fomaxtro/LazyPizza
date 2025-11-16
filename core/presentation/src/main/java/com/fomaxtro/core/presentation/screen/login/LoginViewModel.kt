@@ -5,6 +5,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.repository.AuthRepository
+import com.fomaxtro.core.domain.use_case.Login
 import com.fomaxtro.core.domain.util.DataError
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.domain.validation.OtpValidator
@@ -44,7 +45,8 @@ class LoginViewModel(
     private val otpValidator: OtpValidator,
     private val authRepository: AuthRepository,
     private val smsRetrieverClient: SmsRetrieverClient,
-    private val otpCodeEventBus: OtpCodeEventBus
+    private val otpCodeEventBus: OtpCodeEventBus,
+    private val login: Login
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginInternalState())
 
@@ -196,12 +198,12 @@ class LoginViewModel(
         _state.update { it.copy(isSubmittingLogin = true) }
 
         try {
-            when (
-                val result = authRepository.verifyOtp(
-                    phoneNumber = _state.value.phoneNumber,
-                    code = _state.value.otpCode.text.toString()
-                )
-            ) {
+            val result = login(
+                phoneNumber = _state.value.phoneNumber,
+                code = _state.value.otpCode.text.toString()
+            )
+
+            when (result) {
                 is Result.Error -> {
                     when (result.error) {
                         DataError.Validation.INVALID_INPUT -> {

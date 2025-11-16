@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.repository.AuthRepository
 import com.fomaxtro.core.domain.use_case.CountCartItems
+import com.fomaxtro.core.domain.use_case.Logout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -12,8 +13,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val authRepository: AuthRepository,
-    countCartItems: CountCartItems
+    countCartItems: CountCartItems,
+    authRepository: AuthRepository,
+    private val logout: Logout
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeInternalState())
 
@@ -49,7 +51,7 @@ class HomeViewModel(
     private fun onLogoutConfirmClick() = viewModelScope.launch {
         _state.update { it.copy(isLogoutDialogVisible = false) }
 
-        authRepository.logout()
+        logout()
     }
 
     private fun onLogoutClick() {
