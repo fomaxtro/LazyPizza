@@ -1,6 +1,7 @@
 package com.fomaxtro.core.data.repository
 
 import com.fomaxtro.core.data.mapper.toCartItemLocal
+import com.fomaxtro.core.data.mapper.toCartItemSession
 import com.fomaxtro.core.data.mapper.toToppingSelectionSession
 import com.fomaxtro.core.data.session.SessionStorage
 import com.fomaxtro.core.data.session.model.CartItemSession
@@ -21,6 +22,16 @@ class SessionCartRepository(
                 cartItems.map { it.toCartItemLocal() }
             }
             .distinctUntilChanged()
+    }
+
+    override suspend fun upsertCartItemsLocal(items: List<CartItemLocal>) {
+        sessionStorage.upsertCartItems(
+            items = items.map { it.toCartItemSession() }
+        )
+    }
+
+    override suspend fun clearCart() {
+        sessionStorage.clearCartItems()
     }
 
     override suspend fun removeCartItem(item: CartItem) {

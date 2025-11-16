@@ -13,7 +13,6 @@ import com.fomaxtro.core.domain.util.EmptyResult
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.domain.util.asEmptyResult
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -62,7 +61,7 @@ class AuthRepositoryImpl(
 
         secureSessionStorage.removeTokenPair()
 
-        applicationScope.launch(NonCancellable) {
+        applicationScope.launch {
             val request = RefreshTokenRequest(
                 refreshToken = tokenPair.refreshToken
             )

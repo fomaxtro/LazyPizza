@@ -26,3 +26,15 @@ fun CartItemWithToppingSelections.toCartItemLocal() = CartItemLocal(
     quantity = cartItem.quantity,
     selectedToppings = toppings.map { it.toToppingSelection() },
 )
+
+fun CartItemLocal.toCartItemSession() = CartItemSession(
+    id = id.toString(),
+    productId = productId,
+    quantity = quantity
+)
+
+fun CartItemLocal.toCartItemEntity() = CartItemEntity(
+    id = id.toString(),
+    productId = productId,
+    quantity = quantity,
+)

@@ -1,6 +1,7 @@
 package com.fomaxtro.core.data.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -17,9 +18,15 @@ interface CartItemDao {
     @Upsert
     suspend fun upsert(cartItem: CartItemEntity)
 
-    @Query("DELETE FROM cart_items WHERE id = :id")
-    suspend fun deleteById(id: String)
+    @Upsert
+    suspend fun upsertAll(cartItems: List<CartItemEntity>)
 
-    @Query("SELECT COUNT(*) FROM cart_items")
+    @Delete
+    suspend fun delete(cartItem: CartItemEntity)
+
+    @Query("SELECT SUM(quantity) FROM cart_items")
     fun countCartItems(): Flow<Int>
+
+    @Query("DELETE FROM cart_items")
+    suspend fun deleteAll()
 }

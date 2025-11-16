@@ -17,7 +17,7 @@ class DatabaseCartRepository(
     }
 
     override suspend fun removeCartItem(item: CartItem) {
-        cartItemDao.deleteById(item.id.toString())
+        cartItemDao.delete(item.toCartItemEntity())
     }
 
     override fun countCartItems(): Flow<Int> {
@@ -29,5 +29,15 @@ class DatabaseCartRepository(
             .map { cartItems ->
                 cartItems.map { it.toCartItemLocal() }
             }
+    }
+
+    override suspend fun upsertCartItemsLocal(items: List<CartItemLocal>) {
+        cartItemDao.upsertAll(
+            cartItems = items.map { it.toCartItemEntity() }
+        )
+    }
+
+    override suspend fun clearCart() {
+        cartItemDao.deleteAll()
     }
 }
