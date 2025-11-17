@@ -49,4 +49,5 @@
     <string name="logout_message">Are you sure you want\nto log out?</string>
     <string name="logout">Log Out</string>
     <string name="cancel">Cancel</string>
+    <string name="total_amount">Total amount</string>
 </resources>

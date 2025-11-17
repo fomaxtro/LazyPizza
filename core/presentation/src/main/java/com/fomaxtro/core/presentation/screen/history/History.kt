@@ -42,7 +42,7 @@ private fun HistoryScreen(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun HistoryScreenPreview() {
     LazyPizzaTheme {
