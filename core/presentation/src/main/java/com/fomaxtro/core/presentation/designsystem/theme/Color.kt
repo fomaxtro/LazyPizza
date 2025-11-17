@@ -38,3 +38,5 @@ val FadeGradient: Brush
 
 val Primary = Color(0xFFF36B50)
 val Primary8 = Primary.copy(alpha = 0.08f)
+val Success = Color(0xFF2E7D32)
+val Warning = Color(0xFFF9A825)

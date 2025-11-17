@@ -36,7 +36,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.title3
 @Composable
 fun BaseHistoryListItem(
     title: @Composable () -> Unit,
-    createdAt: @Composable () -> Unit,
+    date: @Composable () -> Unit,
     products: @Composable () -> Unit,
     status: @Composable () -> Unit,
     price: @Composable () -> Unit,
@@ -49,7 +49,7 @@ fun BaseHistoryListItem(
             .dropShadow(
                 shape = shape,
                 shadow = Shadow(
-                    color = MaterialTheme.colorScheme.textPrimary.copy(alpha = 0.6f),
+                    color = MaterialTheme.colorScheme.textPrimary.copy(alpha = 0.06f),
                     radius = 16.dp,
                     offset = DpOffset(0.dp, 4.dp)
                 )
@@ -80,7 +80,7 @@ fun BaseHistoryListItem(
                     LocalTextStyle provides MaterialTheme.typography.body4Regular.copy(
                         color = MaterialTheme.colorScheme.textSecondary
                     ),
-                    content = createdAt
+                    content = date
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -125,7 +125,7 @@ private fun BaseHistoryListItemPreview() {
         BaseHistoryListItem(
             modifier = Modifier.fillMaxWidth(),
             title = { Text("Order #1234") },
-            createdAt = { Text("September 25, 12:15") },
+            date = { Text("September 25, 12:15") },
             products = {
                 Text(
                     text = """

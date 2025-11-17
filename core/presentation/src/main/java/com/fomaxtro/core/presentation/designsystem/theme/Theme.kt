@@ -46,6 +46,12 @@ val ColorScheme.primaryGradient: Brush
 val ColorScheme.fadeGradient: Brush
     get() = FadeGradient
 
+val ColorScheme.success: Color
+    get() = Success
+
+val ColorScheme.waring: Color
+    get() = Warning
+
 @Composable
 fun LazyPizzaTheme(
     content: @Composable () -> Unit

@@ -98,7 +98,9 @@ fun HomeNavigationRoot(
                 }
 
                 entry<HomeRoute.History> {
-                    HistoryRoot()
+                    HistoryRoot(
+                        onNavigateToLogin = onNavigateToLogin
+                    )
                 }
             }
         )
