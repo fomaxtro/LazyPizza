@@ -11,10 +11,8 @@ import com.fomaxtro.core.presentation.screen.product_details.ProductDetailsRoot
 import com.fomaxtro.lazypizza.navigation.home.HomeNavigationRoot
 
 @Composable
-fun NavigationRoot(
-    isAuthenticated: Boolean
-) {
-    val backStack = rememberNavBackStack(if (isAuthenticated) Route.Home else Route.Login)
+fun NavigationRoot() {
+    val backStack = rememberNavBackStack(Route.Home)
 
     NavDisplay(
         backStack = backStack,
