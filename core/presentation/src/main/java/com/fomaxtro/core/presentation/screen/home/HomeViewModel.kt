@@ -2,41 +2,63 @@ package com.fomaxtro.core.presentation.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fomaxtro.core.domain.repository.CartRepository
+import com.fomaxtro.core.domain.repository.AuthRepository
+import com.fomaxtro.core.domain.use_case.CountCartItems
+import com.fomaxtro.core.domain.use_case.Logout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlin.concurrent.atomics.AtomicBoolean
-import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalAtomicApi::class)
 class HomeViewModel(
-    private val cartRepository: CartRepository
+    countCartItems: CountCartItems,
+    authRepository: AuthRepository,
+    private val logout: Logout
 ) : ViewModel() {
-    private var firstLaunch = AtomicBoolean(false)
+    private val _state = MutableStateFlow(HomeInternalState())
 
-    private val _state = MutableStateFlow(HomeState())
-    val state = _state
-        .onStart {
-            if (firstLaunch.compareAndSet(expectedValue = false, newValue = true)) {
-                loadCartItemsCount()
-            }
-        }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            HomeState()
+    val state = combine(
+        _state,
+        countCartItems(),
+        authRepository.isAuthenticated()
+    ) { state, cartItemsCount, isAuthenticated ->
+        HomeState(
+            cartItemsCount = cartItemsCount,
+            isAuthenticated = isAuthenticated,
+            isLogoutDialogVisible = state.isLogoutDialogVisible
         )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        HomeState()
+    )
 
-    private fun loadCartItemsCount() {
-        cartRepository.countCartItems()
-            .onEach { count ->
-                _state.update { it.copy(cartItemsCount = count) }
-            }
-            .launchIn(viewModelScope)
+    fun onAction(action: HomeAction) {
+        when (action) {
+            HomeAction.OnLogoutClick -> onLogoutClick()
+            HomeAction.OnLogoutConfirmClick -> onLogoutConfirmClick()
+            HomeAction.OnLogoutDismiss -> onLogoutDismiss()
+            else -> Unit
+        }
     }
+
+    private fun onLogoutDismiss() {
+        _state.update { it.copy(isLogoutDialogVisible = false) }
+    }
+
+    private fun onLogoutConfirmClick() = viewModelScope.launch {
+        _state.update { it.copy(isLogoutDialogVisible = false) }
+
+        logout()
+    }
+
+    private fun onLogoutClick() {
+        _state.update { it.copy(isLogoutDialogVisible = true) }
+    }
+
+    private data class HomeInternalState(
+        val isLogoutDialogVisible: Boolean = false
+    )
 }

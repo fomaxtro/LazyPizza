@@ -6,6 +6,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.fomaxtro.core.presentation.screen.login.LoginRoot
 import com.fomaxtro.core.presentation.screen.product_details.ProductDetailsRoot
 import com.fomaxtro.lazypizza.navigation.home.HomeNavigationRoot
 
@@ -23,11 +24,19 @@ fun NavigationRoot() {
             rememberViewModelStoreNavEntryDecorator()
         ),
         entryProvider = entryProvider {
-            entry<Route.Home> { entry ->
+            entry<Route.Home> {
                 HomeNavigationRoot(
                     onNavigateToProductDetails = { productId ->
                         if (backStack.lastOrNull() !is Route.ProductDetails) {
                             backStack.add(Route.ProductDetails(productId))
+                        }
+                    },
+                    onNavigateToLogin = {
+                        val currentRoute = backStack.lastOrNull()
+
+                        if (currentRoute is Route.Home) {
+                            backStack.add(Route.Login)
+                            backStack.remove(currentRoute)
                         }
                     }
                 )
@@ -50,6 +59,16 @@ fun NavigationRoot() {
                             backStack.remove(currentRoute)
                             backStack.remove(lastHome)
                         }
+                    }
+                )
+            }
+
+            entry<Route.Login> {
+                LoginRoot(
+                    onNavigateToHome = {
+                        val previousRoute = backStack.last()
+                        backStack.add(Route.Home)
+                        backStack.remove(previousRoute)
                     }
                 )
             }

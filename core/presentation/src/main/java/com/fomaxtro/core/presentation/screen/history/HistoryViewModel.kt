@@ -1,18 +1,25 @@
 package com.fomaxtro.core.presentation.screen.history
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
+import androidx.lifecycle.viewModelScope
+import com.fomaxtro.core.domain.repository.AuthRepository
+import com.fomaxtro.core.presentation.util.Resource
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
-class HistoryViewModel : ViewModel() {
-    private val _state = MutableStateFlow(HistoryState())
-    val state = _state.asStateFlow()
-
-    private val eventChannel = Channel<HistoryEvent>()
-    val events = eventChannel.receiveAsFlow()
-
-    fun onAction(action: HistoryAction) {
-    }
+class HistoryViewModel(
+    authRepository: AuthRepository
+) : ViewModel() {
+    val state = authRepository.isAuthenticated()
+        .map { isAuthenticated ->
+            HistoryState(
+                isAuthenticated = Resource.Success(isAuthenticated)
+            )
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            HistoryState()
+        )
 }

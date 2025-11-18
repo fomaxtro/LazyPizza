@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
+import timber.log.Timber
 
 class SessionStorage(
     private val dataStore: DataStore<Preferences>
@@ -18,25 +20,44 @@ class SessionStorage(
         val CART_ITEMS_KEY = stringPreferencesKey("cart_items")
     }
 
+    private fun upsertItem(
+        items: MutableList<CartItemSession>,
+        item: CartItemSession
+    ) {
+        val cartItemIndex = items.indexOfFirst { item.id == it.id }
+
+        if (cartItemIndex != -1) {
+            items[cartItemIndex] = item
+        } else {
+            items += item
+        }
+    }
+
     suspend fun upsertCartItem(item: CartItemSession) {
+        val cartItems = getCartItems().first().toMutableList()
+        upsertItem(cartItems, item)
+
         dataStore.edit { preferences ->
-            val cartItems = getCartItems().first()
-            val mutableCartItems = cartItems.toMutableList()
-            val cartItemIndex = mutableCartItems.indexOfFirst { item.id == it.id }
+            preferences[CART_ITEMS_KEY] = Json.encodeToString(cartItems.toList())
+        }
+    }
 
-            if (cartItemIndex != -1) {
-                mutableCartItems[cartItemIndex] = item
-            } else {
-                mutableCartItems += item
-            }
+    suspend fun upsertCartItems(items: List<CartItemSession>) {
+        val cartItems = getCartItems().first().toMutableList()
 
-            preferences[CART_ITEMS_KEY] = Json.encodeToString(mutableCartItems.toList())
+        items.forEach { item ->
+            upsertItem(cartItems, item)
+        }
+
+        dataStore.edit { preferences ->
+            preferences[CART_ITEMS_KEY] = Json.encodeToString(cartItems.toList())
         }
     }
 
     suspend fun removeCartItem(cartId: String) {
+        val cartItems = getCartItems().first()
+
         dataStore.edit { preferences ->
-            val cartItems = getCartItems().first()
             val newCartItems = cartItems.filterNot { it.id == cartId }
 
             preferences[CART_ITEMS_KEY] = Json.encodeToString(newCartItems)
@@ -47,9 +68,21 @@ class SessionStorage(
         return dataStore.data
             .map { preferences ->
                 preferences[CART_ITEMS_KEY]?.let { cartItems ->
-                    Json.decodeFromString<List<CartItemSession>>(cartItems)
+                    try {
+                        Json.decodeFromString<List<CartItemSession>>(cartItems)
+                    } catch (e: SerializationException) {
+                        Timber.tag("SessionStorage").e(e)
+
+                        emptyList()
+                    }
                 } ?: emptyList()
             }
             .distinctUntilChanged()
+    }
+
+    suspend fun clearCartItems() {
+        dataStore.edit { preferences ->
+            preferences.remove(CART_ITEMS_KEY)
+        }
     }
 }

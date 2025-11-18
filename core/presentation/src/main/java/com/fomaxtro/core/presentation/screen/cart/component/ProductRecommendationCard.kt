@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
 import com.fomaxtro.core.presentation.R
-import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaIconButton
+import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaOutlinedIconButton
 import com.fomaxtro.core.presentation.designsystem.theme.AppIcons
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.body1Regular
@@ -61,7 +61,7 @@ fun ProductRecommendationCard(
                 style = MaterialTheme.typography.title1SemiBold
             )
 
-            LazyPizzaIconButton(
+            LazyPizzaOutlinedIconButton(
                 onClick = onAddClick
             ) {
                 Icon(

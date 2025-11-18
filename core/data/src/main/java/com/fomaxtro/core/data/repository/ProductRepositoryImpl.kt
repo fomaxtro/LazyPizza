@@ -4,7 +4,7 @@ import com.fomaxtro.core.data.mapper.toCategoryId
 import com.fomaxtro.core.data.mapper.toProduct
 import com.fomaxtro.core.data.remote.datasource.ProductRemoteDataSource
 import com.fomaxtro.core.data.util.safeRemoteCall
-import com.fomaxtro.core.domain.error.DataError
+import com.fomaxtro.core.domain.util.DataError
 import com.fomaxtro.core.domain.model.Product
 import com.fomaxtro.core.domain.model.ProductCategory
 import com.fomaxtro.core.domain.repository.ProductRepository

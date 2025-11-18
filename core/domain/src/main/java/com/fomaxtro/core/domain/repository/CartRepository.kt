@@ -9,4 +9,6 @@ interface CartRepository {
     suspend fun removeCartItem(item: CartItem)
     fun countCartItems(): Flow<Int>
     fun getCartItemsLocal(): Flow<List<CartItemLocal>>
+    suspend fun upsertCartItemsLocal(items: List<CartItemLocal>)
+    suspend fun clearCart()
 }

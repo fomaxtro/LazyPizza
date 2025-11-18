@@ -1,9 +1,14 @@
 package com.fomaxtro.core.presentation.designsystem.button
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,10 +30,19 @@ fun LazyPizzaButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    loading: Boolean = false,
 ) {
+    val buttonHeight = ButtonDefaults.MinHeight - with(ButtonDefaults.ContentPadding) {
+        calculateTopPadding() + calculateBottomPadding()
+    }
+
     Button(
-        onClick = onClick,
+        onClick = {
+            if (!loading) {
+                onClick()
+            }
+        },
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             disabledContentColor = MaterialTheme.colorScheme.textPrimary,
@@ -54,10 +68,19 @@ fun LazyPizzaButton(
             ),
         enabled = enabled
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.title3
-        )
+        AnimatedContent(loading) { loading ->
+            if (loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(buttonHeight),
+                    color = LocalContentColor.current
+                )
+            } else {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.title3
+                )
+            }
+        }
     }
 }
 
@@ -68,8 +91,11 @@ private fun LazyPizzaPrimaryButtonPreview() {
         LazyPizzaButton(
             onClick = {},
             text = "Primary Button",
-            modifier = Modifier.padding(8.dp),
-            enabled = true
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            enabled = true,
+            loading = true
         )
     }
 }

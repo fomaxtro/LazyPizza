@@ -20,7 +20,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.outline50
 
 @Composable
-fun LazyPizzaIconButton(
+fun LazyPizzaOutlinedIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.primary,
@@ -51,9 +51,9 @@ fun LazyPizzaIconButton(
 
 @Preview
 @Composable
-private fun LazyPizzaIconButtonPreview() {
+private fun LazyPizzaOutlinedIconButtonPreview() {
     LazyPizzaTheme {
-        LazyPizzaIconButton(
+        LazyPizzaOutlinedIconButton(
             onClick = {}
         ) {
             Icon(

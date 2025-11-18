@@ -1,6 +1,4 @@
-package com.fomaxtro.core.domain.error
-
-import com.fomaxtro.core.domain.util.Error
+package com.fomaxtro.core.domain.util
 
 sealed interface DataError : Error {
     enum class Network : DataError {

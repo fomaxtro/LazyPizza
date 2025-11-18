@@ -1,9 +1,8 @@
 package com.fomaxtro.core.domain.use_case
 
-import com.fomaxtro.core.domain.error.DataError
+import com.fomaxtro.core.domain.util.DataError
 import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.ToppingSelection
-import com.fomaxtro.core.domain.repository.CartRepository
 import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.repository.ToppingRepository
 import com.fomaxtro.core.domain.util.Result
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 
 class ObserveCartItems(
-    private val cartRepository: CartRepository,
+    private val getCartItemsLocal: GetCartItemsLocal,
     private val toppingRepository: ToppingRepository,
     private val productRepository: ProductRepository
 ) {
@@ -23,7 +22,7 @@ class ObserveCartItems(
         return combine(
             products,
             toppings,
-            cartRepository.getCartItemsLocal()
+            getCartItemsLocal()
         ) { productsResult, toppingsResult, cartItems ->
             val products = when (productsResult) {
                 is Result.Error -> return@combine productsResult

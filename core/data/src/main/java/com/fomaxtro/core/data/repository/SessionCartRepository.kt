@@ -1,19 +1,20 @@
 package com.fomaxtro.core.data.repository
 
 import com.fomaxtro.core.data.mapper.toCartItemLocal
+import com.fomaxtro.core.data.mapper.toCartItemSession
 import com.fomaxtro.core.data.mapper.toToppingSelectionSession
 import com.fomaxtro.core.data.session.SessionStorage
 import com.fomaxtro.core.data.session.model.CartItemSession
 import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.CartItemLocal
-import com.fomaxtro.core.domain.repository.CartRepository
+import com.fomaxtro.core.domain.repository.GuestCartRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-class CartRepositoryImpl(
+class SessionCartRepository(
     private val sessionStorage: SessionStorage
-) : CartRepository {
+) : GuestCartRepository {
     override fun getCartItemsLocal(): Flow<List<CartItemLocal>> {
         return sessionStorage
             .getCartItems()
@@ -21,6 +22,16 @@ class CartRepositoryImpl(
                 cartItems.map { it.toCartItemLocal() }
             }
             .distinctUntilChanged()
+    }
+
+    override suspend fun upsertCartItemsLocal(items: List<CartItemLocal>) {
+        sessionStorage.upsertCartItems(
+            items = items.map { it.toCartItemSession() }
+        )
+    }
+
+    override suspend fun clearCart() {
+        sessionStorage.clearCartItems()
     }
 
     override suspend fun removeCartItem(item: CartItem) {

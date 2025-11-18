@@ -6,26 +6,31 @@ app-targetSdk = "36"
 app-versionCode = "1"
 app-versionName = "1.0"
 
-agp = "8.13.0"
-kotlin = "2.2.20"
+agp = "8.13.1"
+kotlin = "2.2.21"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.9.4"
 activityCompose = "1.11.0"
-composeBom = "2025.10.01"
-splashScreen = "1.0.1"
+composeBom = "2025.11.00"
+splashScreen = "1.2.0"
 coil = "3.3.0"
 timber = "5.0.1"
-ktor = "3.3.1"
+ktor = "3.3.2"
 koin = "4.1.1"
 datastore = "1.1.7"
 coroutines = "1.10.2"
+room = "2.8.3"
+ksp = "2.3.2"
 
-nav3Core = "1.0.0-beta01"
-lifecycleViewmodelNav3 = "2.10.0-beta01"
+nav3Core = "1.0.0-rc01"
+lifecycleViewmodelNav3 = "2.10.0-rc01"
 kotlinxSerialization = "1.9.0"
+
+playServiceAuth = "21.4.0"
+playServiceAuthApiPhone = "18.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -59,6 +64,7 @@ ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
@@ -72,7 +78,14 @@ androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecy
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 
+gms-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServiceAuth" }
+gms-play-services-auth-api-phone = { module = "com.google.android.gms:play-services-auth-api-phone", version.ref = "playServiceAuthApiPhone" }
+
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 
 [bundles]
 compose-icons = [
@@ -88,12 +101,21 @@ ktor = [
     "ktor-client-cio",
     "ktor-client-content-negotiation",
     "ktor-serialization-kotlinx-json",
-    "ktor-client-logging"
+    "ktor-client-logging",
+    "ktor-client-auth"
 ]
 navigation3 = [
     "androidx-navigation3-runtime",
     "androidx-navigation3-ui",
     "androidx-lifecycle-viewmodel-navigation3"
+]
+play-services-auth = [
+    "gms-play-services-auth",
+    "gms-play-services-auth-api-phone"
+]
+room = [
+    "room-runtime",
+    "room-ktx"
 ]
 
 [plugins]
@@ -110,3 +132,6 @@ lazypizza-library-compose = { id = "lazypizza.library.compose" }
 lazypizza-library-jvm = { id = "lazypizza.library.jvm" }
 lazypizza-android-library = { id = "lazypizza.android.library" }
 lazypizza-feature-ui = { id = "lazypizza.feature.ui" }
+
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+room = { id = "androidx.room", version.ref = "room" }

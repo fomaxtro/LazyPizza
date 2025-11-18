@@ -1,6 +1,6 @@
 package com.fomaxtro.core.presentation.mapper
 
-import com.fomaxtro.core.domain.error.DataError
+import com.fomaxtro.core.domain.util.DataError
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.ui.UiText
 
