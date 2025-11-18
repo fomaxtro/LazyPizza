@@ -3,6 +3,7 @@ package com.fomaxtro.core.presentation.screen.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.repository.AuthRepository
+import com.fomaxtro.core.presentation.util.Resource
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -13,7 +14,7 @@ class HistoryViewModel(
     val state = authRepository.isAuthenticated()
         .map { isAuthenticated ->
             HistoryState(
-                isAuthenticated = isAuthenticated
+                isAuthenticated = Resource.Success(isAuthenticated)
             )
         }
         .stateIn(
