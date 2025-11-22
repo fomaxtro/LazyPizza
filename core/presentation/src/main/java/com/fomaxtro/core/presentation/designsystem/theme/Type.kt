@@ -54,6 +54,22 @@ val Typography.title4: TextStyle
         lineHeight = 16.sp
     )
 
+val Typography.label1Medium: TextStyle
+    get() = TextStyle(
+        fontFamily = InstrumentSans,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        lineHeight = 20.sp
+    )
+
+val Typography.label1Semibold: TextStyle
+    get() = TextStyle(
+        fontFamily = InstrumentSans,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
+        lineHeight = 20.sp
+    )
+
 val Typography.label2Semibold: TextStyle
     get() = TextStyle(
         fontFamily = InstrumentSans,

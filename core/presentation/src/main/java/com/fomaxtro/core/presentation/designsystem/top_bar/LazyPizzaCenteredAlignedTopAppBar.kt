@@ -8,6 +8,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaNavigationIconButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.body1Medium
 
@@ -15,7 +16,8 @@ import com.fomaxtro.core.presentation.designsystem.theme.body1Medium
 @Composable
 fun LazyPizzaCenteredAlignedTopAppBar(
     title: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateBackClick: (() -> Unit)? = null
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -27,7 +29,14 @@ fun LazyPizzaCenteredAlignedTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.background
         ),
-        modifier = modifier
+        modifier = modifier,
+        navigationIcon = {
+            if (onNavigateBackClick != null) {
+                LazyPizzaNavigationIconButton(
+                    onClick = onNavigateBackClick
+                )
+            }
+        }
     )
 }
 
