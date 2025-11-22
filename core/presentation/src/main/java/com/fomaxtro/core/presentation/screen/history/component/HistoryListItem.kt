@@ -27,7 +27,7 @@ fun HistoryListItem(
 ) {
     BaseHistoryListItem(
         title = {
-            Text(stringResource(R.string.order_nunber, order.id))
+            Text(stringResource(R.string.order_number, order.id))
         },
         date = {
             Text(
@@ -60,7 +60,7 @@ fun HistoryListItem(
                 }
                 OrderStatus.IN_PROGRESS -> {
                     InfoLabel(
-                        text = stringResource(R.string.in_progress),
+                        text = stringResource(R.string.in_progress_text),
                         containerColor = MaterialTheme.colorScheme.waring
                     )
                 }

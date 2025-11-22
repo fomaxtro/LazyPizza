@@ -18,7 +18,7 @@ import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.screen.cart.component.CartLayout
-import com.fomaxtro.core.presentation.screen.cart.component.ProductRecommendationCard
+import com.fomaxtro.core.presentation.component.ProductRecommendationCard
 import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.util.ProductUiFactory

@@ -56,7 +56,6 @@ android {
             isDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
-            applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("release")
 
             matchingFallbacks += "debug"
