@@ -24,26 +24,12 @@ class ProductRepositoryImpl(
             .map { it.toProduct() }
     }
 
-    override suspend fun getRecommendations(): Result<List<Product>, DataError> {
-        val categoryIds = listOf(
-            ProductCategory.SAUCES,
-            ProductCategory.DRINKS
-        ).map { it.toCategoryId() }
+    override suspend fun getAllByCategories(categories: Set<ProductCategory>): Result<List<Product>, DataError> {
+        val categoryIds = categories.map { it.toCategoryId() }
 
-        return when (
-            val result = safeRemoteCall {
-                productRemoteDataSource.fetchAllByCategories(categoryIds)
+        return safeRemoteCall { productRemoteDataSource.fetchAllByCategories(categoryIds) }
+            .map { products ->
+                products.map { it.toProduct() }
             }
-        ) {
-            is Result.Error -> result
-
-            is Result.Success -> {
-                val randomProducts = result.data
-                    .map { it.toProduct() }
-                    .shuffled()
-
-                Result.Success(randomProducts)
-            }
-        }
     }
 }
