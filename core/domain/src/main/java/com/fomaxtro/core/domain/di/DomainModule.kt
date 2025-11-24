@@ -2,7 +2,7 @@ package com.fomaxtro.core.domain.di
 
 import com.fomaxtro.core.domain.use_case.CountCartItems
 import com.fomaxtro.core.domain.use_case.GetCartItemsLocal
-import com.fomaxtro.core.domain.use_case.GetProductRecommendations
+import com.fomaxtro.core.domain.use_case.ObserveProductRecommendations
 import com.fomaxtro.core.domain.use_case.Login
 import com.fomaxtro.core.domain.use_case.Logout
 import com.fomaxtro.core.domain.use_case.ObserveCartItems
@@ -27,5 +27,5 @@ val domainModule = module {
     factoryOf(::UpsertCartItem)
     factoryOf(::Login)
     factoryOf(::Logout)
-    factoryOf(::GetProductRecommendations)
+    factoryOf(::ObserveProductRecommendations)
 }

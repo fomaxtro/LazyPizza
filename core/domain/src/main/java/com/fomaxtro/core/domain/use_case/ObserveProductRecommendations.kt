@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 
-class GetProductRecommendations(
+class ObserveProductRecommendations(
     private val productRepository: ProductRepository
 ) {
     operator fun invoke(

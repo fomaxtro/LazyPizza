@@ -6,6 +6,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.fomaxtro.core.presentation.screen.checkout.CheckoutRoot
 import com.fomaxtro.core.presentation.screen.login.LoginRoot
 import com.fomaxtro.core.presentation.screen.product_details.ProductDetailsRoot
 import com.fomaxtro.lazypizza.navigation.home.HomeNavigationRoot
@@ -37,6 +38,11 @@ fun NavigationRoot() {
                         if (currentRoute is Route.Home) {
                             backStack.add(Route.Login)
                             backStack.remove(currentRoute)
+                        }
+                    },
+                    onNavigateToCheckout = {
+                        if (backStack.lastOrNull() is Route.Home) {
+                            backStack.add(Route.Checkout)
                         }
                     }
                 )
@@ -71,6 +77,10 @@ fun NavigationRoot() {
                         backStack.remove(previousRoute)
                     }
                 )
+            }
+
+            entry<Route.Checkout> {
+                CheckoutRoot()
             }
         }
     )

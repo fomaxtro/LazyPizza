@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.component.GradientFadeBox
 import com.fomaxtro.core.presentation.component.ProductListItem
+import com.fomaxtro.core.presentation.component.ProductListItemLoader
 import com.fomaxtro.core.presentation.component.ProductRecommendationCard
 import com.fomaxtro.core.presentation.component.ProductRecommendationCardLoader
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
@@ -66,6 +67,8 @@ import java.util.Locale
 fun CheckoutLayout(
     pickupOptions: @Composable () -> Unit,
     pickupTime: String,
+    cartItemsLoading: Boolean,
+    cartItemsLoader: @Composable () -> Unit,
     cartItems: List<CartItemUi>,
     cartItemBuilder: @Composable (CartItemUi) -> Unit,
     productRecommendationsLoading: Boolean,
@@ -88,11 +91,11 @@ fun CheckoutLayout(
     val actionHeightDp = with(LocalDensity.current) { actionHeightPx.toDp() }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
     ) {
         LazyColumn(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
@@ -186,8 +189,14 @@ fun CheckoutLayout(
                                     .padding(bottom = 16.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                cartItems.forEach {
-                                    cartItemBuilder(it)
+                                if (cartItemsLoading) {
+                                    repeat(3) {
+                                        cartItemsLoader()
+                                    }
+                                } else {
+                                    cartItems.forEach {
+                                        cartItemBuilder(it)
+                                    }
                                 }
                             }
                         }
@@ -201,16 +210,26 @@ fun CheckoutLayout(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                cartItems.forEach {
-                                    Box(
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        cartItemBuilder(it)
+                                if (cartItemsLoading) {
+                                    repeat(4) {
+                                        Box(
+                                            modifier = Modifier.weight(1f),
+                                        ) {
+                                            cartItemsLoader()
+                                        }
                                     }
-                                }
+                                } else {
+                                    cartItems.forEach {
+                                        Box(
+                                            modifier = Modifier.weight(1f)
+                                        ) {
+                                            cartItemBuilder(it)
+                                        }
+                                    }
 
-                                if (cartItems.isNotEmpty() && cartItems.size % 2 != 0) {
-                                    Spacer(modifier = Modifier.weight(1f))
+                                    if (cartItems.isNotEmpty() && cartItems.size % 2 != 0) {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                    }
                                 }
                             }
                         }
@@ -363,6 +382,10 @@ private fun CheckoutLayoutPreview() {
                 )
             },
             pickupTime = "12:15",
+            cartItemsLoading = true,
+            cartItemsLoader = {
+                ProductListItemLoader()
+            },
             cartItems = cartItems,
             cartItemBuilder = { cartItem ->
                 ProductListItem(

@@ -11,6 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.component.ProductListItem
 import com.fomaxtro.core.presentation.component.ProductRecommendationCard
@@ -34,8 +36,20 @@ import com.fomaxtro.core.presentation.screen.checkout.model.PickupOption
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 import com.fomaxtro.core.presentation.util.Resource
 import com.fomaxtro.core.presentation.util.getOrDefault
+import org.koin.androidx.compose.koinViewModel
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+
+@Composable
+fun CheckoutRoot(
+    viewModel: CheckoutViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    CheckoutScreen(
+        state = state
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,7 +108,9 @@ private fun CheckoutScreen(
                         }
                     )
                 ),
-            cartItems = state.cartItems,
+            cartItemsLoading = state.cartItems.isLoading,
+            cartItemsLoader = {},
+            cartItems = state.cartItems.getOrDefault(emptyList()),
             cartItemBuilder = { cartItem ->
                 val product = cartItem.product
 
@@ -143,19 +159,21 @@ private fun CheckoutScreen(
 @Preview
 @Composable
 private fun CheckoutScreenPreview() {
+    val cartItems = (1..3).map {
+        CartItemUi(
+            id = it.toString(),
+            product = ProductUiFactory.create(
+                id = it.toLong()
+            ),
+            quantity = it
+        )
+    }
+
     LazyPizzaTheme {
         CheckoutScreen(
             state = CheckoutState(
                 pickupOption = PickupOption.EARLIEST,
-                cartItems = (1..3).map {
-                    CartItemUi(
-                        id = it.toString(),
-                        product = ProductUiFactory.create(
-                            id = it.toLong()
-                        ),
-                        quantity = it
-                    )
-                },
+                cartItems = Resource.Success(cartItems),
                 productRecommendations = Resource.Success(
                     data = (1..3).map {
                         ProductUiFactory.create(

@@ -3,7 +3,7 @@ package com.fomaxtro.core.presentation.screen.cart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.model.CartItem
-import com.fomaxtro.core.domain.use_case.GetProductRecommendations
+import com.fomaxtro.core.domain.use_case.ObserveProductRecommendations
 import com.fomaxtro.core.domain.use_case.ObserveCartItems
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
@@ -29,7 +29,7 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 @OptIn(ExperimentalAtomicApi::class)
 class CartViewModel(
     private val updateCartItemQuantity: UpdateCartItemQuantity,
-    getProductRecommendations: GetProductRecommendations,
+    observeProductRecommendations: ObserveProductRecommendations,
     observeCartItems: ObserveCartItems
 ) : ViewModel() {
     private val eventChannel = Channel<CartEvent>()
@@ -47,7 +47,8 @@ class CartViewModel(
         }
         .shareIn(
             viewModelScope,
-            SharingStarted.Lazily
+            SharingStarted.Lazily,
+            replay = 1
         )
 
     private val cartItems = cartItemsShared
@@ -58,7 +59,7 @@ class CartViewModel(
             Resource.Loading
         )
 
-    private val productRecommendations = getProductRecommendations(
+    private val productRecommendations = observeProductRecommendations(
         cartItems = cartItemsShared.map { it.getOrDefault(emptyList()) }
     )
         .onEach { productRecommendations ->
@@ -73,7 +74,7 @@ class CartViewModel(
         .map { it.toResource() }
         .stateIn(
             viewModelScope,
-            SharingStarted.Eagerly,
+            SharingStarted.Lazily,
             Resource.Loading
         )
 
@@ -99,7 +100,7 @@ class CartViewModel(
         when (action) {
             is CartAction.OnQuantityChange -> onQuantityChange(action.cartItemId, action.quantity)
             is CartAction.OnRecommendationAddClick -> onRecommendationAddClick(action.productId)
-            CartAction.OnBackToMenuClick -> Unit
+            else -> Unit
         }
     }
 

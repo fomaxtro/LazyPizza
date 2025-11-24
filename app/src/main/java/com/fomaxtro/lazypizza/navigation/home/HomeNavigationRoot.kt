@@ -23,7 +23,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeNavigationRoot(
     onNavigateToProductDetails: (productId: Long) -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToCheckout: () -> Unit
 ) {
     val backStack = rememberNavBackStack(HomeRoute.Menu)
     val currentRoute = backStack.lastOrNull()
@@ -93,7 +94,8 @@ fun HomeNavigationRoot(
                                 backStack.add(HomeRoute.Menu)
                                 backStack.remove(currentRoute)
                             }
-                        }
+                        },
+                        onNavigateToCheckout = onNavigateToCheckout
                     )
                 }
 

@@ -28,6 +28,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun CartRoot(
     onBackToMenuClick: () -> Unit,
+    onNavigateToCheckout: () -> Unit,
     viewModel: CartViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
@@ -49,6 +50,7 @@ fun CartRoot(
         onAction = { action ->
             when (action) {
                 CartAction.OnBackToMenuClick -> onBackToMenuClick()
+                CartAction.OnCheckoutClick -> onNavigateToCheckout()
                 else -> viewModel.onAction(action)
             }
         },
@@ -129,7 +131,9 @@ private fun CartScreen(
             loading = state.isCartItemsLoading,
             action = {
                 LazyPizzaButton(
-                    onClick = {},
+                    onClick = {
+                        onAction(CartAction.OnCheckoutClick)
+                    },
                     text = stringResource(
                         id = R.string.proceed_to_checkout,
                         Formatters.formatCurrency(state.totalPrice)
