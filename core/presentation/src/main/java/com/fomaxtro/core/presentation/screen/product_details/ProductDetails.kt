@@ -35,17 +35,12 @@ import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.currentScreenType
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ProductDetailsRoot(
-    productId: Long,
     onBackClick: () -> Unit,
     onNavigateToCart: () -> Unit,
-    viewModel: ProductDetailsViewModel = koinViewModel {
-        parametersOf(productId)
-    }
+    viewModel: ProductDetailsViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current

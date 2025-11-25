@@ -23,13 +23,12 @@ import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 import com.fomaxtro.core.presentation.util.toDisplayText
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CartRoot(
     onBackToMenuClick: () -> Unit,
     onNavigateToCheckout: () -> Unit,
-    viewModel: CartViewModel = koinViewModel()
+    viewModel: CartViewModel
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()

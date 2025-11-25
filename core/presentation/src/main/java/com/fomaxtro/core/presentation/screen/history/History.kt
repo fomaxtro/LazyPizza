@@ -26,14 +26,13 @@ import com.fomaxtro.core.presentation.screen.history.model.OrderUi
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.currentScreenType
 import com.fomaxtro.core.presentation.util.Resource
-import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDateTime
 import java.time.ZoneId
 
 @Composable
 fun HistoryRoot(
     onNavigateToLogin: () -> Unit,
-    viewModel: HistoryViewModel = koinViewModel()
+    viewModel: HistoryViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 

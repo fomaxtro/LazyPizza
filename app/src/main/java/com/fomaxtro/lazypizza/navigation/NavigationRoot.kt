@@ -10,6 +10,8 @@ import com.fomaxtro.core.presentation.screen.checkout.CheckoutRoot
 import com.fomaxtro.core.presentation.screen.login.LoginRoot
 import com.fomaxtro.core.presentation.screen.product_details.ProductDetailsRoot
 import com.fomaxtro.lazypizza.navigation.home.HomeNavigationRoot
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun NavigationRoot() {
@@ -50,7 +52,9 @@ fun NavigationRoot() {
 
             entry<Route.ProductDetails> { entry ->
                 ProductDetailsRoot(
-                    productId = entry.productId,
+                    viewModel = koinViewModel {
+                        parametersOf(entry.productId)
+                    },
                     onBackClick = {
                         if (backStack.lastOrNull() is Route.ProductDetails) {
                             backStack.removeLastOrNull()
@@ -75,7 +79,8 @@ fun NavigationRoot() {
                         val previousRoute = backStack.last()
                         backStack.add(Route.Home)
                         backStack.remove(previousRoute)
-                    }
+                    },
+                    viewModel = koinViewModel()
                 )
             }
 
@@ -85,7 +90,8 @@ fun NavigationRoot() {
                         if (backStack.lastOrNull() is Route.Checkout) {
                             backStack.removeLastOrNull()
                         }
-                    }
+                    },
+                    viewModel = koinViewModel()
                 )
             }
         }

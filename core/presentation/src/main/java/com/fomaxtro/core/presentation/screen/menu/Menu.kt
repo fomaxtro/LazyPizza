@@ -42,6 +42,7 @@ import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.UiText
 import com.fomaxtro.core.presentation.ui.currentScreenType
+import com.fomaxtro.core.presentation.util.getOrNull
 import com.fomaxtro.core.presentation.util.toDisplayName
 import org.koin.androidx.compose.koinViewModel
 
@@ -49,7 +50,7 @@ import org.koin.androidx.compose.koinViewModel
 fun MenuRoot(
     onProductClick: (productId: Long) -> Unit,
     onShowMessage: (UiText) -> Unit,
-    viewModel: MenuViewModel = koinViewModel()
+    viewModel: MenuViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current

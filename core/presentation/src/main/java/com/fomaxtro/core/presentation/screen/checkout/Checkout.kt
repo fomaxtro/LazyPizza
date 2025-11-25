@@ -33,14 +33,13 @@ import com.fomaxtro.core.presentation.screen.checkout.model.PickupOption
 import com.fomaxtro.core.presentation.util.ProductUiFactory
 import com.fomaxtro.core.presentation.util.Resource
 import com.fomaxtro.core.presentation.util.getOrDefault
-import org.koin.androidx.compose.koinViewModel
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun CheckoutRoot(
     onNavigateBack: () -> Unit,
-    viewModel: CheckoutViewModel = koinViewModel()
+    viewModel: CheckoutViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 

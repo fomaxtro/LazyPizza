@@ -19,6 +19,7 @@ import com.fomaxtro.core.presentation.screen.home.HomeDestination
 import com.fomaxtro.core.presentation.screen.home.HomeRoot
 import com.fomaxtro.core.presentation.screen.menu.MenuRoot
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeNavigationRoot(
@@ -53,7 +54,8 @@ fun HomeNavigationRoot(
             backStack.remove(currentRoute)
         },
         onNavigateToLogin = onNavigateToLogin,
-        hostState = snackbarHostState
+        hostState = snackbarHostState,
+        viewModel = koinViewModel()
     ) {
         NavDisplay(
             backStack = backStack,
@@ -81,7 +83,8 @@ fun HomeNavigationRoot(
                             scope.launch {
                                 snackbarHostState.showSnackbar(message.asString(context))
                             }
-                        }
+                        },
+                        viewModel = koinViewModel()
                     )
                 }
 
@@ -95,13 +98,15 @@ fun HomeNavigationRoot(
                                 backStack.remove(currentRoute)
                             }
                         },
-                        onNavigateToCheckout = onNavigateToCheckout
+                        onNavigateToCheckout = onNavigateToCheckout,
+                        viewModel = koinViewModel()
                     )
                 }
 
                 entry<HomeRoute.History> {
                     HistoryRoot(
-                        onNavigateToLogin = onNavigateToLogin
+                        onNavigateToLogin = onNavigateToLogin,
+                        viewModel = koinViewModel()
                     )
                 }
             }
