@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -71,11 +72,11 @@ fun CheckoutLayout(
     cartItemsLoading: Boolean,
     cartItemsLoader: @Composable () -> Unit,
     cartItems: List<CartItemUi>,
-    cartItemBuilder: @Composable (CartItemUi) -> Unit,
+    cartItemBuilder: @Composable LazyItemScope.(CartItemUi) -> Unit,
     productRecommendationsLoading: Boolean,
     productRecommendationsLoader: @Composable () -> Unit,
     productRecommendations: List<ProductUi>,
-    productRecommendationBuilder: @Composable (ProductUi) -> Unit,
+    productRecommendationBuilder: @Composable LazyItemScope.(ProductUi) -> Unit,
     comments: @Composable () -> Unit,
     totalPrice: Double,
     modifier: Modifier = Modifier

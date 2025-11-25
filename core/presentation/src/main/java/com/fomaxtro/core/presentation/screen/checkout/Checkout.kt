@@ -39,19 +39,27 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun CheckoutRoot(
+    onNavigateBack: () -> Unit,
     viewModel: CheckoutViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     CheckoutScreen(
-        state = state
+        state = state,
+        onAction = { action ->
+            when (action) {
+                CheckoutAction.OnNavigateBackClick -> onNavigateBack()
+                else -> viewModel.onAction(action)
+            }
+        }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CheckoutScreen(
-    state: CheckoutState
+    state: CheckoutState,
+    onAction: (CheckoutAction) -> Unit = {}
 ) {
     val shape = RoundedCornerShape(
         topStart = 16.dp,
@@ -69,7 +77,9 @@ private fun CheckoutScreen(
             ) {
                 LazyPizzaCenteredAlignedTopAppBar(
                     title = stringResource(R.string.order_checkout),
-                    onNavigateBackClick = {},
+                    onNavigateBackClick = {
+                        onAction(CheckoutAction.OnNavigateBackClick)
+                    },
                     modifier = Modifier.padding(horizontal = 10.dp),
                     containerColor = MaterialTheme.colorScheme.surface
                 )
@@ -116,9 +126,25 @@ private fun CheckoutScreen(
                     description = product.description,
                     price = cartItem.priceWithToppings,
                     quantity = cartItem.quantity,
-                    modifier = Modifier.fillMaxWidth(),
-                    onDeleteClick = {},
-                    onQuantityChange = {},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateItem(),
+                    onDeleteClick = {
+                        onAction(
+                            CheckoutAction.OnCartItemQuantityChange(
+                                cartItemId = cartItem.id,
+                                quantity = 0
+                            )
+                        )
+                    },
+                    onQuantityChange = {
+                        onAction(
+                            CheckoutAction.OnCartItemQuantityChange(
+                                cartItemId = cartItem.id,
+                                quantity = it
+                            )
+                        )
+                    },
                     minQuantity = 1
                 )
             },
@@ -127,10 +153,15 @@ private fun CheckoutScreen(
                 ProductRecommendationCardLoader()
             },
             productRecommendations = state.productRecommendations.getOrDefault(emptyList()),
-            productRecommendationBuilder = {
+            productRecommendationBuilder = { product ->
                 ProductRecommendationCard(
-                    product = it,
-                    onAddClick = {}
+                    product = product,
+                    onAddClick = {
+                        onAction(
+                            CheckoutAction.OnAddProductRecommendationClick(product.id)
+                        )
+                    },
+                    modifier = Modifier.animateItem()
                 )
             },
             comments = {

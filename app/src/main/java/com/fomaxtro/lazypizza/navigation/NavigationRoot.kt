@@ -80,7 +80,13 @@ fun NavigationRoot() {
             }
 
             entry<Route.Checkout> {
-                CheckoutRoot()
+                CheckoutRoot(
+                    onNavigateBack = {
+                        if (backStack.lastOrNull() is Route.Checkout) {
+                            backStack.removeLastOrNull()
+                        }
+                    }
+                )
             }
         }
     )
