@@ -6,19 +6,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fomaxtro.core.presentation.R
@@ -27,7 +25,6 @@ import com.fomaxtro.core.presentation.component.ProductRecommendationCard
 import com.fomaxtro.core.presentation.component.ProductRecommendationCardLoader
 import com.fomaxtro.core.presentation.designsystem.text_field.LazyPizzaOutlinedFormTextField
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
-import com.fomaxtro.core.presentation.designsystem.theme.textPrimary
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaCenteredAlignedTopAppBar
 import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.screen.checkout.component.CheckoutLayout
@@ -63,22 +60,21 @@ private fun CheckoutScreen(
 
     Scaffold(
         topBar = {
-            LazyPizzaCenteredAlignedTopAppBar(
-                title = stringResource(R.string.order_checkout),
-                onNavigateBackClick = {},
-                modifier = Modifier.padding(horizontal = 10.dp)
-            )
-        },
-        modifier = Modifier
-            .clip(shape)
-            .dropShadow(
-                shape = shape,
-                shadow = Shadow(
-                    color = MaterialTheme.colorScheme.textPrimary.copy(alpha = 0.04f),
-                    radius = 16.dp,
-                    offset = DpOffset(0.dp, (-4).dp)
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding(),
+                color = MaterialTheme.colorScheme.surface,
+                shape = shape
+            ) {
+                LazyPizzaCenteredAlignedTopAppBar(
+                    title = stringResource(R.string.order_checkout),
+                    onNavigateBackClick = {},
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    containerColor = MaterialTheme.colorScheme.surface
                 )
-            )
+            }
+        }
     ) { innerPadding ->
         CheckoutLayout(
             pickupOptions = {
