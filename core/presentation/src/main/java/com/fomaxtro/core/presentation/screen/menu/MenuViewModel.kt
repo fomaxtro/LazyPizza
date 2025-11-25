@@ -12,7 +12,6 @@ import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.ui.UiText
 import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrDefault
 import com.fomaxtro.core.presentation.util.getOrNull
 import com.fomaxtro.core.presentation.util.map
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -160,8 +159,9 @@ private fun MenuInternalState.toUi(
 ) = MenuState(
     search = search,
     selectedCategory = selectedCategory,
-    isLoading = cartItems.isLoading,
-    cartItems = cartItems.getOrDefault(emptyList())
-        .map { it.toUi() }
-        .groupBy { it.product.category }
+    cartItems = cartItems
+        .map { cartItems ->
+            cartItems.map { it.toUi() }
+                .groupBy { it.product.category }
+        }
 )

@@ -44,7 +44,6 @@ import com.fomaxtro.core.presentation.ui.UiText
 import com.fomaxtro.core.presentation.ui.currentScreenType
 import com.fomaxtro.core.presentation.util.getOrNull
 import com.fomaxtro.core.presentation.util.toDisplayName
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MenuRoot(
@@ -172,8 +171,8 @@ private fun MenuScreen(
 
         categoryProductList(
             category = ProductCategory.PIZZA,
-            items = state.cartItems[ProductCategory.PIZZA],
-            loading = state.isLoading,
+            items = state.cartItems.getOrNull()?.get(ProductCategory.PIZZA),
+            loading = state.cartItems.isLoading,
             screenType = screenType,
             itemContent = { cartItem ->
                 val product = cartItem.product
@@ -195,8 +194,8 @@ private fun MenuScreen(
         productCategories.drop(1).forEach { productCategory ->
             categoryProductList(
                 category = productCategory,
-                items = state.cartItems[productCategory],
-                loading = state.isLoading,
+                items = state.cartItems.getOrNull()?.get(productCategory),
+                loading = state.cartItems.isLoading,
                 screenType = screenType,
                 itemContent = { cartItem ->
                     val product = cartItem.product
