@@ -2,12 +2,12 @@ package com.fomaxtro.core.presentation.screen.cart
 
 import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.model.ProductUi
+import com.fomaxtro.core.presentation.util.Resource
+import com.fomaxtro.core.presentation.util.getOrDefault
 
 data class CartState(
-    val isCartItemsLoading: Boolean = true,
-    val isProductRecommendationsLoading: Boolean = true,
-    val cartItems: List<CartItemUi> = emptyList(),
-    val productRecommendations: List<ProductUi> = emptyList(),
+    val cartItems: Resource<List<CartItemUi>> = Resource.Loading,
+    val productRecommendations: Resource<List<ProductUi>> = Resource.Loading,
 ) {
-    val totalPrice = cartItems.sumOf { it.totalPrice }
+    val totalPrice = cartItems.getOrDefault(emptyList()).sumOf { it.totalPrice }
 }

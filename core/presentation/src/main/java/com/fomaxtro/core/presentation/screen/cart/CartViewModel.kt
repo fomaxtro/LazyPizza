@@ -3,8 +3,8 @@ package com.fomaxtro.core.presentation.screen.cart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.model.CartItem
-import com.fomaxtro.core.domain.use_case.ObserveProductRecommendations
 import com.fomaxtro.core.domain.use_case.ObserveCartItems
+import com.fomaxtro.core.domain.use_case.ObserveProductRecommendations
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.domain.util.getOrDefault
@@ -12,8 +12,8 @@ import com.fomaxtro.core.presentation.mapper.toResource
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrDefault
 import com.fomaxtro.core.presentation.util.getOrNull
+import com.fomaxtro.core.presentation.util.map
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -83,12 +83,12 @@ class CartViewModel(
         productRecommendations
     ) { cartItems, productRecommendations ->
         CartState(
-            isCartItemsLoading = cartItems.isLoading,
-            cartItems = cartItems.getOrDefault(emptyList())
-                .map { it.toUi() },
-            isProductRecommendationsLoading = productRecommendations.isLoading,
-            productRecommendations = productRecommendations.getOrDefault(emptyList())
-                .map { it.toUi() }
+            cartItems = cartItems.map { cartItems ->
+                cartItems.map { it.toUi() }
+            },
+            productRecommendations = productRecommendations.map { productRecommendations ->
+                productRecommendations.map { it.toUi() }
+            }
         )
     }.stateIn(
         viewModelScope,
