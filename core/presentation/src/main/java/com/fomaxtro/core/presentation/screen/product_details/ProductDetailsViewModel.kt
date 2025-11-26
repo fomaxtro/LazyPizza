@@ -8,6 +8,7 @@ import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.repository.ToppingRepository
 import com.fomaxtro.core.domain.use_case.UpsertCartItem
 import com.fomaxtro.core.domain.util.Result
+import com.fomaxtro.core.presentation.mapper.toResource
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.util.Resource
@@ -18,6 +19,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -33,29 +36,22 @@ class ProductDetailsViewModel(
     private val eventChannel = Channel<ProductDetailsEvent>()
     val events = eventChannel.receiveAsFlow()
 
-    private val product = flow {
-        emit(Resource.Loading)
-
-        when (val result = productRepository.findById(productId)) {
-            is Result.Error -> {
+    private val product = flow { emit(productRepository.findById(productId)) }
+        .onEach { result ->
+            if (result is Result.Error) {
                 eventChannel.send(
                     ProductDetailsEvent.ShowSystemMessage(
                         result.error.toUiText()
                     )
                 )
-
-                emit(Resource.Error)
-            }
-
-            is Result.Success -> {
-                emit(Resource.Success(result.data))
             }
         }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.Lazily,
-        Resource.Loading
-    )
+        .map { it.toResource() }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            Resource.Loading
+        )
 
     private val toppings = MutableStateFlow<Resource<List<ToppingSelection>>>(Resource.Loading)
 

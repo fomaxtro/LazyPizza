@@ -8,6 +8,7 @@ import com.fomaxtro.core.domain.repository.AuthRepository
 import com.fomaxtro.core.domain.use_case.Login
 import com.fomaxtro.core.domain.util.DataError
 import com.fomaxtro.core.domain.util.Result
+import com.fomaxtro.core.domain.util.ValidationResult
 import com.fomaxtro.core.domain.validation.OtpValidator
 import com.fomaxtro.core.domain.validation.PhoneNumberValidator
 import com.fomaxtro.core.presentation.R
@@ -28,18 +29,14 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlin.concurrent.atomics.AtomicBoolean
-import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
-@OptIn(ExperimentalAtomicApi::class)
 class LoginViewModel(
     private val phoneNumberValidator: PhoneNumberValidator,
     private val otpValidator: OtpValidator,
@@ -53,22 +50,13 @@ class LoginViewModel(
     private val eventChannel = Channel<LoginEvent>()
     val events = eventChannel.receiveAsFlow()
 
-    private val firstLaunch = AtomicBoolean(false)
-
     private val otpCodeFlow = snapshotFlow { _state.value.otpCode.text.toString() }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Lazily,
-            ""
-        )
 
     private val isValidPhoneNumberFlow = _state
         .map { it.phoneNumber }
         .distinctUntilChanged()
         .map { phoneNumber ->
-            val validationError = phoneNumberValidator.validate(phoneNumber)
-
-            validationError == null
+            phoneNumberValidator.validate(phoneNumber) is ValidationResult.Valid
         }
 
     private val canSubmitLogin = combine(
@@ -77,7 +65,7 @@ class LoginViewModel(
         otpCodeFlow
     ) { isValidPhoneNumber, isOtpInputVisible, otpCode ->
         if (isValidPhoneNumber && isOtpInputVisible) {
-            otpValidator.validate(otpCode) == null
+            otpValidator.validate(otpCode) is ValidationResult.Valid
         } else {
             isValidPhoneNumber
         }
@@ -117,27 +105,29 @@ class LoginViewModel(
             canSubmitLogin = canSubmitLogin,
             remainingOtpResendTime = remainingOtpResendTime
         )
-    }
-        .onStart {
-            if (firstLaunch.compareAndSet(expectedValue = false, newValue = true)) {
-                otpCodeEventBus.events
-                    .onEach { otpCode ->
-                        _state.update {
-                            it.copy(
-                                otpCode = TextFieldState(otpCode)
-                            )
-                        }
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        LoginState()
+    )
 
-                        submitLogin()
-                    }
-                    .launchIn(viewModelScope)
+    private fun observeOtpCode() {
+        otpCodeEventBus.events
+            .onEach { otpCode ->
+                _state.update {
+                    it.copy(
+                        otpCode = TextFieldState(otpCode)
+                    )
+                }
+
+                submitLogin()
             }
-        }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            LoginState()
-        )
+            .launchIn(viewModelScope)
+    }
+
+    init {
+        observeOtpCode()
+    }
 
     fun onAction(action: LoginAction) {
         when (action) {

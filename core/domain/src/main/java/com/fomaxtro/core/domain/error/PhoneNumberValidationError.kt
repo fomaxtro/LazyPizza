@@ -1,6 +1,8 @@
 package com.fomaxtro.core.domain.error
 
-enum class PhoneNumberValidationError {
+import com.fomaxtro.core.domain.util.ValidationError
+
+enum class PhoneNumberValidationError : ValidationError {
     EMPTY_PHONE,
     INVALID_FORMAT
 }

@@ -1,6 +1,8 @@
 package com.fomaxtro.core.domain.error
 
-enum class OtpValidationError {
+import com.fomaxtro.core.domain.util.ValidationError
+
+enum class OtpValidationError : ValidationError {
     EMPTY_OTP,
     TOO_SHORT
 }
