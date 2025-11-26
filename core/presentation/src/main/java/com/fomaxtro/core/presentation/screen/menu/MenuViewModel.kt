@@ -8,6 +8,7 @@ import com.fomaxtro.core.domain.use_case.ObserveProductsWithCartItems
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.presentation.R
+import com.fomaxtro.core.presentation.mapper.toResource
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.ui.UiText
@@ -49,12 +50,7 @@ class MenuViewModel(
                 )
             }
         }
-        .map { cartItemsResult ->
-            when (cartItemsResult) {
-                is Result.Error -> Resource.Error
-                is Result.Success -> Resource.Success(cartItemsResult.data)
-            }
-        }
+        .map { it.toResource() }
         .stateIn(
             viewModelScope,
             SharingStarted.Lazily,
