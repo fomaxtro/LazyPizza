@@ -8,6 +8,7 @@ import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.repository.ToppingRepository
 import com.fomaxtro.core.domain.use_case.UpsertCartItem
 import com.fomaxtro.core.domain.util.Result
+import com.fomaxtro.core.domain.util.map
 import com.fomaxtro.core.presentation.mapper.toResource
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
@@ -25,7 +26,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import okhttp3.internal.toImmutableList
 
 class ProductDetailsViewModel(
     private val productId: Long,
@@ -53,7 +53,32 @@ class ProductDetailsViewModel(
             Resource.Loading
         )
 
-    private val toppings = MutableStateFlow<Resource<List<ToppingSelection>>>(Resource.Loading)
+    private val quantities = MutableStateFlow<Map<Long, Int>>(emptyMap())
+    private val toppings = flow { emit(toppingRepository.getAll()) }
+        .onEach { result ->
+            if (result is Result.Error) {
+                eventChannel.send(
+                    ProductDetailsEvent.ShowSystemMessage(
+                        result.error.toUiText()
+                    )
+                )
+            }
+        }
+        .combine(quantities) { toppings, quantities ->
+            toppings.map { toppings ->
+                toppings.map { topping ->
+                    ToppingSelection(
+                        topping = topping,
+                        quantity = quantities[topping.id] ?: 0
+                    )
+                }
+            }.toResource()
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            Resource.Loading
+        )
 
     val state = combine(
         product,
@@ -71,36 +96,6 @@ class ProductDetailsViewModel(
             SharingStarted.WhileSubscribed(5000),
             ProductDetailsState()
         )
-
-    init {
-        loadToppings()
-    }
-
-    private fun loadToppings() = viewModelScope.launch {
-        toppings.value = Resource.Loading
-
-        when (val result = toppingRepository.getAll()) {
-            is Result.Error -> {
-                eventChannel.send(
-                    ProductDetailsEvent.ShowSystemMessage(
-                        result.error.toUiText()
-                    )
-                )
-
-                toppings.value = Resource.Error
-            }
-
-            is Result.Success -> {
-                val toppingSelection = result.data.map {
-                    ToppingSelection(
-                        topping = it
-                    )
-                }
-
-                toppings.value = Resource.Success(toppingSelection)
-            }
-        }
-    }
 
     fun onAction(action: ProductDetailsAction) {
         when (action) {
@@ -132,15 +127,12 @@ class ProductDetailsViewModel(
         toppingId: Long,
         quantity: Int
     ) {
-        val toppings = toppings.value.getOrNull()?.toMutableList() ?: return
-        val toppingIndex = toppings
-            .indexOfFirst { it.topping.id == toppingId }
-            .takeIf { it != -1 } ?: return
-
-        toppings[toppingIndex] = toppings[toppingIndex].copy(quantity = quantity)
-
-        this.toppings.update {
-            Resource.Success(toppings.toImmutableList())
+        quantities.update { currentMap ->
+            if (quantity > 0) {
+                currentMap + (toppingId to quantity)
+            } else {
+                currentMap - toppingId
+            }
         }
     }
 }
