@@ -6,7 +6,7 @@ import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.ToppingSelection
 import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.repository.ToppingRepository
-import com.fomaxtro.core.domain.use_case.UpsertCartItem
+import com.fomaxtro.core.domain.use_case.CartUseCases
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.domain.util.map
 import com.fomaxtro.core.presentation.mapper.toResource
@@ -31,7 +31,7 @@ class ProductDetailsViewModel(
     private val productId: Long,
     private val productRepository: ProductRepository,
     private val toppingRepository: ToppingRepository,
-    private val upsertCartItem: UpsertCartItem
+    private val cartUseCases: CartUseCases
 ) : ViewModel() {
     private val eventChannel = Channel<ProductDetailsEvent>()
     val events = eventChannel.receiveAsFlow()
@@ -105,6 +105,13 @@ class ProductDetailsViewModel(
 
             ProductDetailsAction.OnNavigateBackClick -> Unit
             ProductDetailsAction.OnAddToCartClick -> onAddToCartClick()
+            is ProductDetailsAction.OnToppingAddClick -> onToppingAddClick(action.toppingId)
+        }
+    }
+
+    private fun onToppingAddClick(toppingId: Long) {
+        quantities.update { currentMap ->
+            currentMap + (toppingId to 1)
         }
     }
 
@@ -119,7 +126,7 @@ class ProductDetailsViewModel(
             selectedToppings = selectedToppings
         )
 
-        upsertCartItem(cartItem)
+        cartUseCases.addCartItem(cartItem)
         eventChannel.send(ProductDetailsEvent.NavigateToCart)
     }
 

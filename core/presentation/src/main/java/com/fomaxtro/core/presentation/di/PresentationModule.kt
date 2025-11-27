@@ -23,7 +23,7 @@ val presentationModule = module {
             productId = productId,
             productRepository = get(),
             toppingRepository = get(),
-            upsertCartItem = get()
+            cartUseCases = get()
         )
     }
     viewModelOf(::HomeViewModel)

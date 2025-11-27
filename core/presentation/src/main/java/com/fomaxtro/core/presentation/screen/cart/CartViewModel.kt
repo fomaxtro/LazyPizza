@@ -3,9 +3,9 @@ package com.fomaxtro.core.presentation.screen.cart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.model.CartItem
+import com.fomaxtro.core.domain.use_case.CartUseCases
 import com.fomaxtro.core.domain.use_case.ObserveCartItems
 import com.fomaxtro.core.domain.use_case.ObserveProductRecommendations
-import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.domain.util.getOrDefault
 import com.fomaxtro.core.presentation.mapper.toResource
@@ -28,7 +28,7 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class)
 class CartViewModel(
-    private val updateCartItemQuantity: UpdateCartItemQuantity,
+    private val cartUseCases: CartUseCases,
     observeProductRecommendations: ObserveProductRecommendations,
     observeCartItems: ObserveCartItems
 ) : ViewModel() {
@@ -98,17 +98,33 @@ class CartViewModel(
 
     fun onAction(action: CartAction) {
         when (action) {
-            is CartAction.OnQuantityChange -> onQuantityChange(action.cartItemId, action.quantity)
+            is CartAction.OnCartItemQuantityChange -> {
+                onCartItemQuantityChange(
+                    cartItemId = action.cartItemId,
+                    quantity = action.quantity
+                )
+            }
             is CartAction.OnRecommendationAddClick -> onRecommendationAddClick(action.productId)
+            is CartAction.OnCartItemDeleteClick -> onCartItemDeleteClick(action.cartItemId)
             else -> Unit
         }
     }
 
-    private fun onQuantityChange(cartItemId: String, quantity: Int) = viewModelScope.launch {
-        val cartItem = cartItems.value.getOrNull()
-            ?.find { UUID.fromString(cartItemId) == it.id } ?: return@launch
+    private fun getCartItem(cartItemId: String): CartItem? {
+        return cartItems.value.getOrNull()?.find { UUID.fromString(cartItemId) == it.id }
+    }
 
-        updateCartItemQuantity(cartItem.copy(quantity = quantity))
+    private fun onCartItemDeleteClick(cartItemId: String) = viewModelScope.launch {
+        val cartItem = getCartItem(cartItemId) ?: return@launch
+
+        cartUseCases.removeCartItem(cartItem)
+    }
+
+    private fun onCartItemQuantityChange(cartItemId: String, quantity: Int) =
+        viewModelScope.launch {
+            val cartItem = getCartItem(cartItemId) ?: return@launch
+
+            cartUseCases.changeCartItemQuantity(cartItem.copy(quantity = quantity))
     }
 
     private fun onRecommendationAddClick(productId: Long) = viewModelScope.launch {
@@ -120,6 +136,6 @@ class CartViewModel(
             quantity = 1
         )
 
-        updateCartItemQuantity(cartItem)
+        cartUseCases.addCartItem(cartItem)
     }
 }

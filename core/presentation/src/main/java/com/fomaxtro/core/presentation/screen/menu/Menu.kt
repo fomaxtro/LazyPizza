@@ -211,12 +211,7 @@ private fun MenuScreen(
                             onAction(MenuAction.OnCartItemAddClick(cartItem.id))
                         },
                         onDeleteClick = {
-                            onAction(
-                                MenuAction.OnCartItemQuantityChange(
-                                    cartItemId = cartItem.id,
-                                    quantity = 0
-                                )
-                            )
+                            onAction(MenuAction.OnCartItemDeleteClick(cartItem.id))
                         },
                         onQuantityChange = {
                             onAction(

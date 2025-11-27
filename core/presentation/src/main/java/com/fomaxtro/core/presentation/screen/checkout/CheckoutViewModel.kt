@@ -3,9 +3,9 @@ package com.fomaxtro.core.presentation.screen.checkout
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.model.CartItem
+import com.fomaxtro.core.domain.use_case.CartUseCases
 import com.fomaxtro.core.domain.use_case.ObserveCartItems
 import com.fomaxtro.core.domain.use_case.ObserveProductRecommendations
-import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.domain.util.getOrDefault
 import com.fomaxtro.core.presentation.mapper.toResource
@@ -28,7 +28,7 @@ import java.util.UUID
 class CheckoutViewModel(
     observeCartItems: ObserveCartItems,
     observeProductRecommendations: ObserveProductRecommendations,
-    private val updateCartItemQuantity: UpdateCartItemQuantity
+    private val cartUseCases: CartUseCases
 ) : ViewModel() {
     private val eventChannel = Channel<CheckoutEvent>()
     val events = eventChannel.receiveAsFlow()
@@ -113,7 +113,7 @@ class CheckoutViewModel(
         val cartItem = cartItems.value.getOrNull()
             ?.find { it.id == UUID.fromString(cartItemId) } ?: return@launch
 
-        updateCartItemQuantity(cartItem.copy(quantity = quantity))
+        cartUseCases.changeCartItemQuantity(cartItem.copy(quantity = quantity))
     }
 
     private fun onAddProductRecommendationClick(productId: Long) = viewModelScope.launch {
@@ -125,6 +125,6 @@ class CheckoutViewModel(
             quantity = 1
         )
 
-        updateCartItemQuantity(cartItem)
+        cartUseCases.addCartItem(cartItem)
     }
 }

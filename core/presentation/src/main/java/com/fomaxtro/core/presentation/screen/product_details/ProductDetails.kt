@@ -156,9 +156,8 @@ private fun ProductDetailsScreen(
                     toppingSelection = toppingSelection,
                     onClick = {
                         onAction(
-                            ProductDetailsAction.OnToppingQuantityChange(
-                                toppingId = toppingSelection.topping.id,
-                                quantity = 1
+                            ProductDetailsAction.OnToppingAddClick(
+                                toppingId = toppingSelection.topping.id
                             )
                         )
                     },

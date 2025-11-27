@@ -38,3 +38,9 @@ fun CartItemLocal.toCartItemEntity() = CartItemEntity(
     productId = productId,
     quantity = quantity,
 )
+
+fun CartItem.toCartItemSession() = CartItemSession(
+    id = id.toString(),
+    productId = product.id,
+    quantity = quantity
+)

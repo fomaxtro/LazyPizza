@@ -1,7 +1,8 @@
 package com.fomaxtro.core.presentation.screen.cart
 
 sealed interface CartAction {
-    data class OnQuantityChange(val cartItemId: String, val quantity: Int) : CartAction
+    data class OnCartItemQuantityChange(val cartItemId: String, val quantity: Int) : CartAction
+    data class OnCartItemDeleteClick(val cartItemId: String) : CartAction
     data class OnRecommendationAddClick(val productId: Long) : CartAction
     data object OnBackToMenuClick : CartAction
     data object OnCheckoutClick : CartAction

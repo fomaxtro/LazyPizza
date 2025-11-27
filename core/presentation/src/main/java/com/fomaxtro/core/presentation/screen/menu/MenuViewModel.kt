@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.ProductCategory
+import com.fomaxtro.core.domain.use_case.CartUseCases
 import com.fomaxtro.core.domain.use_case.ObserveProductsWithCartItems
-import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.mapper.toResource
@@ -32,7 +32,7 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class, ExperimentalCoroutinesApi::class)
 class MenuViewModel(
-    private val updateCartItemQuantity: UpdateCartItemQuantity,
+    private val cartUseCases: CartUseCases,
     observeProductsWithCartItems: ObserveProductsWithCartItems
 ) : ViewModel() {
     private val _state = MutableStateFlow(MenuInternalState())
@@ -108,11 +108,24 @@ class MenuViewModel(
 
             is MenuAction.OnProductClick -> Unit
             is MenuAction.OnCartItemAddClick -> onCartItemAddClick(action.cartItemId)
+            is MenuAction.OnCartItemDeleteClick -> onCartItemDeleteClick(action.cartItemId)
         }
     }
 
+    private fun onCartItemDeleteClick(cartItemId: String) = viewModelScope.launch {
+        val cartItem = getCartItem(cartItemId) ?: return@launch
+
+        cartUseCases.removeCartItem(cartItem)
+    }
+
+    private fun getCartItem(cartItemId: String): CartItem? {
+        return cartItems.value.getOrNull()?.find { UUID.fromString(cartItemId) == it.id }
+    }
+
     private fun onCartItemAddClick(cartItemId: String) = viewModelScope.launch {
-        onCartItemQuantityChange(cartItemId, 1)
+        val cartItem = getCartItem(cartItemId) ?: return@launch
+
+        cartUseCases.addCartItem(cartItem.copy(quantity = 1))
         eventChannel.send(
             MenuEvent.ShowMessage(
                 message = UiText.StringResource(R.string.added_to_cart)
@@ -124,10 +137,9 @@ class MenuViewModel(
         cartItemId: String,
         quantity: Int
     ) = viewModelScope.launch {
-        val cartItem = cartItems.value.getOrNull()
-            ?.find { UUID.fromString(cartItemId) == it.id } ?: return@launch
+        val cartItem = getCartItem(cartItemId) ?: return@launch
 
-        updateCartItemQuantity(cartItem.copy(quantity = quantity))
+        cartUseCases.changeCartItemQuantity(cartItem.copy(quantity = quantity))
     }
 
     private fun onProductCategoryToggle(category: ProductCategory) {

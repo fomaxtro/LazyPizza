@@ -102,19 +102,14 @@ private fun CartScreen(
                         .animateItem(),
                     onQuantityChange = {
                         onAction(
-                            CartAction.OnQuantityChange(
+                            CartAction.OnCartItemQuantityChange(
                                 cartItemId = cartItem.id,
                                 quantity = it
                             )
                         )
                     },
                     onDeleteClick = {
-                        onAction(
-                            CartAction.OnQuantityChange(
-                                cartItemId = cartItem.id,
-                                quantity = 0
-                            )
-                        )
+                        onAction(CartAction.OnCartItemDeleteClick(cartItem.id))
                     },
                     minQuantity = 1
                 )
@@ -124,7 +119,7 @@ private fun CartScreen(
                 ProductRecommendationCard(
                     product = product,
                     onAddClick = {
-                        onAction(CartAction.OnRecommendationAddClick(productId = product.id))
+                        onAction(CartAction.OnRecommendationAddClick(product.id))
                     },
                     modifier = Modifier.animateItem()
                 )
