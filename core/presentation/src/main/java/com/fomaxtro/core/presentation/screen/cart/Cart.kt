@@ -124,7 +124,7 @@ private fun CartScreen(
                     modifier = Modifier.animateItem()
                 )
             },
-            loading = state.cartItems.isLoading,
+            loading = state.cartItems is Resource.Loading,
             action = {
                 LazyPizzaButton(
                     onClick = {

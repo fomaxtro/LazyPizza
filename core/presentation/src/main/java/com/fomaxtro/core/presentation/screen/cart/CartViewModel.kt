@@ -12,7 +12,7 @@ import com.fomaxtro.core.presentation.mapper.toResource
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrNull
+import com.fomaxtro.core.presentation.util.getOrThrow
 import com.fomaxtro.core.presentation.util.map
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
@@ -111,7 +111,7 @@ class CartViewModel(
     }
 
     private fun getCartItem(cartItemId: String): CartItem? {
-        return cartItems.value.getOrNull()?.find { UUID.fromString(cartItemId) == it.id }
+        return cartItems.value.getOrThrow().find { UUID.fromString(cartItemId) == it.id }
     }
 
     private fun onCartItemDeleteClick(cartItemId: String) = viewModelScope.launch {
@@ -128,8 +128,8 @@ class CartViewModel(
     }
 
     private fun onRecommendationAddClick(productId: Long) = viewModelScope.launch {
-        val product = productRecommendations.value.getOrNull()
-            ?.find { productId == it.id } ?: return@launch
+        val product = productRecommendations.value.getOrThrow()
+            .find { productId == it.id } ?: return@launch
 
         val cartItem = CartItem(
             product = product,
