@@ -113,7 +113,7 @@ private fun CheckoutScreen(
                         }
                     )
                 ),
-            cartItemsLoading = state.cartItems.isLoading,
+            cartItemsLoading = state.cartItems is Resource.Loading,
             cartItemsLoader = {},
             cartItems = state.cartItems.getOrDefault(emptyList()),
             cartItemBuilder = { cartItem ->
@@ -122,7 +122,7 @@ private fun CheckoutScreen(
                 ProductListItem(
                     imageUrl = product.imageUrl,
                     name = product.name,
-                    description = product.description,
+                    description = null,
                     price = cartItem.priceWithToppings,
                     quantity = cartItem.quantity,
                     modifier = Modifier
@@ -147,7 +147,7 @@ private fun CheckoutScreen(
                     minQuantity = 1
                 )
             },
-            productRecommendationsLoading = state.productRecommendations.isLoading,
+            productRecommendationsLoading = state.productRecommendations is Resource.Loading,
             productRecommendationsLoader = {
                 ProductRecommendationCardLoader()
             },
