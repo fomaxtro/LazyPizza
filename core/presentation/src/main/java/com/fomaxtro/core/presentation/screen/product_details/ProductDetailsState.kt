@@ -10,7 +10,7 @@ data class ProductDetailsState(
     val product: Resource<ProductUi> = Resource.Loading,
     val toppings: Resource<List<ToppingSelectionUi>> = Resource.Loading
 ) {
-    val canAddToCart: Boolean = product is Resource.Success && !toppings.isLoading
+    val canAddToCart: Boolean = product is Resource.Success && toppings !is Resource.Loading
     val totalPrice: Double = product.getOrNull()?.let { product ->
         product.price + toppings.getOrDefault(emptyList()).sumOf { it.totalPrice }
     } ?: 0.0

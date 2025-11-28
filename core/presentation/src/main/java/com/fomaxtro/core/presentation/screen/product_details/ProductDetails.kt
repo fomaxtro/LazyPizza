@@ -172,7 +172,7 @@ private fun ProductDetailsScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             },
-            loading = state.toppings.isLoading,
+            loading = state.toppings is Resource.Loading,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
