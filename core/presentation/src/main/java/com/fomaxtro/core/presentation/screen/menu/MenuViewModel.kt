@@ -13,7 +13,7 @@ import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.ui.UiText
 import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrNull
+import com.fomaxtro.core.presentation.util.getOrThrow
 import com.fomaxtro.core.presentation.util.map
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -119,7 +119,7 @@ class MenuViewModel(
     }
 
     private fun getCartItem(cartItemId: String): CartItem? {
-        return cartItems.value.getOrNull()?.find { UUID.fromString(cartItemId) == it.id }
+        return cartItems.value.getOrThrow().find { UUID.fromString(cartItemId) == it.id }
     }
 
     private fun onCartItemAddClick(cartItemId: String) = viewModelScope.launch {

@@ -42,6 +42,7 @@ import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.UiText
 import com.fomaxtro.core.presentation.ui.currentScreenType
+import com.fomaxtro.core.presentation.util.Resource
 import com.fomaxtro.core.presentation.util.getOrNull
 import com.fomaxtro.core.presentation.util.toDisplayName
 
@@ -172,7 +173,7 @@ private fun MenuScreen(
         categoryProductList(
             category = ProductCategory.PIZZA,
             items = state.cartItems.getOrNull()?.get(ProductCategory.PIZZA),
-            loading = state.cartItems.isLoading,
+            loading = state.cartItems is Resource.Loading,
             screenType = screenType,
             itemContent = { cartItem ->
                 val product = cartItem.product
@@ -195,7 +196,7 @@ private fun MenuScreen(
             categoryProductList(
                 category = productCategory,
                 items = state.cartItems.getOrNull()?.get(productCategory),
-                loading = state.cartItems.isLoading,
+                loading = state.cartItems is Resource.Loading,
                 screenType = screenType,
                 itemContent = { cartItem ->
                     val product = cartItem.product
