@@ -78,7 +78,8 @@ private fun CheckoutScreen(
             onDateTimeSelected = {
                 onAction(CheckoutAction.OnPickupDateTimeSelected(it))
             },
-            initialUtcMillis = state.pickupTime.toEpochMilli()
+            initialUtcMillis = state.pickupTime.toEpochMilli(),
+            error = state.pickupTimeError
         )
     }
 

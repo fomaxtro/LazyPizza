@@ -14,6 +14,7 @@ import com.fomaxtro.core.domain.use_case.RemoveCartItem
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.validation.OtpValidator
 import com.fomaxtro.core.domain.validation.PhoneNumberValidator
+import com.fomaxtro.core.domain.validation.PickupTimeValidator
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
@@ -54,4 +55,5 @@ val domainModule = module {
     factoryOf(::Login)
     factoryOf(::Logout)
     factoryOf(::ObserveProductRecommendations)
+    factoryOf(::PickupTimeValidator)
 }

@@ -7,12 +7,15 @@ import com.fomaxtro.core.domain.use_case.CartUseCases
 import com.fomaxtro.core.domain.use_case.ObserveCartItems
 import com.fomaxtro.core.domain.use_case.ObserveProductRecommendations
 import com.fomaxtro.core.domain.util.Result
+import com.fomaxtro.core.domain.util.ValidationResult
 import com.fomaxtro.core.domain.util.getOrDefault
+import com.fomaxtro.core.domain.validation.PickupTimeValidator
 import com.fomaxtro.core.presentation.mapper.toResource
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.screen.checkout.model.PickupOption
 import com.fomaxtro.core.presentation.ui.Resource
+import com.fomaxtro.core.presentation.ui.UiText
 import com.fomaxtro.core.presentation.ui.getOrThrow
 import com.fomaxtro.core.presentation.ui.map
 import kotlinx.coroutines.channels.Channel
@@ -34,6 +37,7 @@ import java.util.UUID
 class CheckoutViewModel(
     observeCartItems: ObserveCartItems,
     observeProductRecommendations: ObserveProductRecommendations,
+    private val pickupTimeValidator: PickupTimeValidator,
     private val cartUseCases: CartUseCases
 ) : ViewModel() {
     private val eventChannel = Channel<CheckoutEvent>()
@@ -93,6 +97,7 @@ class CheckoutViewModel(
             pickupOption = state.pickupOption,
             isDateTimePickerDialogVisible = state.isDateTimePickerDialogVisible,
             pickupTime = state.pickupTime,
+            pickupTimeError = state.pickupTimeError,
             comments = state.comments,
             cartItems = cartItems.map { cartItems ->
                 cartItems.map { it.toUi() }
@@ -151,12 +156,27 @@ class CheckoutViewModel(
     }
 
     private fun onPickupDateTimeSelected(dateTime: ZonedDateTime) {
-        _state.update {
-            it.copy(
-                pickupTime = dateTime.toInstant(),
-                isDateTimePickerDialogVisible = false,
-                pickupOption = PickupOption.SCHEDULED
-            )
+        val pickupTime = dateTime.toInstant()
+
+        when (val pickupTimeResult = pickupTimeValidator.validate(pickupTime)) {
+            is ValidationResult.Invalid -> {
+                _state.update {
+                    it.copy(
+                        pickupTimeError = pickupTimeResult.error.toUiText()
+                    )
+                }
+            }
+
+            ValidationResult.Valid -> {
+                _state.update {
+                    it.copy(
+                        pickupTime = pickupTime,
+                        isDateTimePickerDialogVisible = false,
+                        pickupOption = PickupOption.SCHEDULED,
+                        pickupTimeError = null
+                    )
+                }
+            }
         }
     }
 
@@ -199,5 +219,6 @@ private data class CheckoutInternalState(
     val pickupOption: PickupOption = PickupOption.EARLIEST,
     val isDateTimePickerDialogVisible: Boolean = false,
     val pickupTime: Instant = Instant.now().plus(15, ChronoUnit.MINUTES),
-    val comments: String = ""
+    val comments: String = "",
+    val pickupTimeError: UiText? = null
 )

@@ -69,4 +69,6 @@
     <string name="add_comment">Add Comment</string>
     <string name="ok">Ok</string>
     <string name="select_time">Select Time</string>
+    <string name="pickup_time_out_of_bounds">Pickup available between 10:15 and 21:45</string>
+    <string name="pickup_time_too_early">Pickup is possible at least 15 minutes from the current time</string>
 </resources>

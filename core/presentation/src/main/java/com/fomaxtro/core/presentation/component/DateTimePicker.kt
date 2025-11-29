@@ -3,10 +3,13 @@ package com.fomaxtro.core.presentation.component
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DatePicker
@@ -23,6 +26,7 @@ import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -32,16 +36,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.body4Regular
 import com.fomaxtro.core.presentation.designsystem.theme.label2Semibold
 import com.fomaxtro.core.presentation.designsystem.theme.surfaceHighest
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.designsystem.theme.title3
+import com.fomaxtro.core.presentation.ui.UiText
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -55,7 +62,8 @@ fun DateTimePicker(
     onDismissRequest: () -> Unit,
     onDateTimeSelected: (ZonedDateTime) -> Unit,
     containerColor: Color = MaterialTheme.colorScheme.surface,
-    initialUtcMillis: Long = Instant.now().toEpochMilli()
+    initialUtcMillis: Long = Instant.now().toEpochMilli(),
+    error: UiText? = null
 ) {
     val datePickerState = rememberDatePickerState(
         selectableDates = object : SelectableDates {
@@ -90,10 +98,15 @@ fun DateTimePicker(
         mutableStateOf(false)
     }
 
+    DisposableEffect(Unit) {
+        onDispose {
+            dateSelected = false
+        }
+    }
+
     BasicAlertDialog(
         onDismissRequest = {
             onDismissRequest()
-            dateSelected = false
         },
         properties = DialogProperties(
             usePlatformDefaultWidth = false
@@ -105,23 +118,26 @@ fun DateTimePicker(
                 .fillMaxWidth(),
             color = containerColor
         ) {
-            Column {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 AnimatedContent(
                     targetState = dateSelected,
                 ) { dateSelected ->
                     if (dateSelected) {
                         Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentWidth()
+                                .width(IntrinsicSize.Min),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
                                 text = stringResource(R.string.select_time).uppercase(),
                                 modifier = Modifier
                                     .padding(horizontal = 24.dp)
-                                    .padding(top = 24.dp),
+                                    .padding(top = 24.dp)
+                                    .align(Alignment.Start),
                                 style = MaterialTheme.typography.label2Semibold,
-                                color = MaterialTheme.colorScheme.textSecondary
+                                color = MaterialTheme.colorScheme.textSecondary,
                             )
 
                             TimeInput(
@@ -133,6 +149,17 @@ fun DateTimePicker(
                                     timeSelectorUnselectedContainerColor = MaterialTheme.colorScheme.surfaceHighest
                                 )
                             )
+
+                            if (error != null) {
+                                Text(
+                                    text = error.asString(),
+                                    style = MaterialTheme.typography.body4Regular,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                )
+
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
                         }
                     } else {
                         DatePicker(
@@ -183,7 +210,6 @@ fun DateTimePicker(
                                         .withZoneSameLocal(ZoneId.systemDefault())
 
                                     onDateTimeSelected(dateTime)
-                                    dateSelected = false
                                 }
 
                             } else {
@@ -205,7 +231,8 @@ private fun DateTimePickerPreview() {
     LazyPizzaTheme {
         DateTimePicker(
             onDismissRequest = {},
-            onDateTimeSelected = {}
+            onDateTimeSelected = {},
+            error = UiText.DynamicString("asjdhasjkdhjashdkjahsdjhaskjdhjaksajkshdajkshdkhaskdj")
         )
     }
 }
