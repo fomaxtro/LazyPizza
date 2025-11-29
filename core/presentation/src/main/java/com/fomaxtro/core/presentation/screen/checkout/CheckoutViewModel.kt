@@ -93,12 +93,13 @@ class CheckoutViewModel(
             pickupOption = state.pickupOption,
             isDateTimePickerDialogVisible = state.isDateTimePickerDialogVisible,
             pickupTime = state.pickupTime,
+            comments = state.comments,
             cartItems = cartItems.map { cartItems ->
                 cartItems.map { it.toUi() }
             },
             productRecommendations = productRecommendations.map { productRecommendations ->
                 productRecommendations.map { it.toUi() }
-            }
+            },
         )
     }.stateIn(
         viewModelScope,
@@ -127,7 +128,17 @@ class CheckoutViewModel(
 
             CheckoutAction.OnPickupTimeDialogDismiss -> onPickupTimeDialogDismiss()
 
+            is CheckoutAction.OnCommentsChange -> onCommentsChange(action.comments)
+
             else -> Unit
+        }
+    }
+
+    private fun onCommentsChange(comments: String) {
+        _state.update {
+            it.copy(
+                comments = comments
+            )
         }
     }
 
@@ -143,17 +154,24 @@ class CheckoutViewModel(
         _state.update {
             it.copy(
                 pickupTime = dateTime.toInstant(),
-                isDateTimePickerDialogVisible = false
+                isDateTimePickerDialogVisible = false,
+                pickupOption = PickupOption.SCHEDULED
             )
         }
     }
 
     private fun onPickupTimeOptionSelected(pickupOption: PickupOption) {
         _state.update {
-            it.copy(
-                pickupOption = pickupOption,
-                isDateTimePickerDialogVisible = pickupOption == PickupOption.SCHEDULED
-            )
+            if (pickupOption == PickupOption.SCHEDULED) {
+                it.copy(
+                    isDateTimePickerDialogVisible = true
+                )
+            } else {
+                it.copy(
+                    pickupOption = PickupOption.EARLIEST,
+                    pickupTime = Instant.now().plus(15, ChronoUnit.MINUTES)
+                )
+            }
         }
     }
 
@@ -180,5 +198,6 @@ class CheckoutViewModel(
 private data class CheckoutInternalState(
     val pickupOption: PickupOption = PickupOption.EARLIEST,
     val isDateTimePickerDialogVisible: Boolean = false,
-    val pickupTime: Instant = Instant.now().plus(15, ChronoUnit.MINUTES)
+    val pickupTime: Instant = Instant.now().plus(15, ChronoUnit.MINUTES),
+    val comments: String = ""
 )

@@ -10,4 +10,5 @@ sealed interface CheckoutAction {
     data class OnCartItemQuantityChange(val cartItemId: String, val quantity: Int) : CheckoutAction
     data class OnAddProductRecommendationClick(val productId: Long) : CheckoutAction
     data object OnNavigateBackClick : CheckoutAction
+    data class OnCommentsChange(val comments: String) : CheckoutAction
 }

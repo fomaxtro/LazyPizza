@@ -158,6 +158,7 @@ fun DateTimePicker(
                     TextButton(
                         onClick = {
                             onDismissRequest()
+
                             dateSelected = false
                         }
                     ) {

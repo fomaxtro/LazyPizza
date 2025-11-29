@@ -1,5 +1,6 @@
 package com.fomaxtro.core.presentation.screen.checkout
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,6 +68,7 @@ private fun CheckoutScreen(
         topStart = 16.dp,
         topEnd = 16.dp
     )
+    val focusManager = LocalFocusManager.current
 
     if (state.isDateTimePickerDialogVisible) {
         DateTimePicker(
@@ -95,6 +99,11 @@ private fun CheckoutScreen(
                     modifier = Modifier.padding(horizontal = 10.dp),
                     containerColor = MaterialTheme.colorScheme.surface
                 )
+            }
+        },
+        modifier = Modifier.pointerInput(Unit) {
+            detectTapGestures {
+                focusManager.clearFocus()
             }
         }
     ) { innerPadding ->
@@ -183,9 +192,12 @@ private fun CheckoutScreen(
             comments = {
                 LazyPizzaOutlinedFormTextField(
                     value = state.comments,
-                    onValueChange = {},
-                    modifier = Modifier.fillMaxWidth(),
-                    minLines = 3,
+                    onValueChange = {
+                        onAction(CheckoutAction.OnCommentsChange(it))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(92.dp),
                     shape = RoundedCornerShape(24.dp),
                     placeholder = stringResource(R.string.add_comment)
                 )
