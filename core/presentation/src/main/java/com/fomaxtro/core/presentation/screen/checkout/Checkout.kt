@@ -28,7 +28,7 @@ import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaCenteredAlignedTopAppBar
 import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.screen.checkout.component.CheckoutLayout
-import com.fomaxtro.core.presentation.screen.checkout.component.DateTimePicker
+import com.fomaxtro.core.presentation.component.DateTimePicker
 import com.fomaxtro.core.presentation.screen.checkout.component.OutlinedRadioButton
 import com.fomaxtro.core.presentation.screen.checkout.model.PickupOption
 import com.fomaxtro.core.presentation.util.ProductUiFactory

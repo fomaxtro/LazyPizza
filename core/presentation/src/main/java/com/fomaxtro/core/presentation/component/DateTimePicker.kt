@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.checkout.component
+package com.fomaxtro.core.presentation.component
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
@@ -177,8 +177,9 @@ fun DateTimePicker(
                                     )
 
                                     val dateTime = Instant.ofEpochMilli(millis)
-                                        .atZone(ZoneId.systemDefault())
+                                        .atZone(ZoneOffset.UTC)
                                         .with(time)
+                                        .withZoneSameLocal(ZoneId.systemDefault())
 
                                     onDateTimeSelected(dateTime)
                                     dateSelected = false
