@@ -6,6 +6,7 @@ import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.use_case.CartUseCases
 import com.fomaxtro.core.domain.use_case.ObserveCartItems
 import com.fomaxtro.core.domain.use_case.ObserveProductRecommendations
+import com.fomaxtro.core.domain.use_case.PlaceOrder
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.domain.util.ValidationResult
 import com.fomaxtro.core.domain.util.getOrDefault
@@ -38,7 +39,8 @@ class CheckoutViewModel(
     observeCartItems: ObserveCartItems,
     observeProductRecommendations: ObserveProductRecommendations,
     private val pickupTimeValidator: PickupTimeValidator,
-    private val cartUseCases: CartUseCases
+    private val cartUseCases: CartUseCases,
+    private val placeOrder: PlaceOrder
 ) : ViewModel() {
     private val eventChannel = Channel<CheckoutEvent>()
     val events = eventChannel.receiveAsFlow()

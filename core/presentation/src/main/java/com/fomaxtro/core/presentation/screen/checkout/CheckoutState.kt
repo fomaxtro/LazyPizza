@@ -18,7 +18,8 @@ data class CheckoutState(
     val isDateTimePickerDialogVisible: Boolean = false,
     val cartItems: Resource<List<CartItemUi>> = Resource.Loading,
     val productRecommendations: Resource<List<ProductUi>> = Resource.Loading,
-    val comments: String = ""
+    val comments: String = "",
+    val isSubmitting: Boolean = false
 ) {
     val totalPrice: Double = cartItems.getOrDefault(emptyList())
         .sumOf { it.totalPrice }
