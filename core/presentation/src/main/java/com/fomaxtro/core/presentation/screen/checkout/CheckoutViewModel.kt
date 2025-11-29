@@ -11,10 +11,12 @@ import com.fomaxtro.core.domain.util.getOrDefault
 import com.fomaxtro.core.presentation.mapper.toResource
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
-import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrNull
-import com.fomaxtro.core.presentation.util.map
+import com.fomaxtro.core.presentation.screen.checkout.model.PickupOption
+import com.fomaxtro.core.presentation.ui.Resource
+import com.fomaxtro.core.presentation.ui.getOrThrow
+import com.fomaxtro.core.presentation.ui.map
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -22,7 +24,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 class CheckoutViewModel(
@@ -32,6 +38,8 @@ class CheckoutViewModel(
 ) : ViewModel() {
     private val eventChannel = Channel<CheckoutEvent>()
     val events = eventChannel.receiveAsFlow()
+
+    private val _state = MutableStateFlow(CheckoutInternalState())
 
     private val cartItemsShared = observeCartItems()
         .onEach { cartItems ->
@@ -77,10 +85,14 @@ class CheckoutViewModel(
         )
 
     val state = combine(
+        _state,
         cartItems,
         productRecommendations
-    ) { cartItems, productRecommendations ->
+    ) { state, cartItems, productRecommendations ->
         CheckoutState(
+            pickupOption = state.pickupOption,
+            isDateTimePickerDialogVisible = state.isDateTimePickerDialogVisible,
+            pickupTime = state.pickupTime,
             cartItems = cartItems.map { cartItems ->
                 cartItems.map { it.toUi() }
             },
@@ -96,29 +108,65 @@ class CheckoutViewModel(
 
     fun onAction(action: CheckoutAction) {
         when (action) {
-            is CheckoutAction.OnAddProductRecommendationClick -> {
-                onAddProductRecommendationClick(action.productId)
-            }
+            is CheckoutAction.OnAddProductRecommendationClick -> onAddProductRecommendationClick(
+                productId = action.productId
+            )
 
             is CheckoutAction.OnCartItemQuantityChange -> onCartItemQuantityChange(
-                action.cartItemId,
-                action.quantity
+                cartItemId = action.cartItemId,
+                quantity = action.quantity
             )
+
+            is CheckoutAction.OnPickupTimeOptionSelected -> onPickupTimeOptionSelected(
+                pickupOption = action.pickupOption
+            )
+
+            is CheckoutAction.OnPickupDateTimeSelected -> onPickupDateTimeSelected(
+                dateTime = action.dateTime
+            )
+
+            CheckoutAction.OnPickupTimeDialogDismiss -> onPickupTimeDialogDismiss()
 
             else -> Unit
         }
     }
 
+    private fun onPickupTimeDialogDismiss() {
+        _state.update {
+            it.copy(
+                isDateTimePickerDialogVisible = false
+            )
+        }
+    }
+
+    private fun onPickupDateTimeSelected(dateTime: ZonedDateTime) {
+        _state.update {
+            it.copy(
+                pickupTime = dateTime.toInstant(),
+                isDateTimePickerDialogVisible = false
+            )
+        }
+    }
+
+    private fun onPickupTimeOptionSelected(pickupOption: PickupOption) {
+        _state.update {
+            it.copy(
+                pickupOption = pickupOption,
+                isDateTimePickerDialogVisible = pickupOption == PickupOption.SCHEDULED
+            )
+        }
+    }
+
     private fun onCartItemQuantityChange(cartItemId: String, quantity: Int) = viewModelScope.launch {
-        val cartItem = cartItems.value.getOrNull()
-            ?.find { it.id == UUID.fromString(cartItemId) } ?: return@launch
+        val cartItem = cartItems.value.getOrThrow()
+            .find { it.id == UUID.fromString(cartItemId) } ?: return@launch
 
         cartUseCases.changeCartItemQuantity(cartItem.copy(quantity = quantity))
     }
 
     private fun onAddProductRecommendationClick(productId: Long) = viewModelScope.launch {
-        val product = productRecommendations.value.getOrNull()
-            ?.find { it.id == productId } ?: return@launch
+        val product = productRecommendations.value.getOrThrow()
+            .find { it.id == productId } ?: return@launch
 
         val cartItem = CartItem(
             product = product,
@@ -128,3 +176,9 @@ class CheckoutViewModel(
         cartUseCases.addCartItem(cartItem)
     }
 }
+
+private data class CheckoutInternalState(
+    val pickupOption: PickupOption = PickupOption.EARLIEST,
+    val isDateTimePickerDialogVisible: Boolean = false,
+    val pickupTime: Instant = Instant.now().plus(15, ChronoUnit.MINUTES)
+)

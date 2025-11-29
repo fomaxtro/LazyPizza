@@ -12,9 +12,9 @@ import com.fomaxtro.core.presentation.mapper.toResource
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.ui.UiText
-import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrThrow
-import com.fomaxtro.core.presentation.util.map
+import com.fomaxtro.core.presentation.ui.Resource
+import com.fomaxtro.core.presentation.ui.getOrThrow
+import com.fomaxtro.core.presentation.ui.map
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

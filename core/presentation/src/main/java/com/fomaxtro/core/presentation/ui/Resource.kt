@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.util
+package com.fomaxtro.core.presentation.ui
 
 sealed interface Resource<out D> {
     data object Loading : Resource<Nothing>

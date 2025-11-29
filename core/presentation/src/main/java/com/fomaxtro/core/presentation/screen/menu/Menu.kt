@@ -42,8 +42,8 @@ import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.UiText
 import com.fomaxtro.core.presentation.ui.currentScreenType
-import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrNull
+import com.fomaxtro.core.presentation.ui.Resource
+import com.fomaxtro.core.presentation.ui.getOrNull
 import com.fomaxtro.core.presentation.util.toDisplayName
 
 @Composable

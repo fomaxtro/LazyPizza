@@ -3,7 +3,7 @@ package com.fomaxtro.core.presentation.screen.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.repository.AuthRepository
-import com.fomaxtro.core.presentation.util.Resource
+import com.fomaxtro.core.presentation.ui.Resource
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn

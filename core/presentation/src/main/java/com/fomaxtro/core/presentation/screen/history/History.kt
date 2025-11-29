@@ -25,7 +25,7 @@ import com.fomaxtro.core.presentation.screen.history.component.HistoryListItemLo
 import com.fomaxtro.core.presentation.screen.history.model.OrderUi
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.currentScreenType
-import com.fomaxtro.core.presentation.util.Resource
+import com.fomaxtro.core.presentation.ui.Resource
 import java.time.LocalDateTime
 import java.time.ZoneId
 

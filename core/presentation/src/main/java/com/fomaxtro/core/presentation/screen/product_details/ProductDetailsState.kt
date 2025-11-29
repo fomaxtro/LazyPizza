@@ -2,9 +2,9 @@ package com.fomaxtro.core.presentation.screen.product_details
 
 import com.fomaxtro.core.presentation.model.ProductUi
 import com.fomaxtro.core.presentation.model.ToppingSelectionUi
-import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrDefault
-import com.fomaxtro.core.presentation.util.getOrNull
+import com.fomaxtro.core.presentation.ui.Resource
+import com.fomaxtro.core.presentation.ui.getOrDefault
+import com.fomaxtro.core.presentation.ui.getOrNull
 
 data class ProductDetailsState(
     val product: Resource<ProductUi> = Resource.Loading,

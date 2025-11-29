@@ -28,11 +28,12 @@ import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaCenteredAlignedTopAppBar
 import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.screen.checkout.component.CheckoutLayout
+import com.fomaxtro.core.presentation.screen.checkout.component.DateTimePicker
 import com.fomaxtro.core.presentation.screen.checkout.component.OutlinedRadioButton
 import com.fomaxtro.core.presentation.screen.checkout.model.PickupOption
 import com.fomaxtro.core.presentation.util.ProductUiFactory
-import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrDefault
+import com.fomaxtro.core.presentation.ui.Resource
+import com.fomaxtro.core.presentation.ui.getOrDefault
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -65,6 +66,18 @@ private fun CheckoutScreen(
         topEnd = 16.dp
     )
 
+    if (state.isDateTimePickerDialogVisible) {
+        DateTimePicker(
+            onDismissRequest = {
+                onAction(CheckoutAction.OnPickupTimeDialogDismiss)
+            },
+            onDateTimeSelected = {
+                onAction(CheckoutAction.OnPickupDateTimeSelected(it))
+            },
+            initialUtcMillis = state.pickupTime.toEpochMilli()
+        )
+    }
+
     Scaffold(
         topBar = {
             Surface(
@@ -88,7 +101,9 @@ private fun CheckoutScreen(
         CheckoutLayout(
             pickupOptions = {
                 OutlinedRadioButton(
-                    onClick = {},
+                    onClick = {
+                        onAction(CheckoutAction.OnPickupTimeOptionSelected(PickupOption.EARLIEST))
+                    },
                     selected = state.pickupOption == PickupOption.EARLIEST,
                     text = stringResource(R.string.earliest_available_time),
                     modifier = Modifier.fillMaxWidth()
@@ -97,7 +112,9 @@ private fun CheckoutScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedRadioButton(
-                    onClick = {},
+                    onClick = {
+                        onAction(CheckoutAction.OnPickupTimeOptionSelected(PickupOption.SCHEDULED))
+                    },
                     selected = state.pickupOption == PickupOption.SCHEDULED,
                     text = stringResource(R.string.scheduled_time),
                     modifier = Modifier.fillMaxWidth()
@@ -206,7 +223,8 @@ private fun CheckoutScreenPreview() {
                             id = it.toLong()
                         )
                     }
-                )
+                ),
+                isDateTimePickerDialogVisible = false
             )
         )
     }

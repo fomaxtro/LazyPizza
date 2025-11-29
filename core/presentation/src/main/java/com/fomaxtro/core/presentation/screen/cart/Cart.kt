@@ -22,8 +22,8 @@ import com.fomaxtro.core.presentation.component.ProductRecommendationCard
 import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.util.ProductUiFactory
-import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrDefault
+import com.fomaxtro.core.presentation.ui.Resource
+import com.fomaxtro.core.presentation.ui.getOrDefault
 import com.fomaxtro.core.presentation.util.toDisplayText
 
 @Composable

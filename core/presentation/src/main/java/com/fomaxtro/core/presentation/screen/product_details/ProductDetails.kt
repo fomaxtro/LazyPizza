@@ -34,9 +34,9 @@ import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.currentScreenType
 import com.fomaxtro.core.presentation.util.ProductUiFactory
-import com.fomaxtro.core.presentation.util.Resource
+import com.fomaxtro.core.presentation.ui.Resource
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
-import com.fomaxtro.core.presentation.util.getOrDefault
+import com.fomaxtro.core.presentation.ui.getOrDefault
 
 @Composable
 fun ProductDetailsRoot(
