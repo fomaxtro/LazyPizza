@@ -1,6 +1,7 @@
 package com.fomaxtro.core.data.mapper
 
 import com.fomaxtro.core.data.database.entity.ToppingSelectionEntity
+import com.fomaxtro.core.data.remote.dto.OrderToppingRequest
 import com.fomaxtro.core.data.session.model.ToppingSelectionSession
 import com.fomaxtro.core.domain.model.ToppingSelection
 import com.fomaxtro.core.domain.model.ToppingSelectionLocal
@@ -35,4 +36,9 @@ fun ToppingSelectionLocal.toToppingSelectionEntity(
     toppingId = id,
     quantity = quantity,
     cartItemId = cartItemId.toString()
+)
+
+fun ToppingSelection.toOrderToppingRequest() = OrderToppingRequest(
+    id = topping.id,
+    quantity = quantity
 )

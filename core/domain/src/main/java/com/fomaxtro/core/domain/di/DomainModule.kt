@@ -10,6 +10,7 @@ import com.fomaxtro.core.domain.use_case.Login
 import com.fomaxtro.core.domain.use_case.Logout
 import com.fomaxtro.core.domain.use_case.ObserveCartItems
 import com.fomaxtro.core.domain.use_case.ObserveProductsWithCartItems
+import com.fomaxtro.core.domain.use_case.PlaceOrder
 import com.fomaxtro.core.domain.use_case.RemoveCartItem
 import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.validation.OtpValidator
@@ -56,4 +57,5 @@ val domainModule = module {
     factoryOf(::Logout)
     factoryOf(::ObserveProductRecommendations)
     factoryOf(::PickupTimeValidator)
+    factoryOf(::PlaceOrder)
 }

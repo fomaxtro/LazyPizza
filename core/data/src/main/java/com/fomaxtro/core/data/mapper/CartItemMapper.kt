@@ -2,6 +2,7 @@ package com.fomaxtro.core.data.mapper
 
 import com.fomaxtro.core.data.database.entity.CartItemEntity
 import com.fomaxtro.core.data.database.entity.CartItemWithToppingSelections
+import com.fomaxtro.core.data.remote.dto.OrderProductRequest
 import com.fomaxtro.core.data.session.model.CartItemSession
 import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.CartItemLocal
@@ -44,4 +45,10 @@ fun CartItem.toCartItemSession() = CartItemSession(
     productId = product.id,
     quantity = quantity,
     selectedToppings = selectedToppings.map { it.toToppingSelectionSession() }
+)
+
+fun CartItem.toOrderProductRequest() = OrderProductRequest(
+    id = product.id,
+    quantity = quantity,
+    toppings = selectedToppings.map { it.toOrderToppingRequest() }
 )

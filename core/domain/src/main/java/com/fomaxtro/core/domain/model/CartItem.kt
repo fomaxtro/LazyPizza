@@ -7,4 +7,6 @@ data class CartItem(
     val product: Product,
     val quantity: Int = 0,
     val selectedToppings: List<ToppingSelection> = emptyList()
-)
+) {
+    val totalPrice: Double = (product.price + selectedToppings.sumOf { it.totalPrice }) * quantity
+}
