@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,20 +21,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fomaxtro.core.presentation.R
+import com.fomaxtro.core.presentation.component.DateTimePicker
 import com.fomaxtro.core.presentation.component.ProductListItem
 import com.fomaxtro.core.presentation.component.ProductRecommendationCard
 import com.fomaxtro.core.presentation.component.ProductRecommendationCardLoader
+import com.fomaxtro.core.presentation.component.TopBarSheetSurface
 import com.fomaxtro.core.presentation.designsystem.text_field.LazyPizzaOutlinedFormTextField
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaCenteredAlignedTopAppBar
 import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.screen.checkout.component.CheckoutLayout
-import com.fomaxtro.core.presentation.component.DateTimePicker
 import com.fomaxtro.core.presentation.screen.checkout.component.OutlinedRadioButton
 import com.fomaxtro.core.presentation.screen.checkout.model.PickupOption
-import com.fomaxtro.core.presentation.util.ProductUiFactory
+import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.ui.Resource
 import com.fomaxtro.core.presentation.ui.getOrDefault
+import com.fomaxtro.core.presentation.util.ProductUiFactory
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -64,10 +64,6 @@ private fun CheckoutScreen(
     state: CheckoutState,
     onAction: (CheckoutAction) -> Unit = {}
 ) {
-    val shape = RoundedCornerShape(
-        topStart = 16.dp,
-        topEnd = 16.dp
-    )
     val focusManager = LocalFocusManager.current
 
     if (state.isDateTimePickerDialogVisible) {
@@ -85,13 +81,7 @@ private fun CheckoutScreen(
 
     Scaffold(
         topBar = {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding(),
-                color = MaterialTheme.colorScheme.surface,
-                shape = shape
-            ) {
+            TopBarSheetSurface {
                 LazyPizzaCenteredAlignedTopAppBar(
                     title = stringResource(R.string.order_checkout),
                     onNavigateBackClick = {
@@ -133,12 +123,10 @@ private fun CheckoutScreen(
             pickupTime = state.pickupTime
                 .atZone(ZoneId.systemDefault())
                 .format(
-                    DateTimeFormatter.ofPattern(
-                        when (state.pickupOption) {
-                            PickupOption.EARLIEST -> "HH:mm"
-                            PickupOption.SCHEDULED -> "MMMM dd, HH:mm"
-                        }
-                    )
+                    when (state.pickupOption) {
+                        PickupOption.EARLIEST -> DateTimeFormatter.ofPattern("HH:mm")
+                        PickupOption.SCHEDULED -> Formatters.pickupTimeFormatter
+                    }
                 ),
             cartItemsLoading = state.cartItems is Resource.Loading,
             cartItemsLoader = {},
@@ -212,7 +200,7 @@ private fun CheckoutScreen(
     }
 }
 
-@Preview
+@Preview(showBackground = true, backgroundColor = 0xFFB61010)
 @Composable
 private fun CheckoutScreenPreview() {
     val cartItems = (1..3).map {

@@ -20,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.rememberDatePickerState
@@ -42,12 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
+import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaTextButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.body4Regular
 import com.fomaxtro.core.presentation.designsystem.theme.label2Semibold
 import com.fomaxtro.core.presentation.designsystem.theme.surfaceHighest
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
-import com.fomaxtro.core.presentation.designsystem.theme.title3
 import com.fomaxtro.core.presentation.ui.UiText
 import java.time.Instant
 import java.time.LocalDate
@@ -182,18 +181,14 @@ fun DateTimePicker(
                         ),
                     horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
                 ) {
-                    TextButton(
+                    LazyPizzaTextButton(
                         onClick = {
                             onDismissRequest()
 
                             dateSelected = false
-                        }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.cancel),
-                            style = MaterialTheme.typography.title3
-                        )
-                    }
+                        },
+                        text = stringResource(R.string.cancel)
+                    )
 
                     LazyPizzaButton(
                         onClick = {

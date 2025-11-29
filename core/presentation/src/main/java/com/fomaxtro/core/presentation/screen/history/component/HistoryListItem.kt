@@ -27,7 +27,7 @@ fun HistoryListItem(
 ) {
     BaseHistoryListItem(
         title = {
-            Text(stringResource(R.string.order_number, order.id))
+            Text(stringResource(R.string.order, order.id))
         },
         date = {
             Text(
