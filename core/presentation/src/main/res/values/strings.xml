@@ -64,7 +64,8 @@
     <string name="show_order_details">Show order details</string>
     <string name="recommended_addons">Recommended Add-Ons</string>
     <string name="comments">Comments</string>
-    <string name="order_total">Order total:</string>
+    <string name="order_total">Order total</string>
+    <string name="format_labeled">%s:</string>
     <string name="place_order">Place Order</string>
     <string name="add_comment">Add Comment</string>
     <string name="ok">Ok</string>

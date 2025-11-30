@@ -38,7 +38,7 @@ import java.time.Instant
 import java.time.ZoneId
 
 @Composable
-private fun OrderConfirmation(
+fun OrderConfirmation(
     onNavigateBack: () -> Unit,
     onNavigateToMenu: () -> Unit,
     orderId: Long,

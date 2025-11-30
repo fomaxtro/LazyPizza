@@ -50,7 +50,6 @@ import com.fomaxtro.core.presentation.component.ProductListItem
 import com.fomaxtro.core.presentation.component.ProductListItemLoader
 import com.fomaxtro.core.presentation.component.ProductRecommendationCard
 import com.fomaxtro.core.presentation.component.ProductRecommendationCardLoader
-import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaOutlinedIconButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.label1Medium
@@ -79,6 +78,7 @@ fun CheckoutLayout(
     productRecommendationBuilder: @Composable LazyItemScope.(ProductUi) -> Unit,
     comments: @Composable () -> Unit,
     totalPrice: Double,
+    action: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isOrderDetailsExpanded by rememberSaveable {
@@ -311,6 +311,11 @@ fun CheckoutLayout(
             Surface(
                 modifier = Modifier.fillMaxWidth()
             ) {
+                val orderTotal = stringResource(
+                    R.string.format_labeled,
+                    stringResource(R.string.order_total).uppercase()
+                )
+
                 when (screenType) {
                     ScreenType.MOBILE -> {
                         Column(
@@ -322,7 +327,7 @@ fun CheckoutLayout(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = stringResource(R.string.order_total).uppercase(Locale.getDefault()),
+                                    text = orderTotal,
                                     style = MaterialTheme.typography.label1Medium,
                                     color = labelTextColor
                                 )
@@ -335,16 +340,44 @@ fun CheckoutLayout(
 
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            LazyPizzaButton(
-                                onClick = {},
-                                text = stringResource(R.string.place_order),
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                propagateMinConstraints = true
+                            ) {
+                                action()
+                            }
                         }
                     }
 
                     ScreenType.WIDE_SCREEN -> {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = orderTotal,
+                                    style = MaterialTheme.typography.label1Medium,
+                                    color = labelTextColor
+                                )
 
+
+                                Text(
+                                    text = Formatters.formatCurrency(totalPrice),
+                                    style = MaterialTheme.typography.label1Semibold
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier.weight(1f),
+                                propagateMinConstraints = true
+                            ) {
+                                action()
+                            }
+                        }
                     }
                 }
             }
@@ -425,7 +458,8 @@ private fun CheckoutLayoutPreview() {
                     minLines = 3
                 )
             },
-            totalPrice = cartItems.sumOf { it.totalPrice }
+            totalPrice = cartItems.sumOf { it.totalPrice },
+            action = {}
         )
     }
 }

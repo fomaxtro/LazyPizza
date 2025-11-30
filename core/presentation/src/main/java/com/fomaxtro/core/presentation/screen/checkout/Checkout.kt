@@ -1,5 +1,6 @@
 package com.fomaxtro.core.presentation.screen.checkout
 
+import android.widget.Toast
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,10 +12,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +31,7 @@ import com.fomaxtro.core.presentation.component.ProductListItem
 import com.fomaxtro.core.presentation.component.ProductRecommendationCard
 import com.fomaxtro.core.presentation.component.ProductRecommendationCardLoader
 import com.fomaxtro.core.presentation.component.TopBarSheetSurface
+import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.text_field.LazyPizzaOutlinedFormTextField
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaCenteredAlignedTopAppBar
@@ -34,6 +40,7 @@ import com.fomaxtro.core.presentation.screen.checkout.component.CheckoutLayout
 import com.fomaxtro.core.presentation.screen.checkout.component.OutlinedRadioButton
 import com.fomaxtro.core.presentation.screen.checkout.model.PickupOption
 import com.fomaxtro.core.presentation.ui.Formatters
+import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.Resource
 import com.fomaxtro.core.presentation.ui.getOrDefault
 import com.fomaxtro.core.presentation.util.ProductUiFactory
@@ -43,9 +50,36 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun CheckoutRoot(
     onNavigateBack: () -> Unit,
+    onNavigateToOrderConfirmation: (orderId: Long, pickupTimeUtc: Long) -> Unit,
     viewModel: CheckoutViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember {
+        SnackbarHostState()
+    }
+    val context = LocalContext.current
+
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is CheckoutEvent.ShowMessage -> {
+                snackbarHostState.showSnackbar(
+                    message = event.message.asString(context)
+                )
+            }
+
+            is CheckoutEvent.ShowSystemMessage -> {
+                Toast.makeText(
+                    context,
+                    event.message.asString(context),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            is CheckoutEvent.NavigateToOrderConfirmation -> {
+                onNavigateToOrderConfirmation(event.orderId, event.pickupTimeUtc)
+            }
+        }
+    }
 
     CheckoutScreen(
         state = state,
@@ -54,7 +88,8 @@ fun CheckoutRoot(
                 CheckoutAction.OnNavigateBackClick -> onNavigateBack()
                 else -> viewModel.onAction(action)
             }
-        }
+        },
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -62,7 +97,8 @@ fun CheckoutRoot(
 @Composable
 private fun CheckoutScreen(
     state: CheckoutState,
-    onAction: (CheckoutAction) -> Unit = {}
+    onAction: (CheckoutAction) -> Unit = {},
+    snackbarHostState: SnackbarHostState
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -91,6 +127,9 @@ private fun CheckoutScreen(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             }
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         },
         modifier = Modifier.pointerInput(Unit) {
             detectTapGestures {
@@ -192,6 +231,15 @@ private fun CheckoutScreen(
                 )
             },
             totalPrice = state.totalPrice,
+            action = {
+                LazyPizzaButton(
+                    onClick = {
+                        onAction(CheckoutAction.OnPlaceOrderClick)
+                    },
+                    text = stringResource(R.string.place_order),
+                    loading = state.isSubmitting
+                )
+            },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -226,7 +274,8 @@ private fun CheckoutScreenPreview() {
                     }
                 ),
                 isDateTimePickerDialogVisible = false
-            )
+            ),
+            snackbarHostState = SnackbarHostState()
         )
     }
 }

@@ -16,4 +16,9 @@ sealed interface Route : NavKey {
 
     @Serializable
     data object Checkout : Route
+
+    data class OrderConfirmation(
+        val orderId: Long,
+        val pickupTimeUtc: Long
+    ) : Route
 }

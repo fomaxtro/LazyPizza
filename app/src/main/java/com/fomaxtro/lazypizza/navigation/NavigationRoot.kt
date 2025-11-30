@@ -8,6 +8,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.fomaxtro.core.presentation.screen.checkout.CheckoutRoot
 import com.fomaxtro.core.presentation.screen.login.LoginRoot
+import com.fomaxtro.core.presentation.screen.order_confirmation.OrderConfirmation
 import com.fomaxtro.core.presentation.screen.product_details.ProductDetailsRoot
 import com.fomaxtro.lazypizza.navigation.home.HomeNavigationRoot
 import org.koin.androidx.compose.koinViewModel
@@ -91,7 +92,42 @@ fun NavigationRoot() {
                             backStack.removeLastOrNull()
                         }
                     },
-                    viewModel = koinViewModel()
+                    viewModel = koinViewModel(),
+                    onNavigateToOrderConfirmation = { orderId, pickupTimeUtc ->
+                        if (backStack.lastOrNull() is Route.Checkout) {
+                            backStack.add(
+                                Route.OrderConfirmation(
+                                    orderId = orderId,
+                                    pickupTimeUtc = pickupTimeUtc
+                                )
+                            )
+                        }
+                    }
+                )
+            }
+
+            entry<Route.OrderConfirmation> { route ->
+                OrderConfirmation(
+                    onNavigateBack = {
+                        if (backStack.lastOrNull() is Route.OrderConfirmation) {
+                            backStack.removeLastOrNull()
+                        }
+                    },
+                    onNavigateToMenu = {
+                        val homeRouteIndex = backStack.indexOfLast { it is Route.Home }
+
+                        if (homeRouteIndex != -1) {
+                            val routesToRemove =
+                                backStack.slice(homeRouteIndex..backStack.lastIndex)
+
+                            backStack.removeAll(routesToRemove)
+                            backStack.add(Route.Home)
+                        } else {
+                            throw IllegalStateException("Home route not found in back stack")
+                        }
+                    },
+                    orderId = route.orderId,
+                    pickupTimeUtc = route.pickupTimeUtc
                 )
             }
         }

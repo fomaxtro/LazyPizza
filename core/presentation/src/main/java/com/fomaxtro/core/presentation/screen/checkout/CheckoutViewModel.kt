@@ -101,6 +101,7 @@ class CheckoutViewModel(
             pickupTime = state.pickupTime,
             pickupTimeError = state.pickupTimeError,
             comments = state.comments,
+            isSubmitting = state.isSubmitting,
             cartItems = cartItems.map { cartItems ->
                 cartItems.map { it.toUi() }
             },
@@ -134,10 +135,42 @@ class CheckoutViewModel(
             )
 
             CheckoutAction.OnPickupTimeDialogDismiss -> onPickupTimeDialogDismiss()
-
             is CheckoutAction.OnCommentsChange -> onCommentsChange(action.comments)
+            CheckoutAction.OnPlaceOrderClick -> onPlaceOrderClick()
 
             else -> Unit
+        }
+    }
+
+    private fun onPlaceOrderClick() = viewModelScope.launch {
+        _state.update { it.copy(isSubmitting = true) }
+
+        try {
+            when (
+                val result = placeOrder(
+                    cartItems = cartItems.value.getOrThrow(),
+                    pickupTime = state.value.pickupTime
+                )
+            ) {
+                is Result.Error -> {
+                    eventChannel.send(
+                        CheckoutEvent.ShowSystemMessage(
+                            message = result.error.toUiText()
+                        )
+                    )
+                }
+
+                is Result.Success -> {
+                    eventChannel.send(
+                        CheckoutEvent.NavigateToOrderConfirmation(
+                            orderId = result.data.id,
+                            pickupTimeUtc = result.data.pickupTime.toEpochMilli()
+                        )
+                    )
+                }
+            }
+        } finally {
+            _state.update { it.copy(isSubmitting = false) }
         }
     }
 
@@ -222,5 +255,6 @@ private data class CheckoutInternalState(
     val isDateTimePickerDialogVisible: Boolean = false,
     val pickupTime: Instant = Instant.now().plus(15, ChronoUnit.MINUTES),
     val comments: String = "",
-    val pickupTimeError: UiText? = null
+    val pickupTimeError: UiText? = null,
+    val isSubmitting: Boolean = false
 )
