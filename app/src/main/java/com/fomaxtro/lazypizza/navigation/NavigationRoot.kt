@@ -16,7 +16,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun NavigationRoot() {
-    val backStack = rememberNavBackStack(Route.Home)
+    val backStack = rememberNavBackStack(Route.Home())
 
     NavDisplay(
         backStack = backStack,
@@ -66,7 +66,7 @@ fun NavigationRoot() {
                         val lastHome = backStack.lastOrNull { it is Route.Home }
 
                         if (currentRoute is Route.ProductDetails) {
-                            backStack.add(Route.Home)
+                            backStack.add(Route.Home())
                             backStack.remove(currentRoute)
                             backStack.remove(lastHome)
                         }
@@ -78,7 +78,7 @@ fun NavigationRoot() {
                 LoginRoot(
                     onNavigateToHome = {
                         val previousRoute = backStack.last()
-                        backStack.add(Route.Home)
+                        backStack.add(Route.Home())
                         backStack.remove(previousRoute)
                     },
                     viewModel = koinViewModel()
@@ -121,7 +121,7 @@ fun NavigationRoot() {
                                 backStack.slice(homeRouteIndex..backStack.lastIndex)
 
                             backStack.removeAll(routesToRemove)
-                            backStack.add(Route.Home)
+                            backStack.add(Route.Home())
                         } else {
                             throw IllegalStateException("Home route not found in back stack")
                         }

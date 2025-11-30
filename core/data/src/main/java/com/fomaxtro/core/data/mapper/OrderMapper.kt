@@ -10,7 +10,8 @@ import java.time.Instant
 fun NewOrder.toOrderRequest() = OrderRequest(
     totalPrice = totalPrice,
     pickupTime = pickupTime.toString(),
-    products = cartItems.map { it.toOrderProductRequest() }
+    products = cartItems.map { it.toOrderProductRequest() },
+    comments = comments
 )
 
 fun OrderResponse.toOrder() = Order(

@@ -15,12 +15,14 @@ class PlaceOrder(
 ) {
     suspend operator fun invoke(
         cartItems: List<CartItem>,
-        pickupTime: Instant
+        pickupTime: Instant,
+        comments: String?
     ): Result<Order, DataError> {
         val order = NewOrder(
             totalPrice = cartItems.sumOf { it.totalPrice },
             pickupTime = pickupTime,
-            cartItems = cartItems
+            cartItems = cartItems,
+            comments = comments
         )
 
         return orderRepository.save(order).also { result ->

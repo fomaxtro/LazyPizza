@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface Route : NavKey {
     @Serializable
-    data object Home : Route
+    data class Home(val refreshKey: Long = System.currentTimeMillis()) : Route
 
     @Serializable
     data class ProductDetails(val productId: Long) : Route

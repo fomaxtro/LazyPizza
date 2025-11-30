@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class OrderRequest(
     val totalPrice: Double,
     val pickupTime: String,
-    val products: List<OrderProductRequest>
+    val products: List<OrderProductRequest>,
+    val comments: String?
 )

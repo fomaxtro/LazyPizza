@@ -149,7 +149,8 @@ class CheckoutViewModel(
             when (
                 val result = placeOrder(
                     cartItems = cartItems.value.getOrThrow(),
-                    pickupTime = state.value.pickupTime
+                    pickupTime = _state.value.pickupTime,
+                    comments = _state.value.comments.takeIf { it.isNotBlank() }
                 )
             ) {
                 is Result.Error -> {
