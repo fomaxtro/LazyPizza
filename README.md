@@ -117,10 +117,11 @@ cd LazyPizza
 3. Configure the API URL in `local.properties`:
 
 ```properties
-API_URL=https://lazypizza.fomaxtro.com/api
+debug.apiUrl=https://lazypizza.fomaxtro.com/api
+release.apiUrl=https://lazypizza.fomaxtro.com/api
 ```
 
-Note: You can change this URL to point to your own backend server if needed.
+Note: You can change this URL to point to your own backend server if needed. The source code for the backend is available at [LazyPizzaApi](https://github.com/fomaxtro/LazyPizzaApi).
 
 4. Sync Gradle files
 
