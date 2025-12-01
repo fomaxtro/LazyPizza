@@ -3,7 +3,9 @@ package com.fomaxtro.core.data.remote.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CategoryDto(
+data class ToppingResponse(
     val id: Long,
-    val name: String
+    val name: String,
+    val price: Double,
+    val imageUrl: String
 )

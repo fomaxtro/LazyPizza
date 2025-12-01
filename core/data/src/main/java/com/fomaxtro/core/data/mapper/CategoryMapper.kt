@@ -1,9 +1,9 @@
 package com.fomaxtro.core.data.mapper
 
-import com.fomaxtro.core.data.remote.dto.CategoryDto
+import com.fomaxtro.core.data.remote.dto.CategoryResponse
 import com.fomaxtro.core.domain.model.ProductCategory
 
-fun CategoryDto.toProductCategory(): ProductCategory {
+fun CategoryResponse.toProductCategory(): ProductCategory {
     return when (id) {
         1L -> ProductCategory.PIZZA
         2L -> ProductCategory.DRINKS

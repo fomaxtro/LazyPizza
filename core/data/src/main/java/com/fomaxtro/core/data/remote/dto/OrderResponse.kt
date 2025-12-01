@@ -8,5 +8,6 @@ data class OrderResponse(
     val totalPrice: Double,
     val status: OrderStatusResponse,
     val pickupTime: String,
-    val createdAt: String
+    val createdAt: String,
+    val products: List<OrderProductResponse>
 )
