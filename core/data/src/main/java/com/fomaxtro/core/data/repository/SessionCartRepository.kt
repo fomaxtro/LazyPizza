@@ -24,8 +24,8 @@ class SessionCartRepository(
             .distinctUntilChanged()
     }
 
-    override suspend fun upsertCartItemsLocal(items: List<CartItemLocal>) {
-        sessionStorage.upsertCartItems(
+    override suspend fun insertCartItemsLocal(items: List<CartItemLocal>) {
+        sessionStorage.saveCartItems(
             items = items.map { it.toCartItemSession() }
         )
     }
@@ -45,14 +45,18 @@ class SessionCartRepository(
             .distinctUntilChanged()
     }
 
-    override suspend fun upsertCartItem(item: CartItem) {
-        val upsertItem = CartItemSession(
+    override suspend fun insertCartItem(item: CartItem) {
+        val cartItem = CartItemSession(
             id = item.id.toString(),
             productId = item.product.id,
             quantity = item.quantity,
             selectedToppings = item.selectedToppings.map { it.toToppingSelectionSession() }
         )
 
-        sessionStorage.upsertCartItem(upsertItem)
+        sessionStorage.addCartItem(cartItem)
+    }
+
+    override suspend fun updateCartItem(item: CartItem) {
+        sessionStorage.updateCartItem(item.toCartItemSession())
     }
 }

@@ -4,17 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.ProductCategory
+import com.fomaxtro.core.domain.use_case.CartUseCases
 import com.fomaxtro.core.domain.use_case.ObserveProductsWithCartItems
-import com.fomaxtro.core.domain.use_case.UpdateCartItemQuantity
 import com.fomaxtro.core.domain.util.Result
 import com.fomaxtro.core.presentation.R
+import com.fomaxtro.core.presentation.mapper.toResource
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
 import com.fomaxtro.core.presentation.ui.UiText
-import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrDefault
-import com.fomaxtro.core.presentation.util.getOrNull
-import com.fomaxtro.core.presentation.util.map
+import com.fomaxtro.core.presentation.ui.Resource
+import com.fomaxtro.core.presentation.ui.getOrThrow
+import com.fomaxtro.core.presentation.ui.map
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +32,7 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class, ExperimentalCoroutinesApi::class)
 class MenuViewModel(
-    private val updateCartItemQuantity: UpdateCartItemQuantity,
+    private val cartUseCases: CartUseCases,
     observeProductsWithCartItems: ObserveProductsWithCartItems
 ) : ViewModel() {
     private val _state = MutableStateFlow(MenuInternalState())
@@ -50,12 +50,7 @@ class MenuViewModel(
                 )
             }
         }
-        .map { cartItemsResult ->
-            when (cartItemsResult) {
-                is Result.Error -> Resource.Error
-                is Result.Success -> Resource.Success(cartItemsResult.data)
-            }
-        }
+        .map { it.toResource() }
         .stateIn(
             viewModelScope,
             SharingStarted.Lazily,
@@ -113,11 +108,24 @@ class MenuViewModel(
 
             is MenuAction.OnProductClick -> Unit
             is MenuAction.OnCartItemAddClick -> onCartItemAddClick(action.cartItemId)
+            is MenuAction.OnCartItemDeleteClick -> onCartItemDeleteClick(action.cartItemId)
         }
     }
 
+    private fun onCartItemDeleteClick(cartItemId: String) = viewModelScope.launch {
+        val cartItem = getCartItem(cartItemId) ?: return@launch
+
+        cartUseCases.removeCartItem(cartItem)
+    }
+
+    private fun getCartItem(cartItemId: String): CartItem? {
+        return cartItems.value.getOrThrow().find { UUID.fromString(cartItemId) == it.id }
+    }
+
     private fun onCartItemAddClick(cartItemId: String) = viewModelScope.launch {
-        onCartItemQuantityChange(cartItemId, 1)
+        val cartItem = getCartItem(cartItemId) ?: return@launch
+
+        cartUseCases.addCartItem(cartItem.copy(quantity = 1))
         eventChannel.send(
             MenuEvent.ShowMessage(
                 message = UiText.StringResource(R.string.added_to_cart)
@@ -129,10 +137,9 @@ class MenuViewModel(
         cartItemId: String,
         quantity: Int
     ) = viewModelScope.launch {
-        val cartItem = cartItems.value.getOrNull()
-            ?.find { UUID.fromString(cartItemId) == it.id } ?: return@launch
+        val cartItem = getCartItem(cartItemId) ?: return@launch
 
-        updateCartItemQuantity(cartItem.copy(quantity = quantity))
+        cartUseCases.changeCartItemQuantity(cartItem.copy(quantity = quantity))
     }
 
     private fun onProductCategoryToggle(category: ProductCategory) {
@@ -160,8 +167,9 @@ private fun MenuInternalState.toUi(
 ) = MenuState(
     search = search,
     selectedCategory = selectedCategory,
-    isLoading = cartItems.isLoading,
-    cartItems = cartItems.getOrDefault(emptyList())
-        .map { it.toUi() }
-        .groupBy { it.product.category }
+    cartItems = cartItems
+        .map { cartItems ->
+            cartItems.map { it.toUi() }
+                .groupBy { it.product.category }
+        }
 )

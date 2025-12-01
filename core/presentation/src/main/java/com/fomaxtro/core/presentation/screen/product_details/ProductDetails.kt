@@ -34,18 +34,15 @@ import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.currentScreenType
 import com.fomaxtro.core.presentation.util.ProductUiFactory
+import com.fomaxtro.core.presentation.ui.Resource
 import com.fomaxtro.core.presentation.util.ToppingUiFactory
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
+import com.fomaxtro.core.presentation.ui.getOrDefault
 
 @Composable
 fun ProductDetailsRoot(
-    productId: Long,
     onBackClick: () -> Unit,
     onNavigateToCart: () -> Unit,
-    viewModel: ProductDetailsViewModel = koinViewModel {
-        parametersOf(productId)
-    }
+    viewModel: ProductDetailsViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -102,10 +99,10 @@ private fun ProductDetailsScreen(
     ) { innerPadding ->
         ProductDetailsLayout(
             image = {
-                if (state.product != null) {
+                if (state.product is Resource.Success) {
                     AsyncImage(
-                        model = state.product.imageUrl,
-                        contentDescription = state.product.name,
+                        model = state.product.data.imageUrl,
+                        contentDescription = state.product.data.name,
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {
@@ -117,8 +114,8 @@ private fun ProductDetailsScreen(
                 }
             },
             title = {
-                if (state.product != null) {
-                    Text(state.product.name)
+                if (state.product is Resource.Success) {
+                    Text(state.product.data.name)
                 } else {
                     Box(
                         modifier = Modifier
@@ -129,8 +126,8 @@ private fun ProductDetailsScreen(
                 }
             },
             subtitle = {
-                if (state.product != null) {
-                    Text(state.product.description ?: "")
+                if (state.product is Resource.Success) {
+                    Text(state.product.data.description ?: "")
                 } else {
                     Box(
                         modifier = Modifier
@@ -153,15 +150,14 @@ private fun ProductDetailsScreen(
                     enabled = state.canAddToCart
                 )
             },
-            items = state.toppings,
+            items = state.toppings.getOrDefault(emptyList()),
             itemContent = { toppingSelection ->
                 ToppingListItem(
                     toppingSelection = toppingSelection,
                     onClick = {
                         onAction(
-                            ProductDetailsAction.OnToppingQuantityChange(
-                                toppingId = toppingSelection.topping.id,
-                                quantity = 1
+                            ProductDetailsAction.OnToppingAddClick(
+                                toppingId = toppingSelection.topping.id
                             )
                         )
                     },
@@ -176,7 +172,7 @@ private fun ProductDetailsScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             },
-            loading = state.isToppingsLoading,
+            loading = state.toppings is Resource.Loading,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -187,23 +183,25 @@ private fun ProductDetailsScreen(
 @Preview
 @Composable
 private fun ProductDetailsScreenPreview() {
+    val product = ProductUiFactory.create(
+        id = 1,
+        name = "Margherita",
+        description = "Tomato sauce, Mozzarella, Fresh basil, Olive oil",
+        imageUrl = "https://nnsqlltlktnsiaqxwwwk.storage.supabase.co/storage/v1/s3/lazy-pizza-products/pizza/Meat%20Lovers.png?x-id=GetObject&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9325183b5fa10e7256a20329645de8b9%2F20251008%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20251008T025007Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=a20d0d65d5dede1b505535fe3c0473260cbb00a507f849eb1f4c740e0c85ff70"
+    )
+    val toppings = (1..12).map {
+        ToppingSelectionUi(
+            topping = ToppingUiFactory.create(
+                id = it.toLong()
+            )
+        )
+    }
+
     LazyPizzaTheme {
         ProductDetailsScreen(
             state = ProductDetailsState(
-                product = ProductUiFactory.create(
-                    id = 1,
-                    name = "Margherita",
-                    description = "Tomato sauce, Mozzarella, Fresh basil, Olive oil",
-                    imageUrl = "https://nnsqlltlktnsiaqxwwwk.storage.supabase.co/storage/v1/s3/lazy-pizza-products/pizza/Meat%20Lovers.png?x-id=GetObject&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9325183b5fa10e7256a20329645de8b9%2F20251008%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20251008T025007Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=a20d0d65d5dede1b505535fe3c0473260cbb00a507f849eb1f4c740e0c85ff70"
-                ),
-                isToppingsLoading = false,
-                toppings = (1..12).map {
-                    ToppingSelectionUi(
-                        topping = ToppingUiFactory.create(
-                            id = it.toLong()
-                        )
-                    )
-                }
+                product = Resource.Success(product),
+                toppings = Resource.Success(toppings)
             ),
         )
     }

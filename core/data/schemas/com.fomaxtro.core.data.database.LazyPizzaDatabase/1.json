@@ -2,15 +2,21 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1ea5b0f6384cde0192aed42ff430c860",
+    "identityHash": "afb145e233695dc20cf8f71b3974354c",
     "entities": [
       {
         "tableName": "topping_selections",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `quantity` INTEGER NOT NULL, `cart_item_id` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `topping_id` INTEGER NOT NULL, `quantity` INTEGER NOT NULL, `cart_item_id` TEXT NOT NULL, FOREIGN KEY(`cart_item_id`) REFERENCES `cart_items`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "toppingId",
+            "columnName": "topping_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -28,11 +34,36 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": false,
+          "autoGenerate": true,
           "columnNames": [
             "id"
           ]
-        }
+        },
+        "indices": [
+          {
+            "name": "index_topping_selections_cart_item_id_topping_id",
+            "unique": true,
+            "columnNames": [
+              "cart_item_id",
+              "topping_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_topping_selections_cart_item_id_topping_id` ON `${TABLE_NAME}` (`cart_item_id`, `topping_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "cart_items",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "cart_item_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       },
       {
         "tableName": "cart_items",
@@ -67,7 +98,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1ea5b0f6384cde0192aed42ff430c860')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'afb145e233695dc20cf8f71b3974354c')"
     ]
   }
 }

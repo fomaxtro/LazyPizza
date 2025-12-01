@@ -10,9 +10,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.fomaxtro.core.domain.model.OrderStatus
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.designsystem.theme.body4Regular
 import com.fomaxtro.core.presentation.designsystem.theme.success
 import com.fomaxtro.core.presentation.designsystem.theme.textSecondary
 import com.fomaxtro.core.presentation.designsystem.theme.waring
+import com.fomaxtro.core.presentation.screen.history.model.OrderProductUiFactory
 import com.fomaxtro.core.presentation.screen.history.model.OrderUi
 import com.fomaxtro.core.presentation.screen.history.model.OrderUiFactory
 import com.fomaxtro.core.presentation.ui.Formatters
@@ -27,11 +29,11 @@ fun HistoryListItem(
 ) {
     BaseHistoryListItem(
         title = {
-            Text(stringResource(R.string.order_nunber, order.id))
+            Text(stringResource(R.string.order, order.id))
         },
         date = {
             Text(
-                text = order.createdAt
+                text = order.pickupTime
                     .atZone(ZoneId.systemDefault())
                     .format(
                         DateTimeFormatter.ofPattern(
@@ -42,7 +44,15 @@ fun HistoryListItem(
             )
         },
         products = {
-            Text(order.products)
+            val formattedProducts = order.products
+                .joinToString("\n") {
+                    "${it.quantity}x ${it.name}"
+                }
+
+            Text(
+                text = formattedProducts,
+                style = MaterialTheme.typography.body4Regular
+            )
         },
         status = {
             when (order.status) {
@@ -60,7 +70,7 @@ fun HistoryListItem(
                 }
                 OrderStatus.IN_PROGRESS -> {
                     InfoLabel(
-                        text = stringResource(R.string.in_progress),
+                        text = stringResource(R.string.in_progress_text),
                         containerColor = MaterialTheme.colorScheme.waring
                     )
                 }
@@ -82,8 +92,12 @@ private fun HistoryListItemPreview() {
         HistoryListItem(
             modifier = Modifier.fillMaxWidth(),
             order = OrderUiFactory.create(
-                id = 1L,
-                status = OrderStatus.CANCELLED
+                id = 1,
+                products = (1..2).map {
+                    OrderProductUiFactory.create(
+                        id = it.toLong()
+                    )
+                },
             )
         )
     }

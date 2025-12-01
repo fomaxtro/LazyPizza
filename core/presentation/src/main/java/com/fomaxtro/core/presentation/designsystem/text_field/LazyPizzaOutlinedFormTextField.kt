@@ -7,9 +7,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.body2Regular
+import com.fomaxtro.core.presentation.designsystem.theme.surfaceHighest
 
 @Composable
 fun LazyPizzaOutlinedFormTextField(
@@ -18,15 +20,19 @@ fun LazyPizzaOutlinedFormTextField(
     modifier: Modifier = Modifier,
     placeholder: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    singleLine: Boolean = false
+    singleLine: Boolean = false,
+    minLines: Int = 1,
+    shape: Shape = CircleShape
 ) {
 
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
-        colors = LazyPizzaOutlinedFormTextFieldDefaults.colors(),
-        shape = CircleShape,
+        colors = LazyPizzaOutlinedFormTextFieldDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.surfaceHighest
+        ),
+        shape = shape,
         placeholder = placeholder?.let { placeholder ->
             @Composable {
                 Text(
@@ -37,7 +43,8 @@ fun LazyPizzaOutlinedFormTextField(
         },
         textStyle = MaterialTheme.typography.body2Regular,
         keyboardOptions = keyboardOptions,
-        singleLine = singleLine
+        singleLine = singleLine,
+        minLines = minLines
     )
 }
 

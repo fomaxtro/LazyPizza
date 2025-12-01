@@ -42,14 +42,15 @@ import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.UiText
 import com.fomaxtro.core.presentation.ui.currentScreenType
+import com.fomaxtro.core.presentation.ui.Resource
+import com.fomaxtro.core.presentation.ui.getOrNull
 import com.fomaxtro.core.presentation.util.toDisplayName
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MenuRoot(
     onProductClick: (productId: Long) -> Unit,
     onShowMessage: (UiText) -> Unit,
-    viewModel: MenuViewModel = koinViewModel()
+    viewModel: MenuViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -171,8 +172,8 @@ private fun MenuScreen(
 
         categoryProductList(
             category = ProductCategory.PIZZA,
-            items = state.cartItems[ProductCategory.PIZZA],
-            loading = state.isLoading,
+            items = state.cartItems.getOrNull()?.get(ProductCategory.PIZZA),
+            loading = state.cartItems is Resource.Loading,
             screenType = screenType,
             itemContent = { cartItem ->
                 val product = cartItem.product
@@ -194,8 +195,8 @@ private fun MenuScreen(
         productCategories.drop(1).forEach { productCategory ->
             categoryProductList(
                 category = productCategory,
-                items = state.cartItems[productCategory],
-                loading = state.isLoading,
+                items = state.cartItems.getOrNull()?.get(productCategory),
+                loading = state.cartItems is Resource.Loading,
                 screenType = screenType,
                 itemContent = { cartItem ->
                     val product = cartItem.product
@@ -211,12 +212,7 @@ private fun MenuScreen(
                             onAction(MenuAction.OnCartItemAddClick(cartItem.id))
                         },
                         onDeleteClick = {
-                            onAction(
-                                MenuAction.OnCartItemQuantityChange(
-                                    cartItemId = cartItem.id,
-                                    quantity = 0
-                                )
-                            )
+                            onAction(MenuAction.OnCartItemDeleteClick(cartItem.id))
                         },
                         onQuantityChange = {
                             onAction(

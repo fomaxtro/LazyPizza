@@ -6,6 +6,7 @@ import com.fomaxtro.core.data.remote.SessionManager
 import com.fomaxtro.core.data.remote.di.remoteModule
 import com.fomaxtro.core.data.repository.AuthRepositoryImpl
 import com.fomaxtro.core.data.repository.DatabaseCartRepository
+import com.fomaxtro.core.data.repository.OrderRepositoryImpl
 import com.fomaxtro.core.data.repository.ProductRepositoryImpl
 import com.fomaxtro.core.data.repository.SessionCartRepository
 import com.fomaxtro.core.data.repository.ToppingRepositoryImpl
@@ -14,6 +15,7 @@ import com.fomaxtro.core.data.validation.AndroidPatternMatching
 import com.fomaxtro.core.domain.repository.AuthRepository
 import com.fomaxtro.core.domain.repository.AuthenticatedCartRepository
 import com.fomaxtro.core.domain.repository.GuestCartRepository
+import com.fomaxtro.core.domain.repository.OrderRepository
 import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.repository.ToppingRepository
 import com.fomaxtro.core.domain.validation.PatternMatching
@@ -31,6 +33,7 @@ val dataModule = module {
     singleOf(::SessionCartRepository).bind<GuestCartRepository>()
     singleOf(::DatabaseCartRepository).bind<AuthenticatedCartRepository>()
     singleOf(::AuthRepositoryImpl).bind<AuthRepository>()
+    singleOf(::OrderRepositoryImpl).bind<OrderRepository>()
 
     singleOf(::AndroidPatternMatching).bind<PatternMatching>()
 }

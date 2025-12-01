@@ -3,108 +3,99 @@ package com.fomaxtro.core.presentation.screen.product_details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fomaxtro.core.domain.model.CartItem
-import com.fomaxtro.core.domain.model.Product
 import com.fomaxtro.core.domain.model.ToppingSelection
 import com.fomaxtro.core.domain.repository.ProductRepository
 import com.fomaxtro.core.domain.repository.ToppingRepository
-import com.fomaxtro.core.domain.use_case.UpsertCartItem
+import com.fomaxtro.core.domain.use_case.CartUseCases
 import com.fomaxtro.core.domain.util.Result
+import com.fomaxtro.core.domain.util.map
+import com.fomaxtro.core.presentation.mapper.toResource
 import com.fomaxtro.core.presentation.mapper.toUi
 import com.fomaxtro.core.presentation.mapper.toUiText
-import com.fomaxtro.core.presentation.util.Resource
-import com.fomaxtro.core.presentation.util.getOrDefault
-import com.fomaxtro.core.presentation.util.getOrNull
-import kotlinx.coroutines.async
+import com.fomaxtro.core.presentation.ui.Resource
+import com.fomaxtro.core.presentation.ui.getOrNull
+import com.fomaxtro.core.presentation.ui.map
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.concurrent.atomics.AtomicBoolean
-import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
-@OptIn(ExperimentalAtomicApi::class)
 class ProductDetailsViewModel(
     private val productId: Long,
     private val productRepository: ProductRepository,
     private val toppingRepository: ToppingRepository,
-    private val upsertCartItem: UpsertCartItem
+    private val cartUseCases: CartUseCases
 ) : ViewModel() {
-    private val firstLaunch = AtomicBoolean(false)
-
-    private val _state = MutableStateFlow(ProductDetailsInternalState())
-
     private val eventChannel = Channel<ProductDetailsEvent>()
     val events = eventChannel.receiveAsFlow()
 
-    private suspend fun loadProduct(): Resource<Product> {
-        return when (val result = productRepository.findById(productId)) {
-            is Result.Error -> {
+    private val product = flow { emit(productRepository.findById(productId)) }
+        .onEach { result ->
+            if (result is Result.Error) {
                 eventChannel.send(
                     ProductDetailsEvent.ShowSystemMessage(
                         result.error.toUiText()
                     )
                 )
-
-                Resource.Error
             }
-
-            is Result.Success -> Resource.Success(result.data)
         }
-    }
+        .map { it.toResource() }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            Resource.Loading
+        )
 
-    private suspend fun loadToppings(): Resource<List<ToppingSelection>> {
-        return when (val result = toppingRepository.getAll()) {
-            is Result.Error -> {
+    private val quantities = MutableStateFlow<Map<Long, Int>>(emptyMap())
+    private val toppings = flow { emit(toppingRepository.getAll()) }
+        .onEach { result ->
+            if (result is Result.Error) {
                 eventChannel.send(
                     ProductDetailsEvent.ShowSystemMessage(
                         result.error.toUiText()
                     )
                 )
-
-                Resource.Error
             }
-
-            is Result.Success -> {
-                val toppingSelections = result.data.map {
+        }
+        .combine(quantities) { toppings, quantities ->
+            toppings.map { toppings ->
+                toppings.map { topping ->
                     ToppingSelection(
-                        topping = it
+                        topping = topping,
+                        quantity = quantities[topping.id] ?: 0
                     )
                 }
-
-                Resource.Success(toppingSelections)
-            }
+            }.toResource()
         }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            Resource.Loading
+        )
+
+    val state = combine(
+        product,
+        toppings
+    ) { product, toppings ->
+        ProductDetailsState(
+            product = product.map { it.toUi() },
+            toppings = toppings.map { toppings ->
+                toppings.map { it.toUi() }
+            }
+        )
     }
-
-    val state = _state
-        .onStart {
-            if (firstLaunch.compareAndSet(expectedValue = false, newValue = true)) {
-                coroutineScope {
-                    val products = async { loadProduct() }
-                    val toppingSelections = async { loadToppings() }
-
-                    _state.update {
-                        ProductDetailsInternalState(
-                            product = products.await(),
-                            toppings = toppingSelections.await()
-                        )
-                    }
-                }
-            }
-        }
-        .map { state -> state.toUi() }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             ProductDetailsState()
         )
-
 
     fun onAction(action: ProductDetailsAction) {
         when (action) {
@@ -114,16 +105,20 @@ class ProductDetailsViewModel(
 
             ProductDetailsAction.OnNavigateBackClick -> Unit
             ProductDetailsAction.OnAddToCartClick -> onAddToCartClick()
+            is ProductDetailsAction.OnToppingAddClick -> onToppingAddClick(action.toppingId)
+        }
+    }
+
+    private fun onToppingAddClick(toppingId: Long) {
+        quantities.update { currentMap ->
+            currentMap + (toppingId to 1)
         }
     }
 
     private fun onAddToCartClick() = viewModelScope.launch {
-        val product = _state.value.product
-            .getOrNull()
-            ?: return@launch
-        val selectedToppings = _state.value.toppings
-            .getOrDefault(emptyList())
-            .filter { it.quantity > 0 }
+        val product = product.value.getOrNull() ?: return@launch
+        val selectedToppings = toppings.value.getOrNull()
+            ?.filter { it.quantity > 0 } ?: return@launch
 
         val cartItem = CartItem(
             product = product,
@@ -131,7 +126,7 @@ class ProductDetailsViewModel(
             selectedToppings = selectedToppings
         )
 
-        upsertCartItem(cartItem)
+        cartUseCases.addCartItem(cartItem)
         eventChannel.send(ProductDetailsEvent.NavigateToCart)
     }
 
@@ -139,30 +134,12 @@ class ProductDetailsViewModel(
         toppingId: Long,
         quantity: Int
     ) {
-        val toppings = _state.value.toppings
-            .getOrDefault(emptyList())
-            .toMutableList()
-        val toppingIndex = toppings
-            .indexOfFirst { it.topping.id == toppingId }
-            .takeIf { it != -1 } ?: return
-
-        toppings[toppingIndex] = toppings[toppingIndex].copy(quantity = quantity)
-
-        _state.update {
-            it.copy(
-                toppings = Resource.Success(toppings.toList())
-            )
+        quantities.update { currentMap ->
+            if (quantity > 0) {
+                currentMap + (toppingId to quantity)
+            } else {
+                currentMap - toppingId
+            }
         }
     }
 }
-
-private data class ProductDetailsInternalState(
-    val product: Resource<Product> = Resource.Loading,
-    val toppings: Resource<List<ToppingSelection>> = Resource.Loading
-)
-
-private fun ProductDetailsInternalState.toUi() = ProductDetailsState(
-    product = product.getOrNull()?.toUi(),
-    isToppingsLoading = toppings.isLoading,
-    toppings = toppings.getOrDefault(emptyList()).map { it.toUi() }
-)

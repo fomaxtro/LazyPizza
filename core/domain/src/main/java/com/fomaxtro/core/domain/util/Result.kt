@@ -41,15 +41,6 @@ fun <D, E : Error> Result<D, E>.getOrDefault(default: D): D {
     }
 }
 
-fun <D, E : Error> Flow<Result<D, E>>.unwrapOr(default: D): Flow<D> {
-    return map {
-        when (it) {
-            is Result.Error -> default
-            is Result.Success -> it.data
-        }
-    }
-}
-
 inline fun <D, E : Error> Flow<Result<D, E>>.onError(
     crossinline onError: suspend (E) -> Unit
 ): Flow<Result<D, E>> {

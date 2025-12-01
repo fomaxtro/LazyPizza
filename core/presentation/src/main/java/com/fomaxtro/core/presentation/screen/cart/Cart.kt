@@ -18,17 +18,19 @@ import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.model.CartItemUi
 import com.fomaxtro.core.presentation.screen.cart.component.CartLayout
-import com.fomaxtro.core.presentation.screen.cart.component.ProductRecommendationCard
+import com.fomaxtro.core.presentation.component.ProductRecommendationCard
 import com.fomaxtro.core.presentation.ui.Formatters
 import com.fomaxtro.core.presentation.ui.ObserveAsEvents
 import com.fomaxtro.core.presentation.util.ProductUiFactory
+import com.fomaxtro.core.presentation.ui.Resource
+import com.fomaxtro.core.presentation.ui.getOrDefault
 import com.fomaxtro.core.presentation.util.toDisplayText
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CartRoot(
     onBackToMenuClick: () -> Unit,
-    viewModel: CartViewModel = koinViewModel()
+    onNavigateToCheckout: () -> Unit,
+    viewModel: CartViewModel
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -49,6 +51,7 @@ fun CartRoot(
         onAction = { action ->
             when (action) {
                 CartAction.OnBackToMenuClick -> onBackToMenuClick()
+                CartAction.OnCheckoutClick -> onNavigateToCheckout()
                 else -> viewModel.onAction(action)
             }
         },
@@ -62,7 +65,7 @@ private fun CartScreen(
     onAction: (CartAction) -> Unit = {},
     state: CartState
 ) {
-    if (!state.isCartItemsLoading && state.cartItems.isEmpty()) {
+    if (state.cartItems is Resource.Success && state.cartItems.data.isEmpty()) {
         EmptyInfo(
             title = stringResource(R.string.empty_cart),
             subtitle = stringResource(R.string.empty_cart_subtitle),
@@ -77,7 +80,7 @@ private fun CartScreen(
         )
     } else {
         CartLayout(
-            cartItems = state.cartItems,
+            cartItems = state.cartItems.getOrDefault(emptyList()),
             productItemContent = { cartItem ->
                 val product = cartItem.product
                 val description = if (cartItem.selectedToppings.isNotEmpty()) {
@@ -99,42 +102,39 @@ private fun CartScreen(
                         .animateItem(),
                     onQuantityChange = {
                         onAction(
-                            CartAction.OnQuantityChange(
+                            CartAction.OnCartItemQuantityChange(
                                 cartItemId = cartItem.id,
                                 quantity = it
                             )
                         )
                     },
                     onDeleteClick = {
-                        onAction(
-                            CartAction.OnQuantityChange(
-                                cartItemId = cartItem.id,
-                                quantity = 0
-                            )
-                        )
+                        onAction(CartAction.OnCartItemDeleteClick(cartItem.id))
                     },
                     minQuantity = 1
                 )
             },
-            recommendations = state.productRecommendations,
+            recommendations = state.productRecommendations.getOrDefault(emptyList()),
             recommendationItemContent = { product ->
                 ProductRecommendationCard(
                     product = product,
                     onAddClick = {
-                        onAction(CartAction.OnRecommendationAddClick(productId = product.id))
+                        onAction(CartAction.OnRecommendationAddClick(product.id))
                     },
                     modifier = Modifier.animateItem()
                 )
             },
-            loading = state.isCartItemsLoading,
+            loading = state.cartItems is Resource.Loading,
             action = {
                 LazyPizzaButton(
-                    onClick = {},
+                    onClick = {
+                        onAction(CartAction.OnCheckoutClick)
+                    },
                     text = stringResource(
                         id = R.string.proceed_to_checkout,
                         Formatters.formatCurrency(state.totalPrice)
                     ),
-                    enabled = state.cartItems.isNotEmpty(),
+                    enabled = state.cartItems.getOrDefault(emptyList()).isNotEmpty(),
                     modifier = Modifier.fillMaxWidth()
                 )
             },
@@ -165,9 +165,8 @@ private fun CartScreenPreview() {
     LazyPizzaTheme {
         CartScreen(
             state = CartState(
-                isCartItemsLoading = false,
-                cartItems = cartItems,
-                productRecommendations = productRecommendations
+                cartItems = Resource.Success(cartItems),
+                productRecommendations = Resource.Success(productRecommendations)
             )
         )
     }

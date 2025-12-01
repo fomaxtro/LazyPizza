@@ -31,11 +31,10 @@ import com.fomaxtro.core.presentation.designsystem.theme.title1Medium
 import com.fomaxtro.core.presentation.designsystem.theme.title3
 import com.fomaxtro.core.presentation.designsystem.top_bar.LazyPizzaCenteredAlignedTopAppBar
 import com.fomaxtro.core.presentation.screen.home.component.MenuTopAppBar
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeRoot(
-    viewModel: HomeViewModel = koinViewModel(),
+    viewModel: HomeViewModel,
     currentDestination: HomeDestination,
     onDestinationClick: (HomeDestination) -> Unit,
     onNavigateToLogin: () -> Unit,

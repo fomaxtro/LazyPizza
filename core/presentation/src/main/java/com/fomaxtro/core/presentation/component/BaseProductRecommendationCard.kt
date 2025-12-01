@@ -1,4 +1,4 @@
-package com.fomaxtro.core.presentation.screen.cart.component
+package com.fomaxtro.core.presentation.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

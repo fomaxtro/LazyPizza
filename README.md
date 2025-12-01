@@ -5,12 +5,37 @@ principles for Mobile Dev Campus.
 
 ## Features
 
-- Browse pizza products and toppings
-- Product detail views with adaptive layouts
+- User authentication with phone verification
+- Browse pizza products, drinks, and sauces
+- Customizable pizzas with extra toppings
+- Shopping cart with recommended add-ons
+- Order checkout with pickup time scheduling
+- Order history tracking
 - Modern Material Design UI with Jetpack Compose
 - Clean Architecture with multi-module structure
-- Dark mode support
 - Splash screen integration
+
+## Screenshots
+
+<div align="center">
+
+### Authentication & Menu
+
+<img src="screenshots/Screenshot_20251201_035359.png" width="250" alt="Login Screen"/> <img src="screenshots/Screenshot_20251201_035758.png" width="250" alt="Menu Screen"/>
+
+### Product Customization & Cart
+
+<img src="screenshots/Screenshot_20251201_035705.png" width="250" alt="Product Detail"/> <img src="screenshots/Screenshot_20251201_035835.png" width="250" alt="Shopping Cart"/>
+
+### Checkout & Order Confirmation
+
+<img src="screenshots/Screenshot_20251201_035930.png" width="250" alt="Checkout"/> <img src="screenshots/Screenshot_20251201_040010.png" width="250" alt="Order Details"/>
+
+### Order Success & History
+
+<img src="screenshots/Screenshot_20251201_040017.png" width="250" alt="Order Confirmation"/> <img src="screenshots/Screenshot_20251201_040026.png" width="250" alt="Order History"/>
+
+</div>
 
 ## Architecture
 

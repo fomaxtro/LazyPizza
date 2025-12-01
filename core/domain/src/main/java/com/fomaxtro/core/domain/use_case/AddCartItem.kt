@@ -6,18 +6,20 @@ import com.fomaxtro.core.domain.repository.AuthenticatedCartRepository
 import com.fomaxtro.core.domain.repository.GuestCartRepository
 import kotlinx.coroutines.flow.first
 
-class UpsertCartItem(
+class AddCartItem(
     private val authRepository: AuthRepository,
     private val guestCartRepository: GuestCartRepository,
     private val authenticatedCartRepository: AuthenticatedCartRepository
 ) {
     suspend operator fun invoke(item: CartItem) {
+        require(item.quantity > 0) { "Quantity must be greater than 0 to add to cart" }
+
         val isAuthenticated = authRepository.isAuthenticated().first()
 
         if (isAuthenticated) {
-            authenticatedCartRepository.upsertCartItem(item)
+            authenticatedCartRepository.insertCartItem(item)
         } else {
-            guestCartRepository.upsertCartItem(item)
+            guestCartRepository.insertCartItem(item)
         }
     }
 }

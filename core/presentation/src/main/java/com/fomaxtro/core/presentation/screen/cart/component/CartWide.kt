@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.component.ProductListItem
 import com.fomaxtro.core.presentation.component.ProductListItemLoader
+import com.fomaxtro.core.presentation.component.ProductRecommendationCard
+import com.fomaxtro.core.presentation.component.ProductRecommendationCardLoader
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
 import com.fomaxtro.core.presentation.designsystem.theme.label2Semibold

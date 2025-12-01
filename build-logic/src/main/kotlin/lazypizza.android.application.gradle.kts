@@ -56,7 +56,6 @@ android {
             isDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
-            applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("release")
 
             matchingFallbacks += "debug"
@@ -77,5 +76,6 @@ dependencies {
     "implementation"(libraries.findLibrary("androidx-activity-compose").get())
     "implementation"(libraries.findLibrary("timber").get())
     "implementation"(libraries.findLibrary("koin-android").get())
+    "implementation"(libraries.findLibrary("koin-compose").get())
     test(project)
 }

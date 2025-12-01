@@ -30,7 +30,7 @@ class Login(
                 val guestCart = guestCartRepository.getCartItemsLocal().first()
 
                 if (guestCart.isNotEmpty()) {
-                    authenticatedCartRepository.upsertCartItemsLocal(guestCart)
+                    authenticatedCartRepository.insertCartItemsLocal(guestCart)
                     guestCartRepository.clearCart()
                 }
             }

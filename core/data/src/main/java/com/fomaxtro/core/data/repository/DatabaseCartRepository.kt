@@ -3,6 +3,7 @@ package com.fomaxtro.core.data.repository
 import com.fomaxtro.core.data.database.dao.CartItemDao
 import com.fomaxtro.core.data.mapper.toCartItemEntity
 import com.fomaxtro.core.data.mapper.toCartItemLocal
+import com.fomaxtro.core.data.mapper.toToppingSelectionEntity
 import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.CartItemLocal
 import com.fomaxtro.core.domain.repository.AuthenticatedCartRepository
@@ -12,8 +13,17 @@ import kotlinx.coroutines.flow.map
 class DatabaseCartRepository(
     private val cartItemDao: CartItemDao
 ) : AuthenticatedCartRepository {
-    override suspend fun upsertCartItem(item: CartItem) {
-        cartItemDao.upsert(item.toCartItemEntity())
+    override suspend fun insertCartItem(item: CartItem) {
+        cartItemDao.insertWithToppingSelections(
+            cartItem = item.toCartItemEntity(),
+            toppingSelections = item.selectedToppings.map {
+                it.toToppingSelectionEntity(item.id)
+            }
+        )
+    }
+
+    override suspend fun updateCartItem(item: CartItem) {
+        cartItemDao.update(item.toCartItemEntity())
     }
 
     override suspend fun removeCartItem(item: CartItem) {
@@ -31,9 +41,14 @@ class DatabaseCartRepository(
             }
     }
 
-    override suspend fun upsertCartItemsLocal(items: List<CartItemLocal>) {
-        cartItemDao.upsertAll(
-            cartItems = items.map { it.toCartItemEntity() }
+    override suspend fun insertCartItemsLocal(items: List<CartItemLocal>) {
+        cartItemDao.insertAllWithToppingSelections(
+            cartItems = items.map { it.toCartItemEntity() },
+            toppingSelections = items.flatMap { cartItem ->
+                cartItem.selectedToppings.map {
+                    it.toToppingSelectionEntity(cartItem.id)
+                }
+            }
         )
     }
 

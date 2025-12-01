@@ -19,11 +19,13 @@ import com.fomaxtro.core.presentation.screen.home.HomeDestination
 import com.fomaxtro.core.presentation.screen.home.HomeRoot
 import com.fomaxtro.core.presentation.screen.menu.MenuRoot
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeNavigationRoot(
     onNavigateToProductDetails: (productId: Long) -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToCheckout: () -> Unit
 ) {
     val backStack = rememberNavBackStack(HomeRoute.Menu)
     val currentRoute = backStack.lastOrNull()
@@ -52,7 +54,8 @@ fun HomeNavigationRoot(
             backStack.remove(currentRoute)
         },
         onNavigateToLogin = onNavigateToLogin,
-        hostState = snackbarHostState
+        hostState = snackbarHostState,
+        viewModel = koinViewModel()
     ) {
         NavDisplay(
             backStack = backStack,
@@ -80,7 +83,8 @@ fun HomeNavigationRoot(
                             scope.launch {
                                 snackbarHostState.showSnackbar(message.asString(context))
                             }
-                        }
+                        },
+                        viewModel = koinViewModel()
                     )
                 }
 
@@ -93,13 +97,16 @@ fun HomeNavigationRoot(
                                 backStack.add(HomeRoute.Menu)
                                 backStack.remove(currentRoute)
                             }
-                        }
+                        },
+                        onNavigateToCheckout = onNavigateToCheckout,
+                        viewModel = koinViewModel()
                     )
                 }
 
                 entry<HomeRoute.History> {
                     HistoryRoot(
-                        onNavigateToLogin = onNavigateToLogin
+                        onNavigateToLogin = onNavigateToLogin,
+                        viewModel = koinViewModel()
                     )
                 }
             }

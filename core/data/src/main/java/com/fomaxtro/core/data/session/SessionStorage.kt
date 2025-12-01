@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.fomaxtro.core.data.session.model.CartItemSession
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -20,45 +19,45 @@ class SessionStorage(
         val CART_ITEMS_KEY = stringPreferencesKey("cart_items")
     }
 
-    private fun upsertItem(
-        items: MutableList<CartItemSession>,
-        item: CartItemSession
-    ) {
-        val cartItemIndex = items.indexOfFirst { item.id == it.id }
+    private fun getCartItems(cartItemPreferences: String?): List<CartItemSession> {
+        return cartItemPreferences?.let {
+            Json.decodeFromString<List<CartItemSession>>(it)
+        } ?: emptyList()
+    }
 
-        if (cartItemIndex != -1) {
-            items[cartItemIndex] = item
-        } else {
-            items += item
+    suspend fun addCartItem(item: CartItemSession) {
+        dataStore.edit { preferences ->
+            val cartItems = getCartItems(preferences[CART_ITEMS_KEY])
+
+            preferences[CART_ITEMS_KEY] = Json.encodeToString(cartItems + item)
         }
     }
 
-    suspend fun upsertCartItem(item: CartItemSession) {
-        val cartItems = getCartItems().first().toMutableList()
-        upsertItem(cartItems, item)
-
+    suspend fun saveCartItems(items: List<CartItemSession>) {
         dataStore.edit { preferences ->
-            preferences[CART_ITEMS_KEY] = Json.encodeToString(cartItems.toList())
+            preferences[CART_ITEMS_KEY] = Json.encodeToString(items)
         }
     }
 
-    suspend fun upsertCartItems(items: List<CartItemSession>) {
-        val cartItems = getCartItems().first().toMutableList()
-
-        items.forEach { item ->
-            upsertItem(cartItems, item)
-        }
-
+    suspend fun updateCartItem(item: CartItemSession) {
         dataStore.edit { preferences ->
-            preferences[CART_ITEMS_KEY] = Json.encodeToString(cartItems.toList())
+            val cartItems = getCartItems(preferences[CART_ITEMS_KEY])
+                .toMutableList()
+            val cartItemIndex = cartItems.indexOfFirst { it.id == item.id }
+
+            if (cartItemIndex != -1) {
+                cartItems[cartItemIndex] = item
+
+                preferences[CART_ITEMS_KEY] = Json.encodeToString(cartItems)
+            }
         }
     }
 
     suspend fun removeCartItem(cartId: String) {
-        val cartItems = getCartItems().first()
-
         dataStore.edit { preferences ->
+            val cartItems = getCartItems(preferences[CART_ITEMS_KEY])
             val newCartItems = cartItems.filterNot { it.id == cartId }
+
 
             preferences[CART_ITEMS_KEY] = Json.encodeToString(newCartItems)
         }

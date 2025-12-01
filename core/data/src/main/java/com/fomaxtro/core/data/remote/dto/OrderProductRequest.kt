@@ -3,7 +3,8 @@ package com.fomaxtro.core.data.remote.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CategoryDto(
+data class OrderProductRequest(
     val id: Long,
-    val name: String
+    val quantity: Int,
+    val toppings: List<OrderToppingRequest>
 )

@@ -2,6 +2,7 @@ package com.fomaxtro.core.presentation.di
 
 import com.fomaxtro.core.presentation.verification.OtpCodeEventBus
 import com.fomaxtro.core.presentation.screen.cart.CartViewModel
+import com.fomaxtro.core.presentation.screen.checkout.CheckoutViewModel
 import com.fomaxtro.core.presentation.screen.history.HistoryViewModel
 import com.fomaxtro.core.presentation.screen.home.HomeViewModel
 import com.fomaxtro.core.presentation.screen.login.LoginViewModel
@@ -22,13 +23,14 @@ val presentationModule = module {
             productId = productId,
             productRepository = get(),
             toppingRepository = get(),
-            upsertCartItem = get()
+            cartUseCases = get()
         )
     }
     viewModelOf(::HomeViewModel)
     viewModelOf(::CartViewModel)
     viewModelOf(::HistoryViewModel)
     viewModelOf(::LoginViewModel)
+    viewModelOf(::CheckoutViewModel)
 
     singleOf(::OtpCodeEventBus)
     single<SmsRetrieverClient> { SmsRetriever.getClient(androidContext()) }
