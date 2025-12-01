@@ -2,7 +2,7 @@ package com.fomaxtro.core.domain.use_case
 
 import com.fomaxtro.core.domain.model.CartItem
 import com.fomaxtro.core.domain.model.Order
-import com.fomaxtro.core.domain.model.NewOrder
+import com.fomaxtro.core.domain.model.CreateOrderParams
 import com.fomaxtro.core.domain.repository.AuthenticatedCartRepository
 import com.fomaxtro.core.domain.repository.OrderRepository
 import com.fomaxtro.core.domain.util.DataError
@@ -18,8 +18,7 @@ class PlaceOrder(
         pickupTime: Instant,
         comments: String?
     ): Result<Order, DataError> {
-        val order = NewOrder(
-            totalPrice = cartItems.sumOf { it.totalPrice },
+        val order = CreateOrderParams(
             pickupTime = pickupTime,
             cartItems = cartItems,
             comments = comments

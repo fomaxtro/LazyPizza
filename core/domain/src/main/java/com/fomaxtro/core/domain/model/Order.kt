@@ -6,5 +6,6 @@ data class Order(
     val id: Long,
     val totalPrice: Double,
     val status: OrderStatus,
-    val pickupTime: Instant
+    val pickupTime: Instant,
+    val products: List<OrderProduct>
 )
