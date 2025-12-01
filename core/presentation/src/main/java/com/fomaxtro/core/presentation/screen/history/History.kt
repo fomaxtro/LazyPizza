@@ -15,19 +15,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.fomaxtro.core.domain.model.OrderStatus
 import com.fomaxtro.core.presentation.R
 import com.fomaxtro.core.presentation.component.EmptyInfo
 import com.fomaxtro.core.presentation.designsystem.button.LazyPizzaButton
 import com.fomaxtro.core.presentation.designsystem.theme.LazyPizzaTheme
+import com.fomaxtro.core.presentation.screen.history.component.HistoryContentLoader
 import com.fomaxtro.core.presentation.screen.history.component.HistoryListItem
-import com.fomaxtro.core.presentation.screen.history.component.HistoryListItemLoader
-import com.fomaxtro.core.presentation.screen.history.model.OrderUi
+import com.fomaxtro.core.presentation.ui.Resource
 import com.fomaxtro.core.presentation.ui.ScreenType
 import com.fomaxtro.core.presentation.ui.currentScreenType
-import com.fomaxtro.core.presentation.ui.Resource
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 @Composable
 fun HistoryRoot(
@@ -54,108 +50,45 @@ private fun HistoryScreen(
     val screenType = currentScreenType()
 
     when (state.isAuthenticated) {
-        Resource.Loading -> {
-            when (screenType) {
-                ScreenType.MOBILE -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(3) {
-                            HistoryListItemLoader()
-                        }
-                    }
-                }
-
-                ScreenType.WIDE_SCREEN -> {
-                    LazyVerticalStaggeredGrid(
-                        columns = StaggeredGridCells.Fixed(2),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp),
-                        verticalItemSpacing = 8.dp,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(4) {
-                            HistoryListItemLoader()
-                        }
-                    }
-                }
-            }
-        }
-
         is Resource.Success -> {
             if (state.isAuthenticated.data) {
-                val orders = listOf(
-                    OrderUi(
-                        id = 12347,
-                        totalPrice = 8.99,
-                        status = OrderStatus.IN_PROGRESS,
-                        createdAt = LocalDateTime.parse("2025-11-17T16:52:00")
-                            .atZone(ZoneId.systemDefault())
-                            .toInstant(),
-                        products = "1 x Margherita",
-                    ),
-                    OrderUi(
-                        id = 12346,
-                        totalPrice = 25.45,
-                        status = OrderStatus.COMPLETED,
-                        createdAt = LocalDateTime.parse("2025-09-25T12:15:00")
-                            .atZone(ZoneId.systemDefault())
-                            .toInstant(),
-                        products = """
-                    1 x Margherita
-                    2 x Pepsi
-                    2 x Cookies Ice Cream
-                """.trimIndent()
-                    ),
-                    OrderUi(
-                        id = 12345,
-                        totalPrice = 11.78,
-                        status = OrderStatus.COMPLETED,
-                        createdAt = LocalDateTime.parse("2025-09-25T12:15:00")
-                            .atZone(ZoneId.systemDefault())
-                            .toInstant(),
-                        products = """
-                    1 x Margherita
-                    2 x Cookies Ice Cream
-                """.trimIndent()
-                    )
-                )
+                when (state.orders) {
+                    is Resource.Success -> {
+                        when (screenType) {
+                            ScreenType.MOBILE -> {
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    items(state.orders.data) { order ->
+                                        HistoryListItem(
+                                            order = order
+                                        )
+                                    }
+                                }
+                            }
+                            ScreenType.WIDE_SCREEN -> {
+                                LazyVerticalStaggeredGrid(
+                                    columns = StaggeredGridCells.Fixed(2),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 16.dp),
+                                    verticalItemSpacing = 8.dp,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    items(state.orders.data) { order ->
+                                        HistoryListItem(
+                                            order = order
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-                when (screenType) {
-                    ScreenType.MOBILE -> {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(orders) { order ->
-                                HistoryListItem(
-                                    order = order
-                                )
-                            }
-                        }
-                    }
-                    ScreenType.WIDE_SCREEN -> {
-                        LazyVerticalStaggeredGrid(
-                            columns = StaggeredGridCells.Fixed(2),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 16.dp),
-                            verticalItemSpacing = 8.dp,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(orders) { order ->
-                                HistoryListItem(
-                                    order = order
-                                )
-                            }
-                        }
-                    }
+                    else -> HistoryContentLoader()
                 }
             } else {
                 EmptyInfo(
@@ -173,7 +106,7 @@ private fun HistoryScreen(
             }
         }
 
-        else -> Unit
+        else -> HistoryContentLoader()
     }
 }
 

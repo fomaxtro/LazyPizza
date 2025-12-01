@@ -79,7 +79,7 @@ fun DateTimePicker(
             }
         },
         initialSelectedDate = Instant.ofEpochMilli(initialUtcMillis)
-            .atZone(ZoneOffset.UTC)
+            .atZone(ZoneId.systemDefault())
             .toLocalDate()
     )
 

@@ -7,5 +7,5 @@ import com.fomaxtro.core.presentation.ui.Resource
 @Immutable
 data class HistoryState(
     val isAuthenticated: Resource<Boolean> = Resource.Loading,
-    val orders: List<OrderUi> = emptyList()
+    val orders: Resource<List<OrderUi>> = Resource.Loading
 )

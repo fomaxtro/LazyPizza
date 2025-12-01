@@ -9,6 +9,6 @@ data class OrderUi(
     val id: Long,
     val totalPrice: Double,
     val status: OrderStatus,
-    val createdAt: Instant,
-    val products: String
+    val pickupTime: Instant,
+    val products: List<OrderProductUi>
 )
